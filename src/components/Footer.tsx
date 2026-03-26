@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Activity } from 'lucide-react';
+import logoImg from '@/assets/logo.png';
 import { trackInternalLinkClick } from '@/lib/tracking';
 
 const Footer = () => {
