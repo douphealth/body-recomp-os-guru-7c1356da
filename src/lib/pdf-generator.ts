@@ -572,9 +572,11 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   doc.setFont('helvetica', 'normal');
   tc(doc, BODY);
   doc.text('Your science-backed fitness companion', pw / 2, bTextY + 5, { align: 'center' });
-  tc(doc, RED);
+  tc(doc, BLUE);
   doc.setFont('helvetica', 'bold');
-  doc.text('gearuptofit.com', pw / 2, bTextY + 11, { align: 'center' });
+  const siteUrl = 'https://gearuptofit.com';
+  const siteW = doc.getTextWidth(siteUrl);
+  doc.textWithLink(siteUrl, pw / 2 - siteW / 2, bTextY + 11, { url: siteUrl });
 
   /* ═══ Page numbering ═══ */
   const total = doc.getNumberOfPages();
