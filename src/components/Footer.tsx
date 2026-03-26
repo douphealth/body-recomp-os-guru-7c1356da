@@ -46,9 +46,10 @@ const Footer = () => {
             <ul className="space-y-3">
               {[
                 { href: '/app/body-recomp', label: 'Body Recomp OS' },
-                { href: '/app/body-recomp/fat-loss-beginner-home-workouts', label: 'Fat Loss — Home Workouts' },
-                { href: '/app/body-recomp/runner-cut-plan', label: 'Runner Cut Plan' },
-                { href: '/app/body-recomp/lean-muscle-high-protein', label: 'Lean Muscle — High Protein' },
+                { href: '/plans', label: 'Browse All Plans' },
+                { href: '/methodology', label: 'Our Methodology' },
+                { href: '/plans/fat-loss-beginner-home-standard', label: 'Fat Loss — Beginner Home' },
+                { href: '/plans/lean-muscle-intermediate-gym-high-protein', label: 'Lean Muscle — Gym' },
               ].map(link => (
                 <li key={link.href}>
                   <a href={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200">

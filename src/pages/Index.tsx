@@ -47,7 +47,7 @@ const planIncludes = [
 ];
 
 const Index = () => {
-  const jsonLd = {
+  const webAppSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     name: 'GearUpToFit Body Recomp OS',
@@ -58,6 +58,25 @@ const Index = () => {
     author: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
   };
 
+  const orgSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'GearUpToFit',
+    url: 'https://gearuptofit.com',
+    sameAs: ['https://twitter.com/GearUpToFit'],
+  };
+
+  const softwareSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Body Recomp OS',
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'Web',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    description: 'Free 8-week body recomposition planner with personalized calories, macros, training, cardio, recovery, and habit plans.',
+    author: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <SEOHead
@@ -65,7 +84,9 @@ const Index = () => {
         description="Get your personalized calorie targets, macro split, 8-week training plan, cardio guidance, and recovery checklist — all in one free tool from GearUpToFit."
         path="/"
       />
-      <JsonLd data={jsonLd} />
+      <JsonLd data={webAppSchema} />
+      <JsonLd data={orgSchema} />
+      <JsonLd data={softwareSchema} />
       <Header />
 
       <main className="flex-1">

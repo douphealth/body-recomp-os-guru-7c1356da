@@ -18,6 +18,8 @@ const Header = () => {
   const navItems = [
     { label: 'Home', path: '/' },
     { label: 'Body Recomp OS', path: '/app/body-recomp' },
+    { label: 'Browse Plans', path: '/plans' },
+    { label: 'Methodology', path: '/methodology' },
   ];
 
   return (

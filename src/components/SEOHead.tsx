@@ -8,7 +8,9 @@ interface SEOHeadProps {
 
 const SEOHead = ({ title, description, path }: SEOHeadProps) => {
   useEffect(() => {
+    const base = 'https://app.gearuptofit.com';
     document.title = title;
+
     const setMeta = (name: string, content: string, attr = 'name') => {
       let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement;
       if (!el) {
@@ -18,19 +20,26 @@ const SEOHead = ({ title, description, path }: SEOHeadProps) => {
       }
       el.content = content;
     };
+
     setMeta('description', description);
     setMeta('og:title', title, 'property');
     setMeta('og:description', description, 'property');
     setMeta('og:type', 'website', 'property');
-    setMeta('og:url', `https://app.gearuptofit.com${path}`, 'property');
+    setMeta('og:url', `${base}${path}`, 'property');
+    setMeta('og:site_name', 'GearUpToFit Body Recomp OS', 'property');
+    setMeta('twitter:title', title);
+    setMeta('twitter:description', description);
+    setMeta('twitter:card', 'summary_large_image');
+    setMeta('twitter:site', '@GearUpToFit');
 
+    // Canonical
     let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
     if (!canonical) {
       canonical = document.createElement('link');
       canonical.rel = 'canonical';
       document.head.appendChild(canonical);
     }
-    canonical.href = `https://app.gearuptofit.com${path}`;
+    canonical.href = `${base}${path}`;
   }, [title, description, path]);
 
   return null;
