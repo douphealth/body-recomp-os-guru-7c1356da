@@ -305,7 +305,7 @@ const Results = () => {
           <TabsContent value="next" className="mt-4"><NextStepsTab /></TabsContent>
         </Tabs>
       )}
-    </motion.div>
+    </>
   );
 
   return (
