@@ -64,7 +64,10 @@ function footer(d: jsPDF, pg: number, total: number) {
   d.setFontSize(6.5);
   d.setFont('helvetica', 'normal');
   tc(d, LABEL);
-  d.text('GearUpToFit Body Recomp OS  |  gearuptofit.com  |  Free Science-Backed Fitness Plans', 15, ph - 10);
+  d.text('GearUpToFit Body Recomp OS  |  Free Science-Backed Fitness Plans', 15, ph - 10);
+  tc(d, BLUE);
+  const fLinkX = 15 + d.getTextWidth('GearUpToFit Body Recomp OS  |  Free Science-Backed Fitness Plans') + 4;
+  d.textWithLink('gearuptofit.com', fLinkX, ph - 10, { url: 'https://gearuptofit.com' });
   tc(d, RED);
   d.text(`Page ${pg} of ${total}`, pw - 15, ph - 10, { align: 'right' });
 }
@@ -117,10 +120,10 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   const logoData = await loadLogo();
 
   const gearLinks = [
-    { label: 'Workout Guides & Tips', url: 'gearuptofit.com/category/workouts/' },
-    { label: 'Nutrition & Meal Plans', url: 'gearuptofit.com/category/nutrition/' },
-    { label: 'Supplement Reviews', url: 'gearuptofit.com/category/supplements/' },
-    { label: 'Recovery & Wellness', url: 'gearuptofit.com/category/recovery/' },
+    { label: 'Workout Guides & Tips', url: 'https://gearuptofit.com/category/workouts/' },
+    { label: 'Nutrition & Meal Plans', url: 'https://gearuptofit.com/category/nutrition/' },
+    { label: 'Supplement Reviews', url: 'https://gearuptofit.com/category/supplements/' },
+    { label: 'Recovery & Wellness', url: 'https://gearuptofit.com/category/recovery/' },
   ];
 
   /* ═══ PAGE 1: COVER ═══ */
@@ -501,8 +504,8 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
 
     doc.setFontSize(7.5);
     doc.setFont('helvetica', 'normal');
-    tc(doc, RED);
-    doc.text(link.url, 27, y + 6);
+    tc(doc, BLUE);
+    doc.textWithLink(link.url, 27, y + 6, { url: link.url });
     y += 14;
   });
 
@@ -572,9 +575,11 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   doc.setFont('helvetica', 'normal');
   tc(doc, BODY);
   doc.text('Your science-backed fitness companion', pw / 2, bTextY + 5, { align: 'center' });
-  tc(doc, RED);
+  tc(doc, BLUE);
   doc.setFont('helvetica', 'bold');
-  doc.text('gearuptofit.com', pw / 2, bTextY + 11, { align: 'center' });
+  const siteUrl = 'https://gearuptofit.com';
+  const siteW = doc.getTextWidth(siteUrl);
+  doc.textWithLink(siteUrl, pw / 2 - siteW / 2, bTextY + 11, { url: siteUrl });
 
   /* ═══ Page numbering ═══ */
   const total = doc.getNumberOfPages();
