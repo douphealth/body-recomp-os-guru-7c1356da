@@ -487,8 +487,14 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
 
   /* ═══ RECOMMENDED RESOURCES ═══ */
   y += 8;
-  y = needPage(doc, y, 60);
+  y = needPage(doc, y, 80);
   y = section(doc, y, 'Recommended Resources from GearUpToFit');
+
+  // Logo above resources
+  if (logoData) {
+    doc.addImage(logoData, 'PNG', pw / 2 - 12, y, 24, 24);
+    y += 28;
+  }
 
   rRect(doc, 15, y, pw - 30, gearLinks.length * 14 + 10, 3, WHITE, RULE);
   y += 8;
