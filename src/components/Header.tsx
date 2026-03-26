@@ -18,7 +18,8 @@ const Header = () => {
   const navItems = [
     { label: 'Home', path: '/' },
     { label: 'Body Recomp OS', path: '/app/body-recomp' },
-    { label: 'Browse Plans', path: '/plans' },
+    { label: 'Tools', path: '/tools' },
+    { label: 'Plans', path: '/plans' },
     { label: 'Methodology', path: '/methodology' },
   ];
 
@@ -40,7 +41,7 @@ const Header = () => {
               key={item.path}
               to={item.path}
               className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                location.pathname === item.path
+                location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path))
                   ? 'text-primary bg-primary/10'
                   : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
               }`}
