@@ -1,12 +1,11 @@
-import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import AnimatedNumber from '@/components/AnimatedNumber';
 import { calculatePlan, type UserInputs, type PlanResults } from '@/lib/calculations';
 
 interface ComparePlansProps {
   currentGoal: string;
   inputs: UserInputs;
+  onSwitchGoal: (goal: 'fat-loss' | 'lean-muscle' | 'recomp') => void;
 }
 
 const goalOptions = [
@@ -15,16 +14,8 @@ const goalOptions = [
   { key: 'recomp' as const, label: 'Recomp', emoji: '⚡', desc: 'Maintenance calories with cycling to lose fat and build muscle' },
 ];
 
-const ComparePlans = ({ currentGoal, inputs }: ComparePlansProps) => {
-  const navigate = useNavigate();
+const ComparePlans = ({ currentGoal, inputs, onSwitchGoal }: ComparePlansProps) => {
   const alternatives = goalOptions.filter(g => g.key !== currentGoal);
-
-  const handleSwitch = (goal: typeof goalOptions[number]['key']) => {
-    const newInputs = { ...inputs, goal };
-    sessionStorage.setItem('recomp-inputs', JSON.stringify(newInputs));
-    navigate('/app/body-recomp/results');
-    window.location.reload();
-  };
 
   return (
     <div className="mt-8">
