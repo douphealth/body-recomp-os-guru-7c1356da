@@ -324,12 +324,18 @@ const Results = () => {
 
       <main className="flex-1 py-8 md:py-12">
         <div className="container max-w-4xl">
-          <AnimatePresence mode="wait">
-            {loading && (
-              <PlanLoadingScreen key="loading" onComplete={handleLoadingComplete} />
-            )}
-          </AnimatePresence>
-          {!loading && resultContent}
+          {loading ? (
+            <PlanLoadingScreen onComplete={handleLoadingComplete} />
+          ) : (
+            <motion.div
+              key="results"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              {resultContent}
+            </motion.div>
+          )}
         </div>
       </main>
 
