@@ -501,8 +501,8 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
 
     doc.setFontSize(7.5);
     doc.setFont('helvetica', 'normal');
-    tc(doc, RED);
-    doc.text(link.url, 27, y + 6);
+    tc(doc, BLUE);
+    doc.textWithLink(link.url, 27, y + 6, { url: link.url });
     y += 14;
   });
 
