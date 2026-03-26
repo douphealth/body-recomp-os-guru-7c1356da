@@ -120,10 +120,11 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   const logoData = await loadLogo();
 
   const gearLinks = [
-    { label: 'Workout Guides & Tips', url: 'https://gearuptofit.com/category/workouts/' },
-    { label: 'Nutrition & Meal Plans', url: 'https://gearuptofit.com/category/nutrition/' },
-    { label: 'Supplement Reviews', url: 'https://gearuptofit.com/category/supplements/' },
-    { label: 'Recovery & Wellness', url: 'https://gearuptofit.com/category/recovery/' },
+    { label: 'Fitness Workouts & Guides', url: 'https://gearuptofit.com/fitness/' },
+    { label: 'Nutrition & Meal Plans', url: 'https://gearuptofit.com/nutrition/' },
+    { label: 'Running Programs', url: 'https://gearuptofit.com/running/' },
+    { label: 'Weight Loss Strategies', url: 'https://gearuptofit.com/weight-loss/' },
+    { label: 'Health & Wellness', url: 'https://gearuptofit.com/health/' },
   ];
 
   /* ═══ PAGE 1: COVER ═══ */
@@ -486,8 +487,14 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
 
   /* ═══ RECOMMENDED RESOURCES ═══ */
   y += 8;
-  y = needPage(doc, y, 60);
+  y = needPage(doc, y, 80);
   y = section(doc, y, 'Recommended Resources from GearUpToFit');
+
+  // Logo above resources
+  if (logoData) {
+    doc.addImage(logoData, 'PNG', pw / 2 - 12, y, 24, 24);
+    y += 28;
+  }
 
   rRect(doc, 15, y, pw - 30, gearLinks.length * 14 + 10, 3, WHITE, RULE);
   y += 8;
