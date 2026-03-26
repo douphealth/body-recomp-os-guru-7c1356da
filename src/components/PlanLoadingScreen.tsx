@@ -97,6 +97,18 @@ const PlanLoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
           <p className="text-xs text-muted-foreground">{Math.round(progress)}%</p>
         </div>
 
+        {/* Motivational quote */}
+        <motion.p
+          key={quoteIndex}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.7 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-xs italic text-muted-foreground h-5"
+        >
+          "{motivationalQuotes[quoteIndex]}"
+        </motion.p>
+
         {/* Skeleton preview */}
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
