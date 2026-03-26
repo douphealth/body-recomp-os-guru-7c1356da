@@ -70,9 +70,7 @@ const PlanLoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
           transition={{ duration: 2, repeat: Infinity }}
           className="inline-flex items-center gap-3"
         >
-          <div className="h-12 w-12 rounded-xl gradient-red flex items-center justify-center shadow-lg shadow-primary/30">
-            <Activity className="h-6 w-6 text-primary-foreground" />
-          </div>
+          <img src={logoImg} alt="GearUpToFit Logo" className="h-12 w-12 rounded-xl shadow-lg shadow-primary/30" />
           <span className="font-['Oswald'] text-xl font-bold tracking-wider">
             GEAR UP <span className="text-primary">TO FIT</span>
           </span>

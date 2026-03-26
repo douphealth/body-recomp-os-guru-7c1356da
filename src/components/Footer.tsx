@@ -10,9 +10,7 @@ const Footer = () => {
         <div className="grid gap-10 md:grid-cols-4">
           <div>
             <div className="flex items-center gap-2.5 mb-5">
-              <div className="h-9 w-9 rounded-lg gradient-red flex items-center justify-center">
-                <Activity className="h-5 w-5 text-primary-foreground" />
-              </div>
+              <img src={logoImg} alt="GearUpToFit Logo" className="h-9 w-9 rounded-lg" />
               <span className="font-['Oswald'] text-lg font-bold tracking-wider">
                 GEAR UP <span className="text-primary">TO FIT</span>
               </span>
