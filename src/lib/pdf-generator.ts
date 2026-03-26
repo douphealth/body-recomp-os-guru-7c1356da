@@ -64,7 +64,10 @@ function footer(d: jsPDF, pg: number, total: number) {
   d.setFontSize(6.5);
   d.setFont('helvetica', 'normal');
   tc(d, LABEL);
-  d.text('GearUpToFit Body Recomp OS  |  gearuptofit.com  |  Free Science-Backed Fitness Plans', 15, ph - 10);
+  d.text('GearUpToFit Body Recomp OS  |  Free Science-Backed Fitness Plans', 15, ph - 10);
+  tc(d, BLUE);
+  const fLinkX = 15 + d.getTextWidth('GearUpToFit Body Recomp OS  |  Free Science-Backed Fitness Plans') + 4;
+  d.textWithLink('gearuptofit.com', fLinkX, ph - 10, { url: 'https://gearuptofit.com' });
   tc(d, RED);
   d.text(`Page ${pg} of ${total}`, pw - 15, ph - 10, { align: 'right' });
 }
