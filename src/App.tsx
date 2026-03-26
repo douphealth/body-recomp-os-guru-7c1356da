@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,6 +10,12 @@ import Results from "./pages/Results.tsx";
 import ProgrammaticSEOPage from "./pages/ProgrammaticSEOPage.tsx";
 import PlansHub from "./pages/PlansHub.tsx";
 import Methodology from "./pages/Methodology.tsx";
+import ToolsHub from "./pages/tools/ToolsHub.tsx";
+import TDEECalculator from "./pages/tools/TDEECalculator.tsx";
+import MacroCalculator from "./pages/tools/MacroCalculator.tsx";
+import ProteinCalculator from "./pages/tools/ProteinCalculator.tsx";
+import OneRepMaxCalculator from "./pages/tools/OneRepMaxCalculator.tsx";
+import BodyFatCalculator from "./pages/tools/BodyFatCalculator.tsx";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +32,12 @@ const App = () => (
           <Route path="/plans" element={<PlansHub />} />
           <Route path="/plans/:pageKey" element={<DynamicPlanPage />} />
           <Route path="/methodology" element={<Methodology />} />
+          <Route path="/tools" element={<ToolsHub />} />
+          <Route path="/tools/tdee-calculator" element={<TDEECalculator />} />
+          <Route path="/tools/macro-calculator" element={<MacroCalculator />} />
+          <Route path="/tools/protein-calculator" element={<ProteinCalculator />} />
+          <Route path="/tools/one-rep-max-calculator" element={<OneRepMaxCalculator />} />
+          <Route path="/tools/body-fat-calculator" element={<BodyFatCalculator />} />
           {/* Legacy SEO template redirects */}
           <Route path="/app/body-recomp/fat-loss-beginner-home-workouts" element={<ProgrammaticSEOPage pageKey="fat-loss-beginner-home-workouts" />} />
           <Route path="/app/body-recomp/runner-cut-plan" element={<ProgrammaticSEOPage pageKey="runner-cut-plan" />} />
