@@ -7,73 +7,60 @@ const Footer = () => {
   };
 
   return (
-    <footer className="border-t border-border bg-card/50 py-12">
-      <div className="container">
-        <div className="grid gap-8 md:grid-cols-3">
+    <footer className="relative border-t border-border bg-card/30 py-16 overflow-hidden">
+      <div className="absolute inset-0 hero-gradient opacity-30" />
+      <div className="container relative">
+        <div className="grid gap-10 md:grid-cols-3">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Activity className="h-6 w-6 text-primary" />
+            <div className="flex items-center gap-2.5 mb-5">
+              <div className="h-9 w-9 rounded-lg gradient-red flex items-center justify-center">
+                <Activity className="h-5 w-5 text-primary-foreground" />
+              </div>
               <span className="font-['Oswald'] text-lg font-bold tracking-wider">
                 GEAR UP <span className="text-primary">TO FIT</span>
               </span>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Science-backed fitness planning tools designed to help you reach your body composition goals.
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
+              Science-backed fitness planning tools designed to help you reach your body composition goals — for free.
             </p>
           </div>
           <div>
-            <h4 className="font-['Oswald'] text-sm font-semibold mb-4 text-foreground">EXPLORE GEARUPTOFIT</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="https://gearuptofit.com/" target="_blank" rel="noopener noreferrer" onClick={() => handleLinkClick('https://gearuptofit.com/')} className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Training Plans & Workouts
-                </a>
-              </li>
-              <li>
-                <a href="https://gearuptofit.com/about-us/" target="_blank" rel="noopener noreferrer" onClick={() => handleLinkClick('https://gearuptofit.com/about-us/')} className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  About Us — Our Mission
-                </a>
-              </li>
-              <li>
-                <a href="https://gearuptofit.com/running/how-to-choose-the-right-running-shoes/" target="_blank" rel="noopener noreferrer" onClick={() => handleLinkClick('https://gearuptofit.com/running/how-to-choose-the-right-running-shoes/')} className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Running Shoe Guide
-                </a>
-              </li>
-              <li>
-                <a href="https://gearuptofit.com/review/running-shoes/" target="_blank" rel="noopener noreferrer" onClick={() => handleLinkClick('https://gearuptofit.com/review/running-shoes/')} className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Best Running Shoes Reviews
-                </a>
-              </li>
+            <h4 className="font-['Oswald'] text-xs font-semibold mb-5 text-foreground tracking-widest">EXPLORE GEARUPTOFIT</h4>
+            <ul className="space-y-3">
+              {[
+                { href: 'https://gearuptofit.com/', label: 'Training Plans & Workouts' },
+                { href: 'https://gearuptofit.com/about-us/', label: 'About Us — Our Mission' },
+                { href: 'https://gearuptofit.com/running/how-to-choose-the-right-running-shoes/', label: 'Running Shoe Guide' },
+                { href: 'https://gearuptofit.com/review/running-shoes/', label: 'Best Running Shoes Reviews' },
+              ].map(link => (
+                <li key={link.href}>
+                  <a href={link.href} target="_blank" rel="noopener noreferrer" onClick={() => handleLinkClick(link.href)} className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
-            <h4 className="font-['Oswald'] text-sm font-semibold mb-4 text-foreground">APP TOOLS</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="/app/body-recomp" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Body Recomp OS
-                </a>
-              </li>
-              <li>
-                <a href="/app/body-recomp/fat-loss-beginner-home-workouts" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Fat Loss — Home Workouts
-                </a>
-              </li>
-              <li>
-                <a href="/app/body-recomp/runner-cut-plan" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Runner Cut Plan
-                </a>
-              </li>
-              <li>
-                <a href="/app/body-recomp/lean-muscle-high-protein" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Lean Muscle — High Protein
-                </a>
-              </li>
+            <h4 className="font-['Oswald'] text-xs font-semibold mb-5 text-foreground tracking-widest">APP TOOLS</h4>
+            <ul className="space-y-3">
+              {[
+                { href: '/app/body-recomp', label: 'Body Recomp OS' },
+                { href: '/app/body-recomp/fat-loss-beginner-home-workouts', label: 'Fat Loss — Home Workouts' },
+                { href: '/app/body-recomp/runner-cut-plan', label: 'Runner Cut Plan' },
+                { href: '/app/body-recomp/lean-muscle-high-protein', label: 'Lean Muscle — High Protein' },
+              ].map(link => (
+                <li key={link.href}>
+                  <a href={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
-        <div className="mt-10 pt-6 border-t border-border text-center">
-          <p className="text-xs text-muted-foreground">
+        <div className="mt-12 pt-8 border-t border-border/50 text-center">
+          <p className="text-xs text-muted-foreground/70">
             © {new Date().getFullYear()} GearUpToFit. This app provides general fitness guidance. Consult a healthcare professional before starting any new exercise or nutrition program.
           </p>
         </div>

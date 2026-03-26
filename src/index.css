@@ -46,6 +46,8 @@
     --sidebar-ring: 0 85% 55%;
 
     --glow-red: 0 85% 55%;
+    --surface: 220 18% 12%;
+    --surface-elevated: 220 16% 14%;
   }
 
   .dark {
@@ -98,14 +100,90 @@
 
 @layer utilities {
   .text-glow {
-    text-shadow: 0 0 20px hsl(0 85% 55% / 0.4);
+    text-shadow: 0 0 40px hsl(0 85% 55% / 0.5), 0 0 80px hsl(0 85% 55% / 0.2);
   }
 
   .card-glow {
-    box-shadow: 0 0 30px -10px hsl(0 85% 55% / 0.2);
+    box-shadow: 0 0 40px -10px hsl(0 85% 55% / 0.15), 0 4px 24px -4px hsl(220 20% 0% / 0.5);
+  }
+
+  .card-glow-hover {
+    box-shadow: 0 0 60px -10px hsl(0 85% 55% / 0.25), 0 8px 32px -4px hsl(220 20% 0% / 0.6);
   }
 
   .gradient-red {
     background: linear-gradient(135deg, hsl(0 85% 55%), hsl(15 90% 50%));
   }
+
+  .gradient-red-subtle {
+    background: linear-gradient(135deg, hsl(0 85% 55% / 0.15), hsl(15 90% 50% / 0.05));
+  }
+
+  .glass {
+    background: hsl(220 18% 10% / 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .glass-border {
+    border: 1px solid hsl(0 0% 100% / 0.06);
+  }
+
+  .shimmer {
+    background: linear-gradient(
+      110deg,
+      transparent 25%,
+      hsl(0 0% 100% / 0.05) 37%,
+      transparent 63%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2.5s ease-in-out infinite;
+  }
+
+  .hero-gradient {
+    background: radial-gradient(ellipse 80% 50% at 50% -20%, hsl(0 85% 55% / 0.2), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 50%, hsl(15 90% 50% / 0.08), transparent),
+                linear-gradient(to bottom, hsl(220 20% 7%), hsl(220 20% 5%));
+  }
+
+  .stat-card {
+    @apply relative overflow-hidden rounded-xl border border-border bg-card p-5;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .stat-card:hover {
+    @apply border-primary/30 card-glow-hover;
+    transform: translateY(-2px);
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, hsl(0 85% 55% / 0.5), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .stat-card:hover::before {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 50%; }
+  100% { background-position: -200% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px -5px hsl(0 85% 55% / 0.3); }
+  50% { box-shadow: 0 0 40px -5px hsl(0 85% 55% / 0.5); }
 }

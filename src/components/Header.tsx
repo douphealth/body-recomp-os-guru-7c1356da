@@ -1,11 +1,19 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Activity, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    const handler = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
+  }, []);
 
   const navItems = [
     { label: 'Home', path: '/' },
@@ -13,23 +21,26 @@ const Header = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <header className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'glass glass-border shadow-lg shadow-background/50' : 'bg-background/80 backdrop-blur border-b border-border'}`}>
       <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <Activity className="h-7 w-7 text-primary" />
-          <span className="font-['Oswald'] text-xl font-bold tracking-wider">
+        <Link to="/" className="flex items-center gap-2.5 group">
+          <div className="h-9 w-9 rounded-lg gradient-red flex items-center justify-center shadow-lg shadow-primary/20 group-hover:shadow-primary/40 transition-shadow">
+            <Activity className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <span className="font-['Oswald'] text-lg font-bold tracking-wider">
             GEAR UP <span className="text-primary">TO FIT</span>
           </span>
         </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-1">
           {navItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
-              className={`text-sm font-medium transition-colors hover:text-primary ${
-                location.pathname === item.path ? 'text-primary' : 'text-muted-foreground'
+              className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                location.pathname === item.path
+                  ? 'text-primary bg-primary/10'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
               }`}
             >
               {item.label}
@@ -39,51 +50,61 @@ const Header = () => {
             href="https://gearuptofit.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            className="px-4 py-2 text-sm font-medium text-muted-foreground rounded-lg hover:text-foreground hover:bg-secondary/50 transition-all duration-200"
           >
             GearUpToFit.com ↗
           </a>
-          <Link to="/app/body-recomp">
-            <Button size="sm" className="gradient-red border-0 font-semibold">
+          <Link to="/app/body-recomp" className="ml-2">
+            <Button size="sm" className="gradient-red border-0 font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all duration-300 hover:scale-[1.02]">
               Build My Plan
             </Button>
           </Link>
         </nav>
 
-        {/* Mobile menu toggle */}
-        <button className="md:hidden p-2" onClick={() => setMenuOpen(!menuOpen)}>
-          {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        <button className="md:hidden p-2 rounded-lg hover:bg-secondary/50 transition-colors" onClick={() => setMenuOpen(!menuOpen)}>
+          {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
-      {/* Mobile nav */}
-      {menuOpen && (
-        <div className="md:hidden border-t border-border bg-background p-4 space-y-3">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className="block text-sm font-medium py-2 hover:text-primary"
-              onClick={() => setMenuOpen(false)}
-            >
-              {item.label}
-            </Link>
-          ))}
-          <a
-            href="https://gearuptofit.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block text-sm font-medium py-2 text-muted-foreground hover:text-primary"
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden overflow-hidden glass glass-border"
           >
-            GearUpToFit.com ↗
-          </a>
-          <Link to="/app/body-recomp" onClick={() => setMenuOpen(false)}>
-            <Button className="w-full gradient-red border-0 font-semibold mt-2">
-              Build My Plan
-            </Button>
-          </Link>
-        </div>
-      )}
+            <div className="p-4 space-y-1">
+              {navItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`block text-sm font-medium py-3 px-4 rounded-lg transition-colors ${
+                    location.pathname === item.path ? 'text-primary bg-primary/10' : 'hover:bg-secondary/50'
+                  }`}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ))}
+              <a
+                href="https://gearuptofit.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-sm font-medium py-3 px-4 rounded-lg text-muted-foreground hover:bg-secondary/50 transition-colors"
+              >
+                GearUpToFit.com ↗
+              </a>
+              <Link to="/app/body-recomp" onClick={() => setMenuOpen(false)}>
+                <Button className="w-full gradient-red border-0 font-semibold mt-2 shadow-lg shadow-primary/20">
+                  Build My Plan
+                </Button>
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };
