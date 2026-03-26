@@ -16,7 +16,7 @@ const PrintButton = ({ plan, inputs }: PrintButtonProps) => {
     setGenerating(true);
     try {
       const { generatePlanPDF } = await import('@/lib/pdf-generator');
-      generatePlanPDF(plan, inputs);
+      await generatePlanPDF(plan, inputs);
       toast.success('Your plan has been downloaded!');
     } catch (err) {
       console.error('PDF generation failed:', err);
