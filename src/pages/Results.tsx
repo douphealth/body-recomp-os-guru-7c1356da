@@ -270,7 +270,7 @@ const Results = () => {
             </p>
           </div>
           <div className="flex gap-2 no-print" data-no-print>
-            <PrintButton />
+            <PrintButton plan={plan} inputs={inputs} />
             <ShareDialog goalLabel={plan.goalLabel} />
           </div>
         </div>
