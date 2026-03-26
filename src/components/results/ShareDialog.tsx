@@ -29,7 +29,7 @@ const ShareDialog = ({ goalLabel, plan, inputs }: ShareDialogProps) => {
     setGenerating(true);
     try {
       const { generatePlanPDF } = await import('@/lib/pdf-generator');
-      generatePlanPDF(plan, inputs);
+      await generatePlanPDF(plan, inputs);
       toast.success('Your plan has been downloaded!');
     } catch {
       toast.error('Failed to generate PDF.');
