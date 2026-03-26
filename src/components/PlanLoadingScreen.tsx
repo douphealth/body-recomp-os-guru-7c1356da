@@ -23,6 +23,7 @@ const motivationalQuotes = [
 const PlanLoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [progress, setProgress] = useState(0);
   const [msgIndex, setMsgIndex] = useState(0);
+  const [quoteIndex, setQuoteIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -38,6 +39,13 @@ const PlanLoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
     const interval = setInterval(() => {
       setMsgIndex((i) => (i + 1) % loadingMessages.length);
     }, 500);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setQuoteIndex((i) => (i + 1) % motivationalQuotes.length);
+    }, 2500);
     return () => clearInterval(interval);
   }, []);
 
