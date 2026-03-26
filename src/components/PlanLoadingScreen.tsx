@@ -13,9 +13,17 @@ const loadingMessages = [
   'Finalizing your plan...',
 ];
 
+const motivationalQuotes = [
+  'The body achieves what the mind believes.',
+  'Discipline is choosing between what you want now and what you want most.',
+  "You don't have to be extreme, just consistent.",
+  "The only bad workout is the one that didn't happen.",
+];
+
 const PlanLoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [progress, setProgress] = useState(0);
   const [msgIndex, setMsgIndex] = useState(0);
+  const [quoteIndex, setQuoteIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -31,6 +39,13 @@ const PlanLoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
     const interval = setInterval(() => {
       setMsgIndex((i) => (i + 1) % loadingMessages.length);
     }, 500);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setQuoteIndex((i) => (i + 1) % motivationalQuotes.length);
+    }, 2500);
     return () => clearInterval(interval);
   }, []);
 
@@ -81,6 +96,18 @@ const PlanLoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
           <Progress value={progress} className="h-2" />
           <p className="text-xs text-muted-foreground">{Math.round(progress)}%</p>
         </div>
+
+        {/* Motivational quote */}
+        <motion.p
+          key={quoteIndex}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.7 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-xs italic text-muted-foreground h-5"
+        >
+          "{motivationalQuotes[quoteIndex]}"
+        </motion.p>
 
         {/* Skeleton preview */}
         <div className="space-y-3">

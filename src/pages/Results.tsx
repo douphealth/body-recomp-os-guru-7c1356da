@@ -13,6 +13,9 @@ import JsonLd from '@/components/JsonLd';
 import AnimatedNumber from '@/components/AnimatedNumber';
 import PlanLoadingScreen from '@/components/PlanLoadingScreen';
 import ShareDialog from '@/components/results/ShareDialog';
+import PrintButton from '@/components/results/PrintButton';
+import ComparePlans from '@/components/results/ComparePlans';
+import GlossaryTooltip from '@/components/results/GlossaryTooltip';
 import MacroDonutChart from '@/components/results/MacroDonutChart';
 import TDEEBarChart from '@/components/results/TDEEBarChart';
 import WeeklyCalendarView from '@/components/results/WeeklyCalendarView';
@@ -102,12 +105,12 @@ const Results = () => {
       <div className="stat-card">
         <h3 className="text-sm font-bold uppercase tracking-wider mb-3 font-['Oswald']">Calculation Details</h3>
         <div className="space-y-2 text-xs">
-          <div className="flex justify-between"><span className="text-muted-foreground">Basal Metabolic Rate (BMR)</span><span className="font-medium">{Math.round(plan.tdee / 1.4)} kcal</span></div>
-          <div className="flex justify-between"><span className="text-muted-foreground">TDEE (maintenance)</span><span className="font-medium">{plan.tdee} kcal</span></div>
-          <div className="flex justify-between"><span className="text-muted-foreground">Lean Body Mass</span><span className="font-medium">{plan.leanBodyMass} kg</span></div>
-          <div className="flex justify-between"><span className="text-muted-foreground">Formula</span><span className="font-medium text-primary">Mifflin-St Jeor</span></div>
+          <div className="flex justify-between"><span className="text-muted-foreground">Basal Metabolic Rate (<GlossaryTooltip term="BMR">BMR</GlossaryTooltip>)</span><span className="font-medium">{Math.round(plan.tdee / 1.4)} kcal</span></div>
+          <div className="flex justify-between"><span className="text-muted-foreground"><GlossaryTooltip term="TDEE">TDEE</GlossaryTooltip> (maintenance)</span><span className="font-medium">{plan.tdee} kcal</span></div>
+          <div className="flex justify-between"><span className="text-muted-foreground"><GlossaryTooltip term="Lean Body Mass">Lean Body Mass</GlossaryTooltip></span><span className="font-medium">{plan.leanBodyMass} kg</span></div>
+          <div className="flex justify-between"><span className="text-muted-foreground">Formula</span><span className="font-medium text-primary"><GlossaryTooltip term="Mifflin-St Jeor">Mifflin-St Jeor</GlossaryTooltip></span></div>
           {plan.weeklyCalorieRange && (
-            <div className="flex justify-between"><span className="text-muted-foreground">Recomp cycling range</span><span className="font-medium text-primary">{plan.weeklyCalorieRange.low}–{plan.weeklyCalorieRange.high}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground"><GlossaryTooltip term="Recomp">Recomp</GlossaryTooltip> cycling range</span><span className="font-medium text-primary">{plan.weeklyCalorieRange.low}–{plan.weeklyCalorieRange.high}</span></div>
           )}
         </div>
       </div>
@@ -242,6 +245,8 @@ const Results = () => {
           </a>
         </div>
       </div>
+
+      <ComparePlans currentGoal={inputs.goal} inputs={inputs} />
     </div>
   );
 
@@ -262,7 +267,10 @@ const Results = () => {
               {inputs.age}yo {inputs.sex} • {inputs.weightKg}kg • {inputs.bodyFatPercent}% BF • {inputs.equipmentAccess} • {inputs.dietStyle} • Generated {today}
             </p>
           </div>
-          <ShareDialog goalLabel={plan.goalLabel} />
+          <div className="flex gap-2 no-print" data-no-print>
+            <PrintButton />
+            <ShareDialog goalLabel={plan.goalLabel} />
+          </div>
         </div>
       </div>
 

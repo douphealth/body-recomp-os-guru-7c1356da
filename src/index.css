@@ -187,3 +187,70 @@
   0%, 100% { box-shadow: 0 0 20px -5px hsl(0 85% 55% / 0.3); }
   50% { box-shadow: 0 0 40px -5px hsl(0 85% 55% / 0.5); }
 }
+
+/* Print styles */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  header, footer, nav,
+  .no-print,
+  [data-no-print] {
+    display: none !important;
+  }
+
+  .stat-card {
+    border: 1px solid #ddd !important;
+    background: white !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .stat-card:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  .stat-card::before {
+    display: none !important;
+  }
+
+  /* Show all accordion content expanded */
+  [data-state="closed"] > [data-radix-accordion-content] {
+    display: block !important;
+    height: auto !important;
+  }
+
+  /* Force dark text */
+  * {
+    color: black !important;
+  }
+
+  .text-primary, [class*="text-primary"] {
+    color: hsl(0 85% 45%) !important;
+  }
+
+  .text-muted-foreground {
+    color: #666 !important;
+  }
+
+  /* White backgrounds for cards */
+  .bg-card, .bg-secondary, [class*="bg-secondary"] {
+    background: #f9f9f9 !important;
+  }
+
+  .bg-background, .bg-popover {
+    background: white !important;
+  }
+
+  /* Make charts print-friendly */
+  .recharts-wrapper {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
