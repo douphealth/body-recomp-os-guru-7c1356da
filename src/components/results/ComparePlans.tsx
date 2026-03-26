@@ -25,7 +25,7 @@ const ComparePlans = ({ currentGoal, inputs, onSwitchGoal }: ComparePlansProps) 
         {alternatives.map(alt => {
           const altPlan = calculatePlan({ ...inputs, goal: alt.key });
           return (
-            <div key={alt.key} className="stat-card group cursor-pointer hover:border-primary/30 transition-all" onClick={() => handleSwitch(alt.key)}>
+            <div key={alt.key} className="stat-card group cursor-pointer hover:border-primary/30 transition-all" onClick={() => onSwitchGoal(alt.key)}>
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-2xl">{alt.emoji}</span>
                 <h4 className="text-sm font-bold font-['Oswald'] tracking-wider">{alt.label.toUpperCase()}</h4>
