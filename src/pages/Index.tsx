@@ -84,7 +84,9 @@ const Index = () => {
         description="Get your personalized calorie targets, macro split, 8-week training plan, cardio guidance, and recovery checklist — all in one free tool from GearUpToFit."
         path="/"
       />
-      <JsonLd data={jsonLd} />
+      <JsonLd data={webAppSchema} />
+      <JsonLd data={orgSchema} />
+      <JsonLd data={softwareSchema} />
       <Header />
 
       <main className="flex-1">
