@@ -47,7 +47,7 @@ const planIncludes = [
 ];
 
 const Index = () => {
-  const jsonLd = {
+  const webAppSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     name: 'GearUpToFit Body Recomp OS',
@@ -55,6 +55,25 @@ const Index = () => {
     url: 'https://app.gearuptofit.com',
     applicationCategory: 'HealthApplication',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    author: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
+  };
+
+  const orgSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'GearUpToFit',
+    url: 'https://gearuptofit.com',
+    sameAs: ['https://twitter.com/GearUpToFit'],
+  };
+
+  const softwareSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Body Recomp OS',
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'Web',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    description: 'Free 8-week body recomposition planner with personalized calories, macros, training, cardio, recovery, and habit plans.',
     author: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
   };
 
