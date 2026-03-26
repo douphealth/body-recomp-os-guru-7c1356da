@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -251,11 +251,7 @@ const Results = () => {
   );
 
   const resultContent = (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
+    <>
       {/* Personalized banner */}
       <div className="relative overflow-hidden rounded-xl border-l-4 border-l-primary bg-card p-4 md:p-5 mb-6">
         <div className="flex items-center justify-between flex-wrap gap-3">
@@ -309,7 +305,7 @@ const Results = () => {
           <TabsContent value="next" className="mt-4"><NextStepsTab /></TabsContent>
         </Tabs>
       )}
-    </motion.div>
+    </>
   );
 
   return (
@@ -324,12 +320,18 @@ const Results = () => {
 
       <main className="flex-1 py-8 md:py-12">
         <div className="container max-w-4xl">
-          <AnimatePresence mode="wait">
-            {loading && (
-              <PlanLoadingScreen key="loading" onComplete={handleLoadingComplete} />
-            )}
-          </AnimatePresence>
-          {!loading && resultContent}
+          {loading ? (
+            <PlanLoadingScreen onComplete={handleLoadingComplete} />
+          ) : (
+            <motion.div
+              key="results"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              {resultContent}
+            </motion.div>
+          )}
         </div>
       </main>
 
