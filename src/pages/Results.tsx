@@ -246,7 +246,13 @@ const Results = () => {
         </div>
       </div>
 
-      <ComparePlans currentGoal={inputs.goal} inputs={inputs} />
+      <ComparePlans currentGoal={inputs.goal} inputs={inputs} onSwitchGoal={(goal) => {
+        const newInputs = { ...inputs, goal };
+        sessionStorage.setItem('recomp-inputs', JSON.stringify(newInputs));
+        setInputs(newInputs);
+        setPlan(calculatePlan(newInputs));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }} />
     </div>
   );
 
