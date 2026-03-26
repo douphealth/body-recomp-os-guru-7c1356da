@@ -117,10 +117,10 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   const logoData = await loadLogo();
 
   const gearLinks = [
-    { label: 'Workout Guides & Tips', url: 'gearuptofit.com/category/workouts/' },
-    { label: 'Nutrition & Meal Plans', url: 'gearuptofit.com/category/nutrition/' },
-    { label: 'Supplement Reviews', url: 'gearuptofit.com/category/supplements/' },
-    { label: 'Recovery & Wellness', url: 'gearuptofit.com/category/recovery/' },
+    { label: 'Workout Guides & Tips', url: 'https://gearuptofit.com/category/workouts/' },
+    { label: 'Nutrition & Meal Plans', url: 'https://gearuptofit.com/category/nutrition/' },
+    { label: 'Supplement Reviews', url: 'https://gearuptofit.com/category/supplements/' },
+    { label: 'Recovery & Wellness', url: 'https://gearuptofit.com/category/recovery/' },
   ];
 
   /* ═══ PAGE 1: COVER ═══ */
