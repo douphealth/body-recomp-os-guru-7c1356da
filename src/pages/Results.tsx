@@ -265,7 +265,10 @@ const Results = () => {
               {inputs.age}yo {inputs.sex} • {inputs.weightKg}kg • {inputs.bodyFatPercent}% BF • {inputs.equipmentAccess} • {inputs.dietStyle} • Generated {today}
             </p>
           </div>
-          <ShareDialog goalLabel={plan.goalLabel} />
+          <div className="flex gap-2 no-print" data-no-print>
+            <PrintButton />
+            <ShareDialog goalLabel={plan.goalLabel} />
+          </div>
         </div>
       </div>
 
