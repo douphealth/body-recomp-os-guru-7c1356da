@@ -251,11 +251,7 @@ const Results = () => {
   );
 
   const resultContent = (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
+    <>
       {/* Personalized banner */}
       <div className="relative overflow-hidden rounded-xl border-l-4 border-l-primary bg-card p-4 md:p-5 mb-6">
         <div className="flex items-center justify-between flex-wrap gap-3">
