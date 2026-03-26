@@ -13,6 +13,13 @@ const loadingMessages = [
   'Finalizing your plan...',
 ];
 
+const motivationalQuotes = [
+  'The body achieves what the mind believes.',
+  'Discipline is choosing between what you want now and what you want most.',
+  "You don't have to be extreme, just consistent.",
+  'The only bad workout is the one that didn't happen.',
+];
+
 const PlanLoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [progress, setProgress] = useState(0);
   const [msgIndex, setMsgIndex] = useState(0);
