@@ -245,6 +245,8 @@ const Results = () => {
           </a>
         </div>
       </div>
+
+      <ComparePlans currentGoal={inputs.goal} inputs={inputs} />
     </div>
   );
 
