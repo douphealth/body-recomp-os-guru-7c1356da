@@ -28,9 +28,7 @@ const Header = () => {
     <header className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'glass glass-border shadow-lg shadow-background/50' : 'bg-background/80 backdrop-blur border-b border-border'}`}>
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="h-9 w-9 rounded-lg gradient-red flex items-center justify-center shadow-lg shadow-primary/20 group-hover:shadow-primary/40 transition-shadow">
-            <Activity className="h-5 w-5 text-primary-foreground" />
-          </div>
+          <img src={logoImg} alt="GearUpToFit Logo" className="h-9 w-9 rounded-lg shadow-lg shadow-primary/20 group-hover:shadow-primary/40 transition-shadow" />
           <span className="font-['Oswald'] text-lg font-bold tracking-wider">
             GEAR UP <span className="text-primary">TO FIT</span>
           </span>
