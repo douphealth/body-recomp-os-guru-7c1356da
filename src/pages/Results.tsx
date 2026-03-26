@@ -325,12 +325,11 @@ const Results = () => {
       <main className="flex-1 py-8 md:py-12">
         <div className="container max-w-4xl">
           <AnimatePresence mode="wait">
-            {loading ? (
+            {loading && (
               <PlanLoadingScreen key="loading" onComplete={handleLoadingComplete} />
-            ) : (
-              resultContent
             )}
           </AnimatePresence>
+          {!loading && resultContent}
         </div>
       </main>
 
