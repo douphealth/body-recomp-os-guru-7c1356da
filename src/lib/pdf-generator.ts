@@ -15,6 +15,7 @@ const GREEN: RGB   = [30, 160, 80];
 const SOFT_RED: RGB = [255, 240, 240];
 const SOFT_BLUE: RGB = [235, 245, 255];
 const SOFT_GREEN: RGB = [235, 250, 240];
+const SOFT_AMBER: RGB = [255, 250, 235];
 
 type RGB = [number, number, number];
 
@@ -110,6 +111,108 @@ async function loadLogo(): Promise<string | null> {
   }
 }
 
+/* ─── Meal plan data ─── */
+interface MealItem { name: string; portion: string; calories: number; protein: number; carbs: number; fat: number; }
+interface MealBlock { meal: string; items: MealItem[]; }
+
+function getSampleMeals(inputs: UserInputs): MealBlock[] {
+  if (inputs.dietStyle === 'keto') {
+    return [
+      { meal: 'Breakfast', items: [
+        { name: 'Scrambled Eggs (3)', portion: '180g', calories: 270, protein: 21, carbs: 2, fat: 20 },
+        { name: 'Avocado (1/2)', portion: '75g', calories: 120, protein: 1, carbs: 6, fat: 11 },
+        { name: 'Bacon (2 strips)', portion: '30g', calories: 90, protein: 6, carbs: 0, fat: 7 },
+      ]},
+      { meal: 'Lunch', items: [
+        { name: 'Grilled Chicken Thighs', portion: '150g', calories: 260, protein: 32, carbs: 0, fat: 14 },
+        { name: 'Mixed Greens + Olive Oil', portion: '135g', calories: 150, protein: 2, carbs: 4, fat: 14 },
+        { name: 'Cheddar Cheese', portion: '40g', calories: 160, protein: 10, carbs: 1, fat: 13 },
+      ]},
+      { meal: 'Dinner', items: [
+        { name: 'Salmon Fillet', portion: '170g', calories: 340, protein: 38, carbs: 0, fat: 20 },
+        { name: 'Roasted Broccoli + Butter', portion: '150g', calories: 100, protein: 4, carbs: 7, fat: 7 },
+        { name: 'Cauliflower Mash', portion: '120g', calories: 80, protein: 3, carbs: 5, fat: 5 },
+      ]},
+      { meal: 'Snack', items: [
+        { name: 'Greek Yogurt (Full Fat)', portion: '150g', calories: 150, protein: 10, carbs: 6, fat: 10 },
+        { name: 'Almond Butter', portion: '15g', calories: 95, protein: 3, carbs: 2, fat: 8 },
+      ]},
+    ];
+  }
+  if (inputs.dietStyle === 'vegetarian') {
+    return [
+      { meal: 'Breakfast', items: [
+        { name: 'Greek Yogurt (0%)', portion: '200g', calories: 120, protein: 20, carbs: 8, fat: 0 },
+        { name: 'Overnight Oats', portion: '60g dry', calories: 230, protein: 8, carbs: 40, fat: 4 },
+        { name: 'Mixed Berries', portion: '100g', calories: 50, protein: 1, carbs: 12, fat: 0 },
+      ]},
+      { meal: 'Lunch', items: [
+        { name: 'Lentil & Chickpea Bowl', portion: '200g', calories: 280, protein: 18, carbs: 42, fat: 4 },
+        { name: 'Quinoa', portion: '100g', calories: 120, protein: 4, carbs: 21, fat: 2 },
+        { name: 'Tahini Dressing', portion: '15ml', calories: 90, protein: 3, carbs: 3, fat: 8 },
+      ]},
+      { meal: 'Dinner', items: [
+        { name: 'Tofu Stir-fry', portion: '200g tofu', calories: 280, protein: 24, carbs: 8, fat: 16 },
+        { name: 'Brown Rice', portion: '120g', calories: 150, protein: 3, carbs: 32, fat: 1 },
+        { name: 'Edamame', portion: '80g', calories: 100, protein: 10, carbs: 7, fat: 4 },
+      ]},
+      { meal: 'Snack', items: [
+        { name: 'Cottage Cheese', portion: '150g', calories: 110, protein: 15, carbs: 5, fat: 3 },
+        { name: 'Walnuts', portion: '15g', calories: 100, protein: 2, carbs: 1, fat: 10 },
+      ]},
+    ];
+  }
+  if (inputs.dietStyle === 'high-protein') {
+    return [
+      { meal: 'Breakfast', items: [
+        { name: 'Egg Whites (6) + 2 Whole', portion: '280g', calories: 290, protein: 38, carbs: 2, fat: 14 },
+        { name: 'Turkey Bacon (3)', portion: '45g', calories: 90, protein: 10, carbs: 1, fat: 5 },
+        { name: 'Whole Wheat Toast', portion: '1 slice', calories: 80, protein: 4, carbs: 14, fat: 1 },
+      ]},
+      { meal: 'Lunch', items: [
+        { name: 'Grilled Chicken Breast', portion: '200g', calories: 330, protein: 62, carbs: 0, fat: 8 },
+        { name: 'Sweet Potato', portion: '150g', calories: 130, protein: 2, carbs: 30, fat: 0 },
+        { name: 'Steamed Broccoli', portion: '150g', calories: 50, protein: 4, carbs: 8, fat: 0 },
+      ]},
+      { meal: 'Post-Workout', items: [
+        { name: 'Whey Protein (2 scoops)', portion: '60g', calories: 240, protein: 50, carbs: 6, fat: 3 },
+        { name: 'Banana', portion: '1 large', calories: 120, protein: 1, carbs: 31, fat: 0 },
+        { name: 'Rice Cakes (2)', portion: '36g', calories: 70, protein: 2, carbs: 15, fat: 0 },
+      ]},
+      { meal: 'Dinner', items: [
+        { name: 'Lean Ground Turkey', portion: '180g', calories: 270, protein: 38, carbs: 0, fat: 12 },
+        { name: 'Jasmine Rice', portion: '120g', calories: 160, protein: 3, carbs: 36, fat: 0 },
+        { name: 'Mixed Salad', portion: '100g', calories: 25, protein: 2, carbs: 4, fat: 0 },
+      ]},
+    ];
+  }
+  // Standard
+  return [
+    { meal: 'Breakfast', items: [
+      { name: 'Oatmeal', portion: '60g dry', calories: 230, protein: 8, carbs: 40, fat: 4 },
+      { name: 'Whey Protein (1 scoop)', portion: '30g', calories: 120, protein: 25, carbs: 3, fat: 1 },
+      { name: 'Banana', portion: '1 medium', calories: 105, protein: 1, carbs: 27, fat: 0 },
+      { name: 'Peanut Butter', portion: '15g', calories: 95, protein: 4, carbs: 3, fat: 8 },
+    ]},
+    { meal: 'Lunch', items: [
+      { name: 'Grilled Chicken Breast', portion: '150g', calories: 250, protein: 47, carbs: 0, fat: 6 },
+      { name: 'Brown Rice', portion: '150g', calories: 190, protein: 4, carbs: 40, fat: 2 },
+      { name: 'Mixed Vegetables', portion: '150g', calories: 65, protein: 3, carbs: 12, fat: 1 },
+      { name: 'Olive Oil', portion: '10ml', calories: 90, protein: 0, carbs: 0, fat: 10 },
+    ]},
+    { meal: 'Snack', items: [
+      { name: 'Greek Yogurt (0%)', portion: '200g', calories: 120, protein: 20, carbs: 8, fat: 0 },
+      { name: 'Almonds', portion: '20g', calories: 120, protein: 4, carbs: 3, fat: 10 },
+      { name: 'Apple', portion: '1 medium', calories: 95, protein: 0, carbs: 25, fat: 0 },
+    ]},
+    { meal: 'Dinner', items: [
+      { name: 'Salmon Fillet', portion: '150g', calories: 300, protein: 34, carbs: 0, fat: 18 },
+      { name: 'Roasted Potatoes', portion: '150g', calories: 130, protein: 3, carbs: 28, fat: 1 },
+      { name: 'Steamed Asparagus', portion: '120g', calories: 25, protein: 3, carbs: 4, fat: 0 },
+    ]},
+  ];
+}
+
 /* ═══════════════════════════════════════════════════════════
    MAIN EXPORT
    ═══════════════════════════════════════════════════════════ */
@@ -121,17 +224,17 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   const logoData = await loadLogo();
 
   const gearLinks = [
-    { label: 'Fitness Workouts & Guides', url: 'https://gearuptofit.com/fitness/' },
-    { label: 'Nutrition & Meal Plans', url: 'https://gearuptofit.com/nutrition/' },
-    { label: 'Running Programs', url: 'https://gearuptofit.com/running/' },
-    { label: 'Weight Loss Strategies', url: 'https://gearuptofit.com/weight-loss/' },
-    { label: 'Health & Wellness', url: 'https://gearuptofit.com/health/' },
+    { label: 'Complete Fitness Workout Guides', url: 'https://gearuptofit.com/fitness/', desc: 'Step-by-step workout routines for all levels' },
+    { label: 'Nutrition & Healthy Meal Plans', url: 'https://gearuptofit.com/nutrition/', desc: 'Evidence-based nutrition strategies and recipes' },
+    { label: 'Running Programs for All Levels', url: 'https://gearuptofit.com/running/', desc: 'From couch-to-5K to marathon training plans' },
+    { label: 'Proven Weight Loss Strategies', url: 'https://gearuptofit.com/weight-loss/', desc: 'Sustainable fat loss methods backed by science' },
+    { label: 'Health & Wellness Resources', url: 'https://gearuptofit.com/health/', desc: 'Sleep, stress management, and recovery tips' },
   ];
 
   /* ═══ PAGE 1: COVER ═══ */
   whiteBg(doc);
 
-  // Top red bar
+  // Top accent bar
   fc(doc, RED);
   doc.rect(0, 0, pw, 4, 'F');
 
@@ -140,7 +243,6 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     doc.addImage(logoData, 'PNG', pw / 2 - 15, 14, 30, 30);
   }
 
-  // Brand text
   const brandY = logoData ? 50 : 30;
   doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
@@ -165,7 +267,7 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   fc(doc, RED);
   doc.rect(pw / 2 - 25, titleY + 17, 50, 0.8, 'F');
 
-  // Quick summary
+  // Summary
   doc.setFontSize(8.5);
   doc.setFont('helvetica', 'normal');
   tc(doc, BODY);
@@ -206,7 +308,7 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     doc.text(item[1], x, iy + 5);
   });
 
-  // Calorie hero
+  // Calorie hero box
   const calY = pcY + 52;
   rRect(doc, 20, calY, pw - 40, 36, 3, WHITE, RED);
 
@@ -237,7 +339,6 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     rRect(doc, x, macY, macW, 32, 3, CARD, RULE);
     fc(doc, m.color);
     doc.rect(x + 1, macY + 0.5, macW - 2, 2.5, 'F');
-
     doc.setFontSize(6.5);
     doc.setFont('helvetica', 'bold');
     tc(doc, LABEL);
@@ -253,16 +354,15 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     doc.text(m.detail, x + macW / 2, macY + 28, { align: 'center' });
   });
 
-  // Additional targets row
+  // Additional targets
   const addY = macY + 38;
   const addW = (pw - 50) / 4;
-  const additionalTargets = [
+  [
     { label: 'FIBER', value: `${plan.fiberGrams}g/day` },
     { label: 'WATER', value: `${plan.waterLiters}L/day` },
     { label: 'TRAINING', value: `${inputs.workoutFrequency}x/week` },
     { label: 'STEPS', value: `${inputs.stepCount.toLocaleString()}/day` },
-  ];
-  additionalTargets.forEach((t, i) => {
+  ].forEach((t, i) => {
     const x = 20 + i * (addW + 3.3);
     doc.setFontSize(5.5);
     doc.setFont('helvetica', 'bold');
@@ -273,7 +373,7 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     doc.text(t.value, x + addW / 2, addY + 5, { align: 'center' });
   });
 
-  // Date & formula
+  // Footer info
   doc.setFontSize(6.5);
   doc.setFont('helvetica', 'normal');
   tc(doc, LABEL);
@@ -286,7 +386,6 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   let y = 20;
   y = section(doc, y, 'The Science Behind Your Plan');
 
-  // Intro paragraph
   rRect(doc, 15, y, pw - 30, 20, 3, SOFT_BLUE, [200, 215, 240]);
   doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
@@ -296,11 +395,8 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   doc.text(sciIntroLines, 22, y + 7);
   y += 24;
 
-  // Science notes
   plan.scienceNotes.forEach((note) => {
     y = needPage(doc, y, 30);
-    
-    // Title with red dot
     fc(doc, RED);
     doc.circle(19, y + 1.5, 1.5, 'F');
     doc.setFontSize(9);
@@ -308,16 +404,12 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     tc(doc, DARK);
     doc.text(clean(note.title), 24, y + 3);
     y += 7;
-
-    // Explanation
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
     tc(doc, BODY);
     const expLines = doc.splitTextToSize(clean(note.explanation), pw - 40);
     doc.text(expLines, 22, y);
     y += expLines.length * 3.8 + 2;
-
-    // Citation
     doc.setFontSize(6.5);
     doc.setFont('helvetica', 'italic');
     tc(doc, LABEL);
@@ -422,7 +514,6 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   plan.mealTiming.forEach((meal) => {
     y = needPage(doc, y, 24);
     rRect(doc, 15, y, pw - 30, 20, 2, CARD, RULE);
-    
     doc.setFontSize(8.5);
     doc.setFont('helvetica', 'bold');
     tc(doc, RED);
@@ -430,18 +521,143 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     doc.setFontSize(7);
     tc(doc, LABEL);
     doc.text(clean(meal.timing), 70, y + 5);
-    
     doc.setFontSize(7.5);
     doc.setFont('helvetica', 'normal');
     tc(doc, BODY);
     doc.text(`${meal.calories} kcal  |  P: ${meal.protein}g  |  C: ${meal.carbs}g  |  F: ${meal.fat}g`, 22, y + 11);
-    
     doc.setFontSize(6.5);
     doc.setFont('helvetica', 'italic');
     tc(doc, LABEL);
     doc.text(clean(meal.notes), 22, y + 16);
     y += 24;
   });
+
+  /* ═══ SAMPLE MEAL PLAN ═══ */
+  doc.addPage();
+  whiteBg(doc);
+  y = 20;
+  const dietLabel = inputs.dietStyle === 'keto' ? 'Ketogenic' : inputs.dietStyle === 'high-protein' ? 'High-Protein' : inputs.dietStyle === 'vegetarian' ? 'Vegetarian' : 'Standard Balanced';
+  y = section(doc, y, `Sample Day - ${dietLabel} Meal Plan`);
+
+  rRect(doc, 15, y, pw - 30, 16, 2, SOFT_AMBER, [230, 220, 190] as RGB);
+  doc.setFontSize(7.5);
+  doc.setFont('helvetica', 'normal');
+  tc(doc, BODY);
+  doc.text('This is a sample day of eating based on your diet style and macro targets. Swap foods with similar macros to suit your preferences.', 22, y + 5);
+  doc.text('Portions are approximate -- use a food scale for accuracy. Adjust serving sizes to hit your exact daily targets.', 22, y + 10);
+  y += 20;
+
+  const meals = getSampleMeals(inputs);
+  let grandTotal = { calories: 0, protein: 0, carbs: 0, fat: 0 };
+
+  meals.forEach((meal) => {
+    y = needPage(doc, y, 12 + meal.items.length * 7);
+
+    // Meal header
+    rRect(doc, 15, y, pw - 30, 8, 2, RED);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    tc(doc, WHITE);
+    doc.text(clean(meal.meal).toUpperCase(), 22, y + 5.5);
+    y += 10;
+
+    // Column headers
+    doc.setFontSize(6);
+    doc.setFont('helvetica', 'bold');
+    tc(doc, LABEL);
+    doc.text('FOOD ITEM', 22, y + 3);
+    doc.text('PORTION', 90, y + 3);
+    doc.text('CAL', 120, y + 3);
+    doc.text('P', 136, y + 3);
+    doc.text('C', 148, y + 3);
+    doc.text('F', 160, y + 3);
+    hLine(doc, 20, y + 5, pw - 20, RULE, 0.2);
+    y += 8;
+
+    let mealCal = 0, mealP = 0, mealC = 0, mealF = 0;
+
+    meal.items.forEach((item, idx) => {
+      const bgColor = idx % 2 === 0 ? CARD : WHITE;
+      rRect(doc, 17, y - 2, pw - 34, 6, 0.5, bgColor);
+
+      doc.setFontSize(7.5);
+      doc.setFont('helvetica', 'normal');
+      tc(doc, DARK);
+      doc.text(clean(item.name), 22, y + 2);
+      doc.setFontSize(7);
+      tc(doc, LABEL);
+      doc.text(item.portion, 90, y + 2);
+      tc(doc, BODY);
+      doc.text(`${item.calories}`, 120, y + 2);
+      tc(doc, RED);
+      doc.text(`${item.protein}`, 136, y + 2);
+      tc(doc, BLUE);
+      doc.text(`${item.carbs}`, 148, y + 2);
+      tc(doc, AMBER);
+      doc.text(`${item.fat}`, 160, y + 2);
+
+      mealCal += item.calories;
+      mealP += item.protein;
+      mealC += item.carbs;
+      mealF += item.fat;
+      y += 6;
+    });
+
+    // Meal subtotal
+    hLine(doc, 20, y, pw - 20, RULE, 0.2);
+    y += 3;
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'bold');
+    tc(doc, DARK);
+    doc.text('Subtotal', 22, y + 2);
+    doc.text(`${mealCal}`, 120, y + 2);
+    tc(doc, RED);
+    doc.text(`${mealP}g`, 133, y + 2);
+    tc(doc, BLUE);
+    doc.text(`${mealC}g`, 145, y + 2);
+    tc(doc, AMBER);
+    doc.text(`${mealF}g`, 157, y + 2);
+    y += 8;
+
+    grandTotal.calories += mealCal;
+    grandTotal.protein += mealP;
+    grandTotal.carbs += mealC;
+    grandTotal.fat += mealF;
+  });
+
+  // Grand total vs target
+  y += 4;
+  y = needPage(doc, y, 28);
+  rRect(doc, 15, y, pw - 30, 24, 3, WHITE, RED);
+  doc.setFontSize(7);
+  doc.setFont('helvetica', 'bold');
+  tc(doc, RED);
+  doc.text('DAILY TOTAL vs TARGET', pw / 2, y + 5, { align: 'center' });
+
+  const compX = [40, 80, 115, 145];
+  const compLabels = ['', 'CALORIES', 'PROTEIN', 'CARBS', 'FAT'];
+  doc.setFontSize(6);
+  tc(doc, LABEL);
+  compLabels.slice(1).forEach((l, i) => doc.text(l, compX[i], y + 10));
+
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  tc(doc, DARK);
+  doc.text('Meal Plan', 20, y + 16);
+  doc.text(`~${grandTotal.calories}`, compX[0], y + 16);
+  tc(doc, RED); doc.text(`${grandTotal.protein}g`, compX[1], y + 16);
+  tc(doc, BLUE); doc.text(`${grandTotal.carbs}g`, compX[2], y + 16);
+  tc(doc, AMBER); doc.text(`${grandTotal.fat}g`, compX[3], y + 16);
+
+  tc(doc, LABEL);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Target', 20, y + 21);
+  tc(doc, DARK); doc.text(`${plan.calorieTarget}`, compX[0], y + 21);
+  tc(doc, RED); doc.text(`${plan.proteinGrams}g`, compX[1], y + 21);
+  tc(doc, BLUE); doc.text(`${plan.carbGrams}g`, compX[2], y + 21);
+  tc(doc, AMBER); doc.text(`${plan.fatGrams}g`, compX[3], y + 21);
+
+  y += 30;
 
   /* ═══ TRAINING PLAN ═══ */
   doc.addPage();
@@ -465,7 +681,6 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   plan.trainingPlan.forEach((week) => {
     y = needPage(doc, y, 20);
 
-    // Phase header
     const weekLabel = clean(`${week.weekRange} -- ${week.phase}`);
     if (week.deload) {
       rRect(doc, 15, y, pw - 30, 14, 2, [255, 248, 230] as RGB, [220, 195, 130] as RGB);
@@ -478,29 +693,22 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     doc.setFont('helvetica', 'bold');
     doc.text(weekLabel, 20, y + 5.5);
 
-    // Phase guideline
     if (week.intensityGuideline) {
       doc.setFontSize(6);
       doc.setFont('helvetica', 'normal');
-      if (week.deload) {
-        tc(doc, [160, 120, 20] as RGB);
-      } else {
-        tc(doc, [255, 200, 200] as RGB);
-      }
+      if (week.deload) tc(doc, [160, 120, 20] as RGB); else tc(doc, [255, 200, 200] as RGB);
       doc.text(clean(week.intensityGuideline), 20, y + 10.5);
     }
     y += 18;
 
     week.days.forEach(day => {
       y = needPage(doc, y, 10 + day.exercises.length * 7);
-
       doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
       tc(doc, RED);
       doc.text(clean(`${day.day} -- ${day.focus}`), 20, y);
       y += 5;
 
-      // Column headers for exercises
       doc.setFontSize(6);
       doc.setFont('helvetica', 'bold');
       tc(doc, LABEL);
@@ -520,16 +728,8 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
         doc.setFont('helvetica', 'bold');
         tc(doc, DARK);
         doc.text(`${ex.sets} x ${clean(ex.reps)}`, pw - 65, y);
-        if (ex.rpe) {
-          doc.setFont('helvetica', 'normal');
-          tc(doc, RED);
-          doc.text(ex.rpe, pw - 35, y);
-        }
-        if (ex.rest) {
-          doc.setFont('helvetica', 'normal');
-          tc(doc, LABEL);
-          doc.text(clean(ex.rest), pw - 22, y, { align: 'right' });
-        }
+        if (ex.rpe) { doc.setFont('helvetica', 'normal'); tc(doc, RED); doc.text(ex.rpe, pw - 35, y); }
+        if (ex.rest) { doc.setFont('helvetica', 'normal'); tc(doc, LABEL); doc.text(clean(ex.rest), pw - 22, y, { align: 'right' }); }
         if (ex.notes) {
           doc.setFontSize(6.5);
           doc.setFont('helvetica', 'italic');
@@ -592,8 +792,6 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     
     rRect(doc, 15, y, pw - 30, plan.cardioPlan.heartRateZones.length * 9 + 10, 3, CARD, RULE);
     y += 6;
-    
-    // Headers
     doc.setFontSize(6.5);
     doc.setFont('helvetica', 'bold');
     tc(doc, LABEL);
@@ -633,7 +831,6 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     dc(doc, RED);
     doc.setLineWidth(0.4);
     doc.roundedRect(22, y - 2.5, 3.5, 3.5, 0.5, 0.5, 'S');
-
     doc.setFontSize(8.5);
     doc.setFont('helvetica', 'normal');
     tc(doc, BODY);
@@ -650,13 +847,11 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
 
   plan.habitPlan.forEach((week) => {
     y = needPage(doc, y, 22);
-    
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
     tc(doc, RED);
     doc.text(`Week ${week.week}: ${clean(week.focus)}`, 22, y + 3);
     y += 6;
-
     week.habits.forEach(h => {
       doc.setFontSize(7.5);
       doc.setFont('helvetica', 'normal');
@@ -669,33 +864,46 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     y += 3;
   });
 
-  /* ═══ RECOMMENDED RESOURCES ═══ */
-  y += 8;
-  y = needPage(doc, y, 80);
+  /* ═══ RECOMMENDED RESOURCES FROM GEARUPTOFIT ═══ */
+  doc.addPage();
+  whiteBg(doc);
+  y = 20;
   y = section(doc, y, 'Recommended Resources from GearUpToFit');
 
+  // Logo + intro
   if (logoData) {
     doc.addImage(logoData, 'PNG', pw / 2 - 12, y, 24, 24);
     y += 28;
   }
 
-  rRect(doc, 15, y, pw - 30, gearLinks.length * 14 + 10, 3, WHITE, RULE);
-  y += 8;
+  rRect(doc, 15, y, pw - 30, 14, 2, SOFT_RED, [240, 210, 210] as RGB);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  tc(doc, BODY);
+  doc.text('Explore these hand-picked resources from GearUpToFit.com to support your transformation journey.', 22, y + 5);
+  doc.text('Click any link below to access expert articles, guides, and programs.', 22, y + 10);
+  y += 18;
 
   gearLinks.forEach((link) => {
+    y = needPage(doc, y, 20);
+    rRect(doc, 15, y, pw - 30, 16, 2, CARD, RULE);
     fc(doc, RED);
-    doc.circle(22, y, 1.2, 'F');
+    doc.circle(22, y + 5, 1.5, 'F');
 
     doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
     tc(doc, DARK);
-    doc.text(clean(link.label), 27, y + 1);
+    doc.text(clean(link.label), 27, y + 5);
+
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'normal');
+    tc(doc, LABEL);
+    doc.text(clean(link.desc), 27, y + 10);
 
     doc.setFontSize(7.5);
-    doc.setFont('helvetica', 'normal');
     tc(doc, BLUE);
-    doc.textWithLink(link.url, 27, y + 6, { url: link.url });
-    y += 14;
+    doc.textWithLink(link.url, 27, y + 14, { url: link.url });
+    y += 20;
   });
 
   /* ═══ PROGRESS TRACKER ═══ */
@@ -733,7 +941,7 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
 
   y += 60;
 
-  // Notes section
+  // Notes
   y = needPage(doc, y, 55);
   y = section(doc, y, 'Personal Notes');
   rRect(doc, 15, y, pw - 30, 48, 3, CARD, RULE);
