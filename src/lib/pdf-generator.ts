@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import { type PlanResults, type UserInputs } from '@/lib/calculations';
+import logoUrl from '@/assets/logo.png';
 
 /* ─── Color Palette (white-background premium) ─── */
 const RED: RGB     = [200, 35, 30];
