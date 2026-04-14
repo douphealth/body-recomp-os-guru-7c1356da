@@ -14,6 +14,7 @@ const AMBER: RGB   = [200, 155, 25];
 const GREEN: RGB   = [30, 160, 80];
 const SOFT_RED: RGB = [255, 240, 240];
 const SOFT_BLUE: RGB = [235, 245, 255];
+const SOFT_GREEN: RGB = [235, 250, 240];
 
 type RGB = [number, number, number];
 
@@ -21,7 +22,7 @@ const tc = (d: jsPDF, c: RGB) => d.setTextColor(c[0], c[1], c[2]);
 const fc = (d: jsPDF, c: RGB) => d.setFillColor(c[0], c[1], c[2]);
 const dc = (d: jsPDF, c: RGB) => d.setDrawColor(c[0], c[1], c[2]);
 
-/* ─── Sanitize text: strip emojis & non-ASCII glyphs ─── */
+/* ─── Sanitize text ─── */
 function clean(text: string): string {
   return text
     .replace(/[\u{1F000}-\u{1FFFF}]/gu, '')
@@ -64,9 +65,9 @@ function footer(d: jsPDF, pg: number, total: number) {
   d.setFontSize(6.5);
   d.setFont('helvetica', 'normal');
   tc(d, LABEL);
-  d.text('GearUpToFit Body Recomp OS  |  Free Science-Backed Fitness Plans', 15, ph - 10);
+  d.text('GearUpToFit Body Recomp OS  |  Science-Backed Fitness Planning', 15, ph - 10);
   tc(d, BLUE);
-  const fLinkX = 15 + d.getTextWidth('GearUpToFit Body Recomp OS  |  Free Science-Backed Fitness Plans') + 4;
+  const fLinkX = 15 + d.getTextWidth('GearUpToFit Body Recomp OS  |  Science-Backed Fitness Planning') + 4;
   d.textWithLink('gearuptofit.com', fLinkX, ph - 10, { url: 'https://gearuptofit.com' });
   tc(d, RED);
   d.text(`Page ${pg} of ${total}`, pw - 15, ph - 10, { align: 'right' });
@@ -148,7 +149,7 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   doc.setFontSize(6.5);
   doc.setFont('helvetica', 'normal');
   tc(doc, LABEL);
-  doc.text('BODY RECOMP OS  |  SCIENCE-BACKED FITNESS PLANNING', pw / 2, brandY + 5, { align: 'center' });
+  doc.text('BODY RECOMP OS  |  EVIDENCE-BASED FITNESS PLANNING', pw / 2, brandY + 5, { align: 'center' });
 
   // Title
   const titleY = brandY + 22;
@@ -172,7 +173,7 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   doc.text(sumLines, pw / 2, titleY + 25, { align: 'center' });
 
   // Profile card
-  const pcY = titleY + 40;
+  const pcY = titleY + 25 + sumLines.length * 4 + 6;
   rRect(doc, 20, pcY, pw - 40, 44, 3, CARD, RULE);
 
   doc.setFontSize(7);
@@ -183,10 +184,10 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   const profileData = [
     ['Age', `${inputs.age} years`],
     ['Sex', inputs.sex.charAt(0).toUpperCase() + inputs.sex.slice(1)],
-    ['Weight', `${inputs.weightKg} kg`],
-    ['Height', `${inputs.heightCm} cm`],
+    ['Weight', `${inputs.weightKg} kg (${Math.round(inputs.weightKg * 2.205)} lbs)`],
+    ['Height', `${inputs.heightCm} cm (${Math.floor(inputs.heightCm / 2.54 / 12)}'${Math.round(inputs.heightCm / 2.54 % 12)}")`],
     ['Body Fat', `${inputs.bodyFatPercent}%`],
-    ['Equipment', inputs.equipmentAccess.charAt(0).toUpperCase() + inputs.equipmentAccess.slice(1)],
+    ['LBM', `${plan.leanBodyMass} kg`],
   ];
 
   const colW = (pw - 60) / 3;
@@ -219,21 +220,21 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
   tc(doc, LABEL);
-  doc.text('kcal / day', pw / 2, calY + 31, { align: 'center' });
+  const defLabel = plan.deficitOrSurplus < 0 ? `${Math.abs(plan.deficitOrSurplus)} kcal deficit from TDEE` : plan.deficitOrSurplus > 0 ? `${plan.deficitOrSurplus} kcal surplus from TDEE` : 'Maintenance (calorie cycling)';
+  doc.text(`kcal / day  |  ${defLabel}`, pw / 2, calY + 31, { align: 'center' });
 
   // Macro cards
   const macY = calY + 44;
   const macW = (pw - 50) / 3;
   const macros = [
-    { label: 'PROTEIN', value: `${plan.proteinGrams}g`, pct: `${plan.proteinPercent}%`, color: RED },
-    { label: 'CARBS', value: `${plan.carbGrams}g`, pct: `${plan.carbPercent}%`, color: BLUE },
-    { label: 'FAT', value: `${plan.fatGrams}g`, pct: `${plan.fatPercent}%`, color: AMBER },
+    { label: 'PROTEIN', value: `${plan.proteinGrams}g`, pct: `${plan.proteinPercent}%`, detail: `${plan.proteinPerKgLBM}g/kg LBM`, color: RED },
+    { label: 'CARBS', value: `${plan.carbGrams}g`, pct: `${plan.carbPercent}%`, detail: `${Math.round(plan.carbGrams / inputs.weightKg * 10) / 10}g/kg BW`, color: BLUE },
+    { label: 'FAT', value: `${plan.fatGrams}g`, pct: `${plan.fatPercent}%`, detail: `${Math.round(plan.fatGrams / inputs.weightKg * 10) / 10}g/kg BW`, color: AMBER },
   ];
 
   macros.forEach((m, i) => {
     const x = 20 + i * (macW + 5);
-    rRect(doc, x, macY, macW, 28, 3, CARD, RULE);
-    // Accent bar at top
+    rRect(doc, x, macY, macW, 32, 3, CARD, RULE);
     fc(doc, m.color);
     doc.rect(x + 1, macY + 0.5, macW - 2, 2.5, 'F');
 
@@ -247,27 +248,101 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     doc.setFontSize(7);
     tc(doc, m.color);
     doc.text(m.pct, x + macW / 2, macY + 24, { align: 'center' });
+    doc.setFontSize(5.5);
+    tc(doc, LABEL);
+    doc.text(m.detail, x + macW / 2, macY + 28, { align: 'center' });
+  });
+
+  // Additional targets row
+  const addY = macY + 38;
+  const addW = (pw - 50) / 4;
+  const additionalTargets = [
+    { label: 'FIBER', value: `${plan.fiberGrams}g/day` },
+    { label: 'WATER', value: `${plan.waterLiters}L/day` },
+    { label: 'TRAINING', value: `${inputs.workoutFrequency}x/week` },
+    { label: 'STEPS', value: `${inputs.stepCount.toLocaleString()}/day` },
+  ];
+  additionalTargets.forEach((t, i) => {
+    const x = 20 + i * (addW + 3.3);
+    doc.setFontSize(5.5);
+    doc.setFont('helvetica', 'bold');
+    tc(doc, LABEL);
+    doc.text(t.label, x + addW / 2, addY, { align: 'center' });
+    doc.setFontSize(9);
+    tc(doc, DARK);
+    doc.text(t.value, x + addW / 2, addY + 5, { align: 'center' });
   });
 
   // Date & formula
   doc.setFontSize(6.5);
   doc.setFont('helvetica', 'normal');
   tc(doc, LABEL);
-  doc.text(`Generated ${today}  |  Formula: Mifflin-St Jeor  |  Diet: ${inputs.dietStyle}`, pw / 2, ph - 22, { align: 'center' });
+  doc.text(`Generated ${today}  |  Formulas: Mifflin-St Jeor + Katch-McArdle  |  Diet: ${inputs.dietStyle}`, pw / 2, ph - 22, { align: 'center' });
   doc.text('For informational purposes only. Consult a healthcare professional before beginning any program.', pw / 2, ph - 17, { align: 'center' });
 
-  /* ═══ PAGE 2: NUTRITION DETAIL ═══ */
+  /* ═══ PAGE 2: SCIENCE & METHODOLOGY ═══ */
   doc.addPage();
   whiteBg(doc);
   let y = 20;
+  y = section(doc, y, 'The Science Behind Your Plan');
+
+  // Intro paragraph
+  rRect(doc, 15, y, pw - 30, 20, 3, SOFT_BLUE, [200, 215, 240]);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  tc(doc, BODY);
+  const sciIntro = 'Every number in this plan is derived from peer-reviewed research and validated equations. Below is the scientific basis for each component of your personalized program.';
+  const sciIntroLines = doc.splitTextToSize(clean(sciIntro), pw - 50);
+  doc.text(sciIntroLines, 22, y + 7);
+  y += 24;
+
+  // Science notes
+  plan.scienceNotes.forEach((note) => {
+    y = needPage(doc, y, 30);
+    
+    // Title with red dot
+    fc(doc, RED);
+    doc.circle(19, y + 1.5, 1.5, 'F');
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    tc(doc, DARK);
+    doc.text(clean(note.title), 24, y + 3);
+    y += 7;
+
+    // Explanation
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    tc(doc, BODY);
+    const expLines = doc.splitTextToSize(clean(note.explanation), pw - 40);
+    doc.text(expLines, 22, y);
+    y += expLines.length * 3.8 + 2;
+
+    // Citation
+    doc.setFontSize(6.5);
+    doc.setFont('helvetica', 'italic');
+    tc(doc, LABEL);
+    const citLines = doc.splitTextToSize(clean(note.citation), pw - 44);
+    doc.text(citLines, 24, y);
+    y += citLines.length * 3.2 + 6;
+  });
+
+  /* ═══ PAGE 3: NUTRITION DETAIL ═══ */
+  doc.addPage();
+  whiteBg(doc);
+  y = 20;
   y = section(doc, y, 'Nutrition Breakdown');
 
   const nutrData = [
-    ['Basal Metabolic Rate (BMR)', `${Math.round(plan.tdee / 1.4)} kcal`],
+    ['Basal Metabolic Rate (BMR)', `${plan.bmr} kcal`],
     ['Total Daily Energy Expenditure (TDEE)', `${plan.tdee} kcal`],
+    ['Thermic Effect of Food (TEF)', `~${plan.tef} kcal`],
+    ['Non-Exercise Activity (NEAT)', `~${plan.neat} kcal`],
     ['Daily Calorie Target', `${plan.calorieTarget} kcal`],
     ['Lean Body Mass', `${plan.leanBodyMass} kg`],
-    ['Calculation Formula', 'Mifflin-St Jeor'],
+    ['Protein per kg LBM', `${plan.proteinPerKgLBM} g/kg`],
+    ['Daily Fiber Target', `${plan.fiberGrams}g`],
+    ['Daily Water Target', `${plan.waterLiters}L`],
+    ['Formulas Used', 'Mifflin-St Jeor + Katch-McArdle (averaged)'],
     ['Diet Style', inputs.dietStyle.charAt(0).toUpperCase() + inputs.dietStyle.slice(1)],
   ];
   if (plan.weeklyCalorieRange) {
@@ -277,7 +352,7 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   rRect(doc, 15, y, pw - 30, nutrData.length * 9 + 8, 3, CARD, RULE);
   y += 6;
   nutrData.forEach(([lbl, val], i) => {
-    if (i > 0) hLine(doc, 22, y + 0.5, pw - 22, [235, 235, 240], 0.15);
+    if (i > 0) hLine(doc, 22, y + 0.5, pw - 22, [235, 235, 240] as RGB, 0.15);
     doc.setFontSize(8.5);
     doc.setFont('helvetica', 'normal');
     tc(doc, BODY);
@@ -290,10 +365,10 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   y += 14;
 
   // Macro table
+  y = needPage(doc, y, 55);
   y = section(doc, y, 'Daily Macro Targets');
   rRect(doc, 15, y, pw - 30, 48, 3, WHITE, RULE);
 
-  // Header row
   const cx = [25, 75, 112, 150];
   doc.setFontSize(7);
   doc.setFont('helvetica', 'bold');
@@ -340,53 +415,84 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
 
   y = ry + 14;
 
-  // Per-meal
-  y = needPage(doc, y, 40);
-  y = section(doc, y, 'Per-Meal Breakdown (4 Meals/Day)');
-  rRect(doc, 15, y, pw - 30, 30, 3, SOFT_BLUE, [200, 215, 240]);
+  /* ═══ MEAL TIMING ═══ */
+  y = needPage(doc, y, 60);
+  y = section(doc, y, 'Recommended Meal Timing');
 
-  const perMeal = [
-    { label: 'CALORIES', value: `${Math.round(plan.calorieTarget / 4)}` },
-    { label: 'PROTEIN', value: `${Math.round(plan.proteinGrams / 4)}g` },
-    { label: 'CARBS', value: `${Math.round(plan.carbGrams / 4)}g` },
-    { label: 'FAT', value: `${Math.round(plan.fatGrams / 4)}g` },
-  ];
-  const mColW = (pw - 40) / 4;
-  perMeal.forEach((m, i) => {
-    const x = 20 + i * mColW;
-    doc.setFontSize(6.5);
+  plan.mealTiming.forEach((meal) => {
+    y = needPage(doc, y, 24);
+    rRect(doc, 15, y, pw - 30, 20, 2, CARD, RULE);
+    
+    doc.setFontSize(8.5);
     doc.setFont('helvetica', 'bold');
+    tc(doc, RED);
+    doc.text(clean(meal.meal), 22, y + 5);
+    doc.setFontSize(7);
     tc(doc, LABEL);
-    doc.text(m.label, x + mColW / 2, y + 9, { align: 'center' });
-    doc.setFontSize(14);
-    tc(doc, DARK);
-    doc.text(m.value, x + mColW / 2, y + 21, { align: 'center' });
+    doc.text(clean(meal.timing), 70, y + 5);
+    
+    doc.setFontSize(7.5);
+    doc.setFont('helvetica', 'normal');
+    tc(doc, BODY);
+    doc.text(`${meal.calories} kcal  |  P: ${meal.protein}g  |  C: ${meal.carbs}g  |  F: ${meal.fat}g`, 22, y + 11);
+    
+    doc.setFontSize(6.5);
+    doc.setFont('helvetica', 'italic');
+    tc(doc, LABEL);
+    doc.text(clean(meal.notes), 22, y + 16);
+    y += 24;
   });
 
-  /* ═══ PAGE 3+: TRAINING PLAN ═══ */
+  /* ═══ TRAINING PLAN ═══ */
   doc.addPage();
   whiteBg(doc);
   y = 20;
-  y = section(doc, y, '8-Week Training Program');
+  y = section(doc, y, '8-Week Periodized Training Program');
+
+  // RPE guide
+  rRect(doc, 15, y, pw - 30, 22, 2, SOFT_GREEN, [200, 230, 210] as RGB);
+  doc.setFontSize(7.5);
+  doc.setFont('helvetica', 'bold');
+  tc(doc, GREEN);
+  doc.text('RPE (Rate of Perceived Exertion) Guide', 22, y + 5);
+  doc.setFontSize(7);
+  doc.setFont('helvetica', 'normal');
+  tc(doc, BODY);
+  doc.text('RPE 6-7: Could do 3-4 more reps  |  RPE 7-8: Could do 2-3 more reps  |  RPE 8-9: Could do 1-2 more reps  |  RPE 10: Failure', 22, y + 11);
+  doc.text('Rest between sets: Compounds 2-3 min  |  Isolations 60-90s  |  Core/Abs 45-60s', 22, y + 16);
+  y += 28;
 
   plan.trainingPlan.forEach((week) => {
     y = needPage(doc, y, 20);
 
-    const weekLabel = clean(`${week.weekRange} -- ${week.phase}${week.deload ? '  (DELOAD WEEK)' : ''}`);
+    // Phase header
+    const weekLabel = clean(`${week.weekRange} -- ${week.phase}`);
     if (week.deload) {
-      rRect(doc, 15, y, pw - 30, 8, 2, [255, 248, 230], [220, 195, 130]);
-      tc(doc, [160, 120, 20]);
+      rRect(doc, 15, y, pw - 30, 14, 2, [255, 248, 230] as RGB, [220, 195, 130] as RGB);
+      tc(doc, [160, 120, 20] as RGB);
     } else {
-      rRect(doc, 15, y, pw - 30, 8, 2, RED);
+      rRect(doc, 15, y, pw - 30, 14, 2, RED);
       tc(doc, WHITE);
     }
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
     doc.text(weekLabel, 20, y + 5.5);
-    y += 12;
+
+    // Phase guideline
+    if (week.intensityGuideline) {
+      doc.setFontSize(6);
+      doc.setFont('helvetica', 'normal');
+      if (week.deload) {
+        tc(doc, [160, 120, 20] as RGB);
+      } else {
+        tc(doc, [255, 200, 200] as RGB);
+      }
+      doc.text(clean(week.intensityGuideline), 20, y + 10.5);
+    }
+    y += 18;
 
     week.days.forEach(day => {
-      y = needPage(doc, y, 10 + day.exercises.length * 6);
+      y = needPage(doc, y, 10 + day.exercises.length * 7);
 
       doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
@@ -394,19 +500,38 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
       doc.text(clean(`${day.day} -- ${day.focus}`), 20, y);
       y += 5;
 
+      // Column headers for exercises
+      doc.setFontSize(6);
+      doc.setFont('helvetica', 'bold');
+      tc(doc, LABEL);
+      doc.text('EXERCISE', 25, y);
+      doc.text('SETS x REPS', pw - 65, y);
+      doc.text('RPE', pw - 35, y);
+      doc.text('REST', pw - 22, y, { align: 'right' });
+      y += 4;
+
       day.exercises.forEach(ex => {
         doc.setFontSize(8);
         doc.setFont('helvetica', 'normal');
         tc(doc, BODY);
-        // Bullet
         fc(doc, LABEL);
         doc.circle(22, y - 0.8, 0.6, 'F');
         doc.text(clean(ex.name), 25, y);
         doc.setFont('helvetica', 'bold');
         tc(doc, DARK);
-        doc.text(`${ex.sets} x ${clean(ex.reps)}`, pw - 22, y, { align: 'right' });
+        doc.text(`${ex.sets} x ${clean(ex.reps)}`, pw - 65, y);
+        if (ex.rpe) {
+          doc.setFont('helvetica', 'normal');
+          tc(doc, RED);
+          doc.text(ex.rpe, pw - 35, y);
+        }
+        if (ex.rest) {
+          doc.setFont('helvetica', 'normal');
+          tc(doc, LABEL);
+          doc.text(clean(ex.rest), pw - 22, y, { align: 'right' });
+        }
         if (ex.notes) {
-          doc.setFontSize(7);
+          doc.setFontSize(6.5);
           doc.setFont('helvetica', 'italic');
           tc(doc, LABEL);
           doc.text(clean(ex.notes), 28, y + 4);
@@ -420,7 +545,7 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     y += 5;
   });
 
-  /* ═══ CARDIO & RECOVERY ═══ */
+  /* ═══ CARDIO & HEART RATE ZONES ═══ */
   y = needPage(doc, y, 70);
   if (y < 25) y = 20;
   y = section(doc, y, 'Cardio Plan');
@@ -448,7 +573,7 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     y += 4;
     const rpText = clean(plan.cardioPlan.runningPlan);
     const rpLines = doc.splitTextToSize(rpText, pw - 50);
-    rRect(doc, 15, y, pw - 30, 8 + rpLines.length * 4, 2, SOFT_RED, [240, 200, 200]);
+    rRect(doc, 15, y, pw - 30, 8 + rpLines.length * 4, 2, SOFT_RED, [240, 200, 200] as RGB);
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
     tc(doc, RED);
@@ -457,6 +582,40 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     tc(doc, BODY);
     doc.text(rpLines, 22, y + 10);
     y += 14 + rpLines.length * 4;
+  }
+
+  // Heart Rate Zones
+  if (plan.cardioPlan.heartRateZones) {
+    y += 8;
+    y = needPage(doc, y, 50);
+    y = section(doc, y, 'Heart Rate Training Zones (Karvonen Formula)');
+    
+    rRect(doc, 15, y, pw - 30, plan.cardioPlan.heartRateZones.length * 9 + 10, 3, CARD, RULE);
+    y += 6;
+    
+    // Headers
+    doc.setFontSize(6.5);
+    doc.setFont('helvetica', 'bold');
+    tc(doc, LABEL);
+    doc.text('ZONE', 22, y + 3);
+    doc.text('HEART RATE', 80, y + 3);
+    doc.text('PURPOSE', 120, y + 3);
+    hLine(doc, 20, y + 5, pw - 20, RULE);
+    y += 8;
+    
+    plan.cardioPlan.heartRateZones.forEach((z) => {
+      doc.setFontSize(7.5);
+      doc.setFont('helvetica', 'bold');
+      tc(doc, DARK);
+      doc.text(clean(z.zone), 22, y + 3);
+      doc.setFont('helvetica', 'normal');
+      tc(doc, RED);
+      doc.text(clean(z.bpm), 80, y + 3);
+      tc(doc, BODY);
+      doc.text(clean(z.purpose), 120, y + 3);
+      y += 9;
+    });
+    y += 4;
   }
 
   y += 10;
@@ -471,7 +630,6 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
 
   plan.recoveryChecklist.forEach(item => {
     y = needPage(doc, y, 10);
-    // Checkbox
     dc(doc, RED);
     doc.setLineWidth(0.4);
     doc.roundedRect(22, y - 2.5, 3.5, 3.5, 0.5, 0.5, 'S');
@@ -485,12 +643,37 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     y += Math.max(8, itemLines.length * 4 + 4);
   });
 
+  /* ═══ 8-WEEK HABIT PLAN ═══ */
+  y += 8;
+  y = needPage(doc, y, 60);
+  y = section(doc, y, '8-Week Habit Building Plan');
+
+  plan.habitPlan.forEach((week) => {
+    y = needPage(doc, y, 22);
+    
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    tc(doc, RED);
+    doc.text(`Week ${week.week}: ${clean(week.focus)}`, 22, y + 3);
+    y += 6;
+
+    week.habits.forEach(h => {
+      doc.setFontSize(7.5);
+      doc.setFont('helvetica', 'normal');
+      tc(doc, BODY);
+      fc(doc, LABEL);
+      doc.circle(24, y + 0.2, 0.6, 'F');
+      doc.text(clean(h), 28, y + 1);
+      y += 5;
+    });
+    y += 3;
+  });
+
   /* ═══ RECOMMENDED RESOURCES ═══ */
   y += 8;
   y = needPage(doc, y, 80);
   y = section(doc, y, 'Recommended Resources from GearUpToFit');
 
-  // Logo above resources
   if (logoData) {
     doc.addImage(logoData, 'PNG', pw / 2 - 12, y, 24, 24);
     y += 28;
@@ -500,7 +683,6 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   y += 8;
 
   gearLinks.forEach((link) => {
-    // Red arrow indicator
     fc(doc, RED);
     doc.circle(22, y, 1.2, 'F');
 
@@ -516,17 +698,15 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     y += 14;
   });
 
-  /* ═══ NOTES & TRACKING ═══ */
+  /* ═══ PROGRESS TRACKER ═══ */
   y += 6;
   y = needPage(doc, y, 70);
   y = section(doc, y, 'Weekly Progress Tracker');
 
-  // 4-week mini tracker
   rRect(doc, 15, y, pw - 30, 52, 3, CARD, RULE);
   const weeks = ['Week 1-2', 'Week 3-4', 'Week 5-6', 'Week 7-8'];
   const trackCols = ['WEIGHT', 'WAIST', 'ENERGY', 'NOTES'];
 
-  // Header
   doc.setFontSize(6.5);
   doc.setFont('helvetica', 'bold');
   tc(doc, LABEL);
@@ -539,14 +719,13 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
 
   weeks.forEach((w, i) => {
     const rowY = y + 16 + i * 10;
-    if (i > 0) hLine(doc, 20, rowY - 3, pw - 20, [235, 235, 240], 0.15);
+    if (i > 0) hLine(doc, 20, rowY - 3, pw - 20, [235, 235, 240] as RGB, 0.15);
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
     tc(doc, DARK);
     doc.text(w, 22, rowY);
-    // Empty lines for user to fill
     trackCols.forEach((_, ci) => {
-      dc(doc, [210, 210, 215]);
+      dc(doc, [210, 210, 215] as RGB);
       doc.setLineWidth(0.15);
       doc.line(55 + ci * tColW, rowY + 1, 55 + ci * tColW + tColW - 8, rowY + 1);
     });
@@ -559,14 +738,39 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   y = section(doc, y, 'Personal Notes');
   rRect(doc, 15, y, pw - 30, 48, 3, CARD, RULE);
   for (let i = 0; i < 5; i++) {
-    hLine(doc, 22, y + 9 + i * 8, pw - 22, [230, 230, 235], 0.15);
+    hLine(doc, 22, y + 9 + i * 8, pw - 22, [230, 230, 235] as RGB, 0.15);
   }
 
-  /* ═══ FINAL BRANDING ═══ */
+  /* ═══ REFERENCES ═══ */
   y += 58;
+  y = needPage(doc, y, 60);
+  y = section(doc, y, 'Scientific References');
+
+  const references = [
+    'Mifflin MD et al. A new predictive equation for resting energy expenditure. Am J Clin Nutr. 1990;51(2):241-7.',
+    'Katch VL, McArdle WD. Introduction to Nutrition, Exercise, and Health. 4th ed. 1996.',
+    'Morton RW et al. A systematic review of protein supplements and resistance training. Br J Sports Med. 2018;52(6):376-384.',
+    'Helms ER et al. Evidence-based recommendations for natural bodybuilding. J Int Soc Sports Nutr. 2014;11:20.',
+    'Levine JA. Measurement of energy expenditure. Public Health Nutr. 2005;8(7A):1123-32.',
+    'Schoenfeld BJ. The mechanisms of muscle hypertrophy. J Strength Cond Res. 2010;24(10):2857-72.',
+    'Walker M. Why We Sleep: Unlocking the Power of Sleep and Dreams. Scribner, 2017.',
+    'Barakat C et al. Body recomposition: Can trained individuals build muscle and lose fat at the same time? Strength Cond J. 2020;42(5):7-21.',
+  ];
+
+  rRect(doc, 15, y, pw - 30, references.length * 6 + 8, 3, CARD, RULE);
+  y += 6;
+  references.forEach((ref, i) => {
+    doc.setFontSize(6);
+    doc.setFont('helvetica', 'normal');
+    tc(doc, BODY);
+    doc.text(`[${i + 1}] ${clean(ref)}`, 22, y + 3);
+    y += 6;
+  });
+
+  /* ═══ FINAL BRANDING ═══ */
+  y += 10;
   y = needPage(doc, y, 45);
 
-  // Branded card
   rRect(doc, 25, y, pw - 50, 38, 4, CARD, RULE);
 
   if (logoData) {
@@ -581,7 +785,7 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   doc.setFontSize(7.5);
   doc.setFont('helvetica', 'normal');
   tc(doc, BODY);
-  doc.text('Your science-backed fitness companion', pw / 2, bTextY + 5, { align: 'center' });
+  doc.text('Your evidence-based fitness companion', pw / 2, bTextY + 5, { align: 'center' });
   tc(doc, BLUE);
   doc.setFont('helvetica', 'bold');
   const siteUrl = 'https://gearuptofit.com';
