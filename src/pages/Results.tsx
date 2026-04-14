@@ -19,6 +19,8 @@ import GlossaryTooltip from '@/components/results/GlossaryTooltip';
 import MacroDonutChart from '@/components/results/MacroDonutChart';
 import TDEEBarChart from '@/components/results/TDEEBarChart';
 import WeeklyCalendarView from '@/components/results/WeeklyCalendarView';
+import SampleMealPlan from '@/components/results/SampleMealPlan';
+import ProgressPhotos from '@/components/results/ProgressPhotos';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { calculatePlan, getContextualLinks, type UserInputs, type PlanResults } from '@/lib/calculations';
 import { trackResultView, trackInternalLinkClick } from '@/lib/tracking';
