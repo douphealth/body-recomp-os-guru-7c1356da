@@ -153,6 +153,9 @@ const Results = () => {
         </div>
       </div>
 
+      {/* Sample Meal Plan */}
+      <SampleMealPlan plan={plan} inputs={inputs} />
+
       {/* Details */}
       <div className="stat-card">
         <h3 className="text-sm font-bold uppercase tracking-wider mb-3 font-['Oswald']">Calculation Details</h3>
@@ -319,6 +322,9 @@ const Results = () => {
           ))}
         </div>
       </div>
+
+      {/* Progress Photos */}
+      <ProgressPhotos />
     </div>
   );
 
