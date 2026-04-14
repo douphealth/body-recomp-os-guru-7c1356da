@@ -99,8 +99,6 @@ function needPage(d: jsPDF, y: number, need: number): number {
 /* ─── Logo loader ─── */
 async function loadLogo(): Promise<string | null> {
   try {
-    // Use local asset to avoid CORS issues
-    const { default: logoUrl } = await import('@/assets/logo.png');
     const resp = await fetch(logoUrl);
     const blob = await resp.blob();
     return new Promise((resolve) => {
