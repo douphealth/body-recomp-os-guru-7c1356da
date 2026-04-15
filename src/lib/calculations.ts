@@ -499,22 +499,40 @@ export function calculatePlan(inputs: UserInputs): PlanResults {
   const proteinGrams = Math.round(leanBodyMass * proteinMultiplier);
   const proteinCals = proteinGrams * 4;
 
+  // Calculate macros ensuring they always sum to 100%
+  // Step 1: Fix protein percent from actual grams
+  const rawProteinPercent = Math.round(proteinCals / calorieTarget * 100);
+  // Cap protein percent at 50% to leave room for fat and carbs
+  const proteinPercent = Math.min(rawProteinPercent, 50);
+
+  // Step 2: Distribute remaining calories between fat and carbs based on diet style
   let fatPercent: number;
   let carbPercent: number;
+  const remaining = 100 - proteinPercent;
+
   if (inputs.dietStyle === 'keto') {
-    fatPercent = 70;
+    // Keto: maximize fat, minimize carbs
     carbPercent = 5;
+    fatPercent = remaining - carbPercent;
   } else if (inputs.dietStyle === 'high-protein') {
-    fatPercent = 25;
-    carbPercent = 100 - (proteinCals / calorieTarget * 100) - fatPercent;
+    // High-protein: moderate fat, rest to carbs
+    fatPercent = Math.min(25, remaining - 10); // ensure at least 10% carbs
+    carbPercent = remaining - fatPercent;
   } else {
-    fatPercent = 30;
-    carbPercent = 100 - (proteinCals / calorieTarget * 100) - fatPercent;
+    // Standard/vegetarian: ~30% fat, rest to carbs
+    fatPercent = Math.min(30, remaining - 10); // ensure at least 10% carbs
+    carbPercent = remaining - fatPercent;
   }
 
-  const proteinPercent = Math.round(proteinCals / calorieTarget * 100);
-  carbPercent = Math.max(Math.round(100 - proteinPercent - fatPercent), 5);
-  fatPercent = Math.round(100 - proteinPercent - carbPercent);
+  // Ensure all percentages are positive and sum to exactly 100
+  carbPercent = Math.max(carbPercent, 5);
+  fatPercent = Math.max(fatPercent, 10);
+  // Re-normalize if needed
+  const macroSum = proteinPercent + carbPercent + fatPercent;
+  if (macroSum !== 100) {
+    carbPercent += 100 - macroSum; // adjust carbs to make it sum to 100
+    carbPercent = Math.max(carbPercent, 5);
+  }
 
   const fatGrams = Math.round((calorieTarget * fatPercent / 100) / 9);
   const carbGrams = Math.round((calorieTarget * carbPercent / 100) / 4);
