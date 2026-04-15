@@ -29,9 +29,9 @@ const PlanLoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
     const interval = setInterval(() => {
       setProgress((p) => {
         if (p >= 100) { clearInterval(interval); return 100; }
-        return Math.min(p + 1.5, 100);
+        return Math.min(p + 3, 100);
       });
-    }, 30);
+    }, 25);
     return () => clearInterval(interval);
   }, []);
 

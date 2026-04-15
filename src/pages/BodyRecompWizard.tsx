@@ -39,7 +39,12 @@ const bodyFatLabels = [
 
 const BodyRecompWizard = () => {
   const [step, setStep] = useState(1);
-  const [inputs, setInputs] = useState<UserInputs>(defaultInputs);
+  const [inputs, setInputs] = useState<UserInputs>(() => {
+    try {
+      const stored = sessionStorage.getItem('recomp-inputs');
+      return stored ? JSON.parse(stored) : defaultInputs;
+    } catch { return defaultInputs; }
+  });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [direction, setDirection] = useState(1);
   const navigate = useNavigate();
