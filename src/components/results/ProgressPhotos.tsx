@@ -1,6 +1,6 @@
-import { useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Upload, X, ChevronLeft, ChevronRight, ImageIcon } from 'lucide-react';
+import { useState, useRef, useCallback } from 'react';
+import { motion } from 'framer-motion';
+import { Camera, Upload, X, ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -12,49 +12,79 @@ interface PhotoEntry {
 }
 
 const WEEKS = [1, 2, 3, 4, 5, 6, 7, 8];
+const MAX_WIDTH = 600;
+const QUALITY = 0.7;
+
+/** Compress image to avoid blowing localStorage quota */
+function compressImage(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const scale = Math.min(1, MAX_WIDTH / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      const ctx = canvas.getContext('2d');
+      if (!ctx) { reject(new Error('Canvas not supported')); return; }
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL('image/jpeg', QUALITY));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Failed to load image')); };
+    img.src = url;
+  });
+}
 
 const ProgressPhotos = () => {
   const [photos, setPhotos] = useState<PhotoEntry[]>(() => {
-    const stored = localStorage.getItem('recomp-progress-photos');
-    return stored ? JSON.parse(stored) : [];
+    try {
+      const stored = localStorage.getItem('recomp-progress-photos');
+      return stored ? JSON.parse(stored) : [];
+    } catch { return []; }
   });
   const [compareWeeks, setCompareWeeks] = useState<[number, number]>([1, 8]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadingWeek, setUploadingWeek] = useState<number | null>(null);
 
-  const savePhotos = (updated: PhotoEntry[]) => {
+  const savePhotos = useCallback((updated: PhotoEntry[]) => {
     setPhotos(updated);
-    localStorage.setItem('recomp-progress-photos', JSON.stringify(updated));
-  };
+    try {
+      localStorage.setItem('recomp-progress-photos', JSON.stringify(updated));
+    } catch {
+      toast.error('Storage full — please remove old photos first');
+    }
+  }, []);
 
   const handleUpload = (week: number) => {
     setUploadingWeek(week);
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || uploadingWeek === null) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image must be under 5MB');
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('Image must be under 10MB');
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
+    try {
+      const compressed = await compressImage(file);
       const entry: PhotoEntry = {
         id: crypto.randomUUID(),
         week: uploadingWeek,
-        imageUrl: reader.result as string,
+        imageUrl: compressed,
         date: new Date().toLocaleDateString(),
       };
       const updated = [...photos.filter(p => p.week !== uploadingWeek), entry];
       savePhotos(updated);
       toast.success(`Week ${uploadingWeek} photo saved!`);
-      setUploadingWeek(null);
-    };
-    reader.readAsDataURL(file);
+    } catch {
+      toast.error('Failed to process image');
+    }
+    setUploadingWeek(null);
     e.target.value = '';
   };
 
@@ -176,7 +206,7 @@ const ProgressPhotos = () => {
       </div>
 
       <p className="text-[10px] text-muted-foreground mt-3 italic">
-        📸 Tips: Take photos in the same lighting, same pose, same time of day (morning, fasted). Front, side, and back views are ideal. Photos are stored locally on your device.
+        Tips: Take photos in the same lighting, same pose, same time of day (morning, fasted). Photos are compressed and stored locally on your device.
       </p>
     </motion.div>
   );
