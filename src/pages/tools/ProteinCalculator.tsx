@@ -52,7 +52,7 @@ const ProteinCalculator = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <SEOHead title="Protein Intake Calculator — How Much Protein Do You Need? | GearUpToFit" description="Calculate your optimal daily protein intake based on body weight, lean mass, and fitness goals. Compare methods and find high-protein foods." path="/tools/protein-calculator" />
+      <SEOHead title="Protein Intake Calculator — How Much Protein Do You Need? | GearUpToFit" description="Calculate your optimal daily protein intake based on body weight, lean mass, and fitness goals. Compare methods and find high-protein foods." path="/free-fitness-calculators/protein-calculator" />
       <JsonLd data={schema} />
       <Header />
       <main className="flex-1 py-8 md:py-16">
@@ -126,7 +126,7 @@ const ProteinCalculator = () => {
                 </Table>
               </div>
 
-              <Link to="/app/body-recomp" className="block">
+              <Link to="/build-my-plan" className="block">
                 <div className="stat-card flex items-center gap-4 cursor-pointer group border-primary/20 bg-primary/5">
                   <div className="flex-1"><p className="text-sm font-bold group-hover:text-primary transition-colors">Build a full nutrition and training plan</p><p className="text-xs text-muted-foreground">Build My Plan →</p></div>
                   <ArrowRight className="h-5 w-5 text-primary" />

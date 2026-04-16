@@ -124,8 +124,8 @@ const SEOTemplatePage = ({ pageKey }: { pageKey: string }) => {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://app.gearuptofit.com/' },
-      { '@type': 'ListItem', position: 2, name: 'Body Recomp OS', item: 'https://app.gearuptofit.com/app/body-recomp' },
-      { '@type': 'ListItem', position: 3, name: page.title, item: `https://app.gearuptofit.com/app/body-recomp/${page.slug}` },
+      { '@type': 'ListItem', position: 2, name: 'Body Recomp OS', item: 'https://app.gearuptofit.com/build-my-plan' },
+      { '@type': 'ListItem', position: 3, name: page.title, item: `https://app.gearuptofit.com/build-my-plan/${page.slug}` },
     ],
   };
 
@@ -136,12 +136,12 @@ const SEOTemplatePage = ({ pageKey }: { pageKey: string }) => {
     description: page.metaDesc,
     author: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
     publisher: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
-    mainEntityOfPage: `https://app.gearuptofit.com/app/body-recomp/${page.slug}`,
+    mainEntityOfPage: `https://app.gearuptofit.com/build-my-plan/${page.slug}`,
   };
 
   return (
     <div className="min-h-screen flex flex-col">
-      <SEOHead title={page.metaTitle} description={page.metaDesc} path={`/app/body-recomp/${page.slug}`} />
+      <SEOHead title={page.metaTitle} description={page.metaDesc} path={`/workout-plans/${page.slug}`} />
       <JsonLd data={faqSchema} />
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={articleSchema} />
@@ -153,7 +153,7 @@ const SEOTemplatePage = ({ pageKey }: { pageKey: string }) => {
           <nav className="text-xs text-muted-foreground mb-6 flex items-center gap-1 flex-wrap">
             <Link to="/" className="hover:text-primary">Home</Link>
             <span>/</span>
-            <Link to="/app/body-recomp" className="hover:text-primary">Body Recomp OS</Link>
+            <Link to="/build-my-plan" className="hover:text-primary">Body Recomp OS</Link>
             <span>/</span>
             <span className="text-foreground">{page.title}</span>
           </nav>
@@ -171,7 +171,7 @@ const SEOTemplatePage = ({ pageKey }: { pageKey: string }) => {
 
           {/* CTA */}
           <div className="text-center mb-10">
-            <Link to="/app/body-recomp" onClick={() => trackCTAClick('template_cta', page.slug)}>
+            <Link to="/build-my-plan" onClick={() => trackCTAClick('template_cta', page.slug)}>
               <Button size="lg" className="gradient-red border-0 font-bold gap-2">
                 Build My Personalized Plan <ArrowRight className="h-5 w-5" />
               </Button>
@@ -228,7 +228,7 @@ const SEOTemplatePage = ({ pageKey }: { pageKey: string }) => {
             <CardContent className="p-6 text-center">
               <h2 className="text-xl font-bold mb-2">READY TO <span className="text-primary">START?</span></h2>
               <p className="text-sm text-muted-foreground mb-4">Get a plan personalized to your exact body, goals, and equipment.</p>
-              <Link to="/app/body-recomp" onClick={() => trackCTAClick('template_bottom_cta', page.slug)}>
+              <Link to="/build-my-plan" onClick={() => trackCTAClick('template_bottom_cta', page.slug)}>
                 <Button className="gradient-red border-0 font-bold gap-2">
                   Build My Plan <ArrowRight className="h-5 w-5" />
                 </Button>

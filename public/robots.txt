@@ -1,10 +1,14 @@
 User-agent: Googlebot
 Allow: /
 Disallow: /app/body-recomp$
+Disallow: /tools$
+Disallow: /plans$
 
 User-agent: Bingbot
 Allow: /
 Disallow: /app/body-recomp$
+Disallow: /tools$
+Disallow: /plans$
 
 User-agent: Twitterbot
 Allow: /
@@ -15,5 +19,7 @@ Allow: /
 User-agent: *
 Allow: /
 Disallow: /app/body-recomp$
+Disallow: /tools$
+Disallow: /plans$
 
 Sitemap: https://app.gearuptofit.com/sitemap.xml

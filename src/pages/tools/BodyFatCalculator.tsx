@@ -63,7 +63,7 @@ const BodyFatCalculator = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <SEOHead title="Body Fat Calculator — U.S. Navy Method | GearUpToFit" description="Estimate your body fat percentage using the U.S. Navy method. Get your lean mass, fat mass, and body composition category." path="/tools/body-fat-calculator" />
+      <SEOHead title="Body Fat Calculator — U.S. Navy Method | GearUpToFit" description="Estimate your body fat percentage using the U.S. Navy method. Get your lean mass, fat mass, and body composition category." path="/free-fitness-calculators/body-fat-calculator" />
       <JsonLd data={schema} />
       <Header />
       <main className="flex-1 py-8 md:py-16">
@@ -140,7 +140,7 @@ const BodyFatCalculator = () => {
                 </div>
               </div>
 
-              <Link to="/app/body-recomp" className="block">
+              <Link to="/build-my-plan" className="block">
                 <div className="stat-card flex items-center gap-4 cursor-pointer group border-primary/20 bg-primary/5">
                   <div className="flex-1"><p className="text-sm font-bold group-hover:text-primary transition-colors">Get a plan designed for your body composition</p><p className="text-xs text-muted-foreground">Build My Plan →</p></div>
                   <ArrowRight className="h-5 w-5 text-primary" />

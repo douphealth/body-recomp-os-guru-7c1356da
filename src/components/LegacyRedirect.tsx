@@ -12,7 +12,7 @@ interface Props {
  */
 const LegacyRedirect = ({ legacyKey }: Props) => {
   const target = legacyPageMap[legacyKey] || legacyKey;
-  return <Navigate to={`/plans/${target}`} replace />;
+  return <Navigate to={`/workout-plans/${target}`} replace />;
 };
 
 export default LegacyRedirect;

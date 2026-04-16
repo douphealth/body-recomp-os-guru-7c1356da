@@ -19,9 +19,9 @@ const Header = () => {
 
   const navItems = [
     { label: 'Home', path: '/' },
-    { label: 'Body Recomp OS', path: '/app/body-recomp' },
-    { label: 'Tools', path: '/tools' },
-    { label: 'Plans', path: '/plans' },
+    { label: 'Body Recomp OS', path: '/build-my-plan' },
+    { label: 'Tools', path: '/free-fitness-calculators' },
+    { label: 'Plans', path: '/workout-plans' },
     { label: 'Methodology', path: '/methodology' },
   ];
 
@@ -57,7 +57,7 @@ const Header = () => {
           >
             GearUpToFit.com ↗
           </a>
-          <Link to="/app/body-recomp" className="ml-2">
+          <Link to="/build-my-plan" className="ml-2">
             <Button size="sm" className="gradient-red border-0 font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all duration-300 hover:scale-[1.02]">
               Build My Plan
             </Button>
@@ -99,7 +99,7 @@ const Header = () => {
               >
                 GearUpToFit.com ↗
               </a>
-              <Link to="/app/body-recomp" onClick={() => setMenuOpen(false)}>
+              <Link to="/build-my-plan" onClick={() => setMenuOpen(false)}>
                 <Button className="w-full gradient-red border-0 font-semibold mt-2 shadow-lg shadow-primary/20">
                   Build My Plan
                 </Button>

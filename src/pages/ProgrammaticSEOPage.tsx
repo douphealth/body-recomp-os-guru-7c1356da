@@ -15,7 +15,7 @@ const ProgrammaticSEOPage = ({ pageKey }: { pageKey: string }) => {
   const page = seoPages.get(resolvedKey);
   if (!page) return null;
 
-  const basePath = `/plans/${page.slug}`;
+  const basePath = `/workout-plans/${page.slug}`;
 
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -32,7 +32,7 @@ const ProgrammaticSEOPage = ({ pageKey }: { pageKey: string }) => {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://app.gearuptofit.com/' },
-      { '@type': 'ListItem', position: 2, name: 'Plans', item: 'https://app.gearuptofit.com/plans' },
+      { '@type': 'ListItem', position: 2, name: 'Plans', item: 'https://app.gearuptofit.com/workout-plans' },
       { '@type': 'ListItem', position: 3, name: page.title, item: `https://app.gearuptofit.com${basePath}` },
     ],
   };
@@ -75,7 +75,7 @@ const ProgrammaticSEOPage = ({ pageKey }: { pageKey: string }) => {
           <nav className="text-xs text-muted-foreground mb-6 flex items-center gap-1 flex-wrap">
             <Link to="/" className="hover:text-primary transition-colors">Home</Link>
             <span>/</span>
-            <Link to="/plans" className="hover:text-primary transition-colors">Plans</Link>
+            <Link to="/workout-plans" className="hover:text-primary transition-colors">Plans</Link>
             <span>/</span>
             <span className="text-foreground">{page.title}</span>
           </nav>
@@ -93,7 +93,7 @@ const ProgrammaticSEOPage = ({ pageKey }: { pageKey: string }) => {
 
           {/* CTA */}
           <div className="text-center mb-10">
-            <Link to="/app/body-recomp" onClick={() => trackCTAClick('template_cta', page.slug)}>
+            <Link to="/build-my-plan" onClick={() => trackCTAClick('template_cta', page.slug)}>
               <Button size="lg" className="gradient-red border-0 font-bold gap-2">
                 Build My Personalized Plan <ArrowRight className="h-5 w-5" />
               </Button>
@@ -131,7 +131,7 @@ const ProgrammaticSEOPage = ({ pageKey }: { pageKey: string }) => {
               <h2 className="text-xl font-bold mb-4">RELATED <span className="text-primary">PLANS</span></h2>
               <div className="grid sm:grid-cols-2 gap-3 mb-10">
                 {page.relatedPlans.map((rp) => (
-                  <Link key={rp.slug} to={`/plans/${rp.slug}`} className="block p-4 bg-secondary/20 rounded-lg hover:bg-secondary/40 transition-colors border border-border/50 hover:border-primary/30">
+                  <Link key={rp.slug} to={`/workout-plans/${rp.slug}`} className="block p-4 bg-secondary/20 rounded-lg hover:bg-secondary/40 transition-colors border border-border/50 hover:border-primary/30">
                     <p className="text-sm font-semibold text-foreground flex items-center gap-2">
                       {rp.title} <ArrowRight className="h-3 w-3 text-primary" />
                     </p>
@@ -172,7 +172,7 @@ const ProgrammaticSEOPage = ({ pageKey }: { pageKey: string }) => {
             <CardContent className="p-6 text-center">
               <h2 className="text-xl font-bold mb-2">READY TO <span className="text-primary">START?</span></h2>
               <p className="text-sm text-muted-foreground mb-4">Get a plan personalized to your exact body, goals, and equipment.</p>
-              <Link to="/app/body-recomp" onClick={() => trackCTAClick('template_bottom_cta', page.slug)}>
+              <Link to="/build-my-plan" onClick={() => trackCTAClick('template_bottom_cta', page.slug)}>
                 <Button className="gradient-red border-0 font-bold gap-2">
                   Build My Plan <ArrowRight className="h-5 w-5" />
                 </Button>
