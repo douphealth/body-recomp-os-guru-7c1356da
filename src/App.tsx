@@ -16,6 +16,7 @@ import MacroCalculator from "./pages/tools/MacroCalculator.tsx";
 import ProteinCalculator from "./pages/tools/ProteinCalculator.tsx";
 import OneRepMaxCalculator from "./pages/tools/OneRepMaxCalculator.tsx";
 import BodyFatCalculator from "./pages/tools/BodyFatCalculator.tsx";
+import LegacyRedirect from "./components/LegacyRedirect.tsx";
 
 const queryClient = new QueryClient();
 
@@ -38,10 +39,12 @@ const App = () => (
           <Route path="/tools/protein-calculator" element={<ProteinCalculator />} />
           <Route path="/tools/one-rep-max-calculator" element={<OneRepMaxCalculator />} />
           <Route path="/tools/body-fat-calculator" element={<BodyFatCalculator />} />
-          {/* Legacy SEO template redirects */}
-          <Route path="/app/body-recomp/fat-loss-beginner-home-workouts" element={<ProgrammaticSEOPage pageKey="fat-loss-beginner-home-workouts" />} />
-          <Route path="/app/body-recomp/runner-cut-plan" element={<ProgrammaticSEOPage pageKey="runner-cut-plan" />} />
-          <Route path="/app/body-recomp/lean-muscle-high-protein" element={<ProgrammaticSEOPage pageKey="lean-muscle-high-protein" />} />
+          {/* Legacy SEO template URLs → 301-style redirect to canonical /plans/:slug */}
+          <Route path="/app/body-recomp/fat-loss-beginner-home-workouts" element={<LegacyRedirect legacyKey="fat-loss-beginner-home-workouts" />} />
+          <Route path="/app/body-recomp/runner-cut-plan" element={<LegacyRedirect legacyKey="runner-cut-plan" />} />
+          <Route path="/app/body-recomp/lean-muscle-high-protein" element={<LegacyRedirect legacyKey="lean-muscle-high-protein" />} />
+          {/* Generic alias: any /app/body-recomp/<slug> → /plans/<slug> */}
+          <Route path="/app/body-recomp/:legacySlug" element={<LegacyAliasRedirect />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
