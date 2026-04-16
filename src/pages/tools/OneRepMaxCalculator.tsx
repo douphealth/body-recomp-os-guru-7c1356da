@@ -38,7 +38,7 @@ const OneRepMaxCalculator = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <SEOHead title="One-Rep Max (1RM) Calculator — Estimate Your Max Lift | GearUpToFit" description="Calculate your estimated one-rep max using the Epley formula. Get training load percentages for any rep range." path="/tools/one-rep-max-calculator" />
+      <SEOHead title="One-Rep Max (1RM) Calculator — Estimate Your Max Lift | GearUpToFit" description="Calculate your estimated one-rep max using the Epley formula. Get training load percentages for any rep range." path="/free-fitness-calculators/one-rep-max-calculator" />
       <JsonLd data={schema} />
       <Header />
       <main className="flex-1 py-8 md:py-16">
@@ -90,7 +90,7 @@ const OneRepMaxCalculator = () => {
                 <p className="text-xs text-muted-foreground leading-relaxed">This uses the <strong className="text-foreground">Epley formula</strong>: 1RM = weight × (1 + reps/30). Most accurate for 1–10 rep ranges. For best results, use a weight you can lift with good form.</p>
               </div>
 
-              <Link to="/app/body-recomp" className="block">
+              <Link to="/build-my-plan" className="block">
                 <div className="stat-card flex items-center gap-4 cursor-pointer group border-primary/20 bg-primary/5">
                   <div className="flex-1"><p className="text-sm font-bold group-hover:text-primary transition-colors">Get an 8-week program with progressive overload</p><p className="text-xs text-muted-foreground">Build My Plan →</p></div>
                   <ArrowRight className="h-5 w-5 text-primary" />

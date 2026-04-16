@@ -57,7 +57,7 @@ const TDEECalculator = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <SEOHead title="TDEE Calculator — Total Daily Energy Expenditure | GearUpToFit" description="Calculate your Total Daily Energy Expenditure (TDEE) using the Mifflin-St Jeor equation. Free, science-backed calorie calculator for fat loss, maintenance, and muscle gain." path="/tools/tdee-calculator" />
+      <SEOHead title="TDEE Calculator — Total Daily Energy Expenditure | GearUpToFit" description="Calculate your Total Daily Energy Expenditure (TDEE) using the Mifflin-St Jeor equation. Free, science-backed calorie calculator for fat loss, maintenance, and muscle gain." path="/free-fitness-calculators/tdee-calculator" />
       <JsonLd data={schema} />
       <Header />
       <main className="flex-1 py-8 md:py-16">
@@ -149,7 +149,7 @@ const TDEECalculator = () => {
                 <p className="text-xs text-muted-foreground leading-relaxed">This calculation uses the <strong className="text-foreground">Mifflin-St Jeor equation</strong>, considered the gold standard for TDEE estimation by the Academy of Nutrition and Dietetics.</p>
               </div>
 
-              <Link to="/app/body-recomp" className="block">
+              <Link to="/build-my-plan" className="block">
                 <div className="stat-card flex items-center gap-4 cursor-pointer group border-primary/20 bg-primary/5">
                   <div className="flex-1">
                     <p className="text-sm font-bold group-hover:text-primary transition-colors">Want a full 8-week plan?</p>

@@ -50,7 +50,7 @@ const MacroCalculator = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <SEOHead title="Macro Calculator — Protein, Carbs & Fat | GearUpToFit" description="Calculate your optimal macronutrient split for fat loss, muscle gain, or recomposition. Free science-backed macro calculator with per-meal breakdown." path="/tools/macro-calculator" />
+      <SEOHead title="Macro Calculator — Protein, Carbs & Fat | GearUpToFit" description="Calculate your optimal macronutrient split for fat loss, muscle gain, or recomposition. Free science-backed macro calculator with per-meal breakdown." path="/free-fitness-calculators/macro-calculator" />
       <JsonLd data={schema} />
       <Header />
       <main className="flex-1 py-8 md:py-16">
@@ -166,7 +166,7 @@ const MacroCalculator = () => {
                 </div>
               </div>
 
-              <Link to="/app/body-recomp" className="block">
+              <Link to="/build-my-plan" className="block">
                 <div className="stat-card flex items-center gap-4 cursor-pointer group border-primary/20 bg-primary/5">
                   <div className="flex-1">
                     <p className="text-sm font-bold group-hover:text-primary transition-colors">Get a full training plan to match these macros</p>

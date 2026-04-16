@@ -235,7 +235,7 @@ const Methodology = () => {
             <CardContent className="p-6 text-center">
               <h2 className="text-xl font-bold mb-2">SEE IT <span className="text-primary">IN ACTION</span></h2>
               <p className="text-sm text-muted-foreground mb-4">Get a plan built from these formulas, personalized to your exact body and goals.</p>
-              <Link to="/app/body-recomp">
+              <Link to="/build-my-plan">
                 <Button className="gradient-red border-0 font-bold gap-2">
                   Build My Plan <ArrowRight className="h-5 w-5" />
                 </Button>

@@ -6,11 +6,11 @@ import SEOHead from '@/components/SEOHead';
 import JsonLd from '@/components/JsonLd';
 
 const tools = [
-  { path: '/tools/tdee-calculator', name: 'TDEE Calculator', desc: 'Calculate your Total Daily Energy Expenditure using the Mifflin-St Jeor equation.', icon: Calculator },
-  { path: '/tools/macro-calculator', name: 'Macro Calculator', desc: 'Get your optimal protein, carb, and fat split for any goal and diet style.', icon: Target },
-  { path: '/tools/protein-calculator', name: 'Protein Calculator', desc: 'Find your ideal daily protein intake with evidence-based methods.', icon: Beef },
-  { path: '/tools/one-rep-max-calculator', name: '1RM Calculator', desc: 'Estimate your one-rep max and get training load percentages.', icon: Dumbbell },
-  { path: '/tools/body-fat-calculator', name: 'Body Fat Estimator', desc: 'Estimate body fat percentage using the U.S. Navy method.', icon: Scale },
+  { path: '/free-fitness-calculators/tdee-calculator', name: 'TDEE Calculator', desc: 'Calculate your Total Daily Energy Expenditure using the Mifflin-St Jeor equation.', icon: Calculator },
+  { path: '/free-fitness-calculators/macro-calculator', name: 'Macro Calculator', desc: 'Get your optimal protein, carb, and fat split for any goal and diet style.', icon: Target },
+  { path: '/free-fitness-calculators/protein-calculator', name: 'Protein Calculator', desc: 'Find your ideal daily protein intake with evidence-based methods.', icon: Beef },
+  { path: '/free-fitness-calculators/one-rep-max-calculator', name: '1RM Calculator', desc: 'Estimate your one-rep max and get training load percentages.', icon: Dumbbell },
+  { path: '/free-fitness-calculators/body-fat-calculator', name: 'Body Fat Estimator', desc: 'Estimate body fat percentage using the U.S. Navy method.', icon: Scale },
 ];
 
 const ToolsHub = () => {
@@ -18,7 +18,7 @@ const ToolsHub = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <SEOHead title="Free Fitness Calculators — TDEE, Macros, Protein, 1RM & More | GearUpToFit" description="Science-backed fitness calculators to plan your journey. Calculate TDEE, macros, protein needs, one-rep max, and body fat — all free." path="/tools" />
+      <SEOHead title="Free Fitness Calculators — TDEE, Macros, Protein, 1RM & More | GearUpToFit" description="Science-backed fitness calculators to plan your journey. Calculate TDEE, macros, protein needs, one-rep max, and body fat — all free." path="/free-fitness-calculators" />
       <JsonLd data={schema} />
       <Header />
       <main className="flex-1 py-8 md:py-16">
@@ -46,7 +46,7 @@ const ToolsHub = () => {
           </div>
 
           <div className="mt-10 text-center">
-            <Link to="/app/body-recomp">
+            <Link to="/build-my-plan">
               <div className="inline-flex items-center gap-3 stat-card border-primary/20 bg-primary/5 cursor-pointer group px-8">
                 <div>
                   <p className="text-sm font-bold group-hover:text-primary transition-colors">Want the complete package?</p>

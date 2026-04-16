@@ -57,7 +57,7 @@ const ScienceTab = ({ plan, inputs, contextLinks, setInputs, setPlan }: Props) =
 
     <div className="mt-8 text-center space-y-3">
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
-        <Link to="/app/body-recomp">
+        <Link to="/build-my-plan">
           <Button variant="outline" className="border-border/50 hover:border-primary/40 hover:bg-primary/5 transition-all">
             Adjust My Plan
           </Button>

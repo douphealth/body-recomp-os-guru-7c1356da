@@ -137,7 +137,7 @@ const Index = () => {
                 transition={{ duration: 0.5, delay: 0.3 }}
                 className="flex flex-col sm:flex-row gap-4"
               >
-                <Link to="/app/body-recomp" onClick={() => trackCTAClick('hero_cta', 'homepage')}>
+                <Link to="/build-my-plan" onClick={() => trackCTAClick('hero_cta', 'homepage')}>
                   <Button size="lg" className="gradient-red border-0 text-base sm:text-lg px-8 sm:px-10 py-6 font-bold tracking-wide shadow-lg shadow-primary/25 hover:shadow-primary/50 transition-all duration-300 hover:scale-[1.02] w-full sm:w-auto">
                     Build My Plan <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
@@ -350,7 +350,7 @@ const Index = () => {
               transition={{ delay: 0.3 }}
               className="mt-12 text-center"
             >
-              <Link to="/app/body-recomp" onClick={() => trackCTAClick('included_cta', 'homepage')}>
+              <Link to="/build-my-plan" onClick={() => trackCTAClick('included_cta', 'homepage')}>
                 <Button size="lg" className="gradient-red border-0 font-bold px-10 py-6 text-base shadow-lg shadow-primary/25 hover:shadow-primary/50 transition-all duration-300 hover:scale-[1.02]">
                   Get My Free Plan <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
@@ -455,7 +455,7 @@ const Index = () => {
                 Your personalized 8-week plan is just 3 steps away. No signup required to start.
               </motion.p>
               <motion.div variants={fadeUp} custom={2}>
-                <Link to="/app/body-recomp" onClick={() => trackCTAClick('final_cta', 'homepage')}>
+                <Link to="/build-my-plan" onClick={() => trackCTAClick('final_cta', 'homepage')}>
                   <Button size="lg" className="gradient-red border-0 text-lg px-12 py-7 font-bold shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all duration-300 hover:scale-[1.03]" style={{ animation: 'pulse-glow 3s ease-in-out infinite' }}>
                     Build My Plan Now <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>

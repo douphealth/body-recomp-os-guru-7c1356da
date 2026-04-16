@@ -26,8 +26,8 @@ const Footer = () => {
             <ul className="space-y-3">
               {[
                 { to: '/', label: 'Home' },
-                { to: '/app/body-recomp', label: 'Build My Plan' },
-                { to: '/plans', label: 'Browse Plans' },
+                { to: '/build-my-plan', label: 'Build My Plan' },
+                { to: '/workout-plans', label: 'Browse Plans' },
                 { to: '/methodology', label: 'Methodology' },
               ].map(link => (
                 <li key={link.to}>
@@ -43,11 +43,11 @@ const Footer = () => {
             <h4 className="font-['Oswald'] text-xs font-semibold mb-5 text-foreground tracking-widest">FREE TOOLS</h4>
             <ul className="space-y-3">
               {[
-                { to: '/tools/tdee-calculator', label: 'TDEE Calculator' },
-                { to: '/tools/macro-calculator', label: 'Macro Calculator' },
-                { to: '/tools/protein-calculator', label: 'Protein Calculator' },
-                { to: '/tools/one-rep-max-calculator', label: '1RM Calculator' },
-                { to: '/tools/body-fat-calculator', label: 'Body Fat Calculator' },
+                { to: '/free-fitness-calculators/tdee-calculator', label: 'TDEE Calculator' },
+                { to: '/free-fitness-calculators/macro-calculator', label: 'Macro Calculator' },
+                { to: '/free-fitness-calculators/protein-calculator', label: 'Protein Calculator' },
+                { to: '/free-fitness-calculators/one-rep-max-calculator', label: '1RM Calculator' },
+                { to: '/free-fitness-calculators/body-fat-calculator', label: 'Body Fat Calculator' },
               ].map(link => (
                 <li key={link.to}>
                   <Link to={link.to} className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200">

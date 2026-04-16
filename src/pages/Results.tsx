@@ -28,14 +28,14 @@ const Results = () => {
 
   useEffect(() => {
     const stored = sessionStorage.getItem('recomp-inputs');
-    if (!stored) { navigate('/app/body-recomp'); return; }
+    if (!stored) { navigate('/build-my-plan'); return; }
     try {
       const parsed = JSON.parse(stored) as UserInputs;
       setInputs(parsed);
       setPlan(calculatePlan(parsed));
       trackResultView(parsed.goal);
     } catch {
-      navigate('/app/body-recomp');
+      navigate('/build-my-plan');
     }
   }, [navigate]);
 
@@ -126,7 +126,7 @@ const Results = () => {
       <SEOHead
         title={`Your ${plan.goalLabel} Plan — ${plan.calorieTarget} cal/day | GearUpToFit Body Recomp OS`}
         description={plan.quickSummary.slice(0, 155)}
-        path="/app/body-recomp/results"
+        path="/build-my-plan/results"
       />
       <JsonLd data={faqSchema} />
       <Header />

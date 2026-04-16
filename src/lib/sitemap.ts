@@ -7,9 +7,9 @@ export function generateSitemapXML(): string {
 
   const staticPages = [
     { loc: '/', priority: '1.0', changefreq: 'weekly' },
-    { loc: '/plans', priority: '0.9', changefreq: 'weekly' },
+    { loc: '/workout-plans', priority: '0.9', changefreq: 'weekly' },
     { loc: '/methodology', priority: '0.8', changefreq: 'monthly' },
-    { loc: '/app/body-recomp/results', priority: '0.7', changefreq: 'weekly' },
+    { loc: '/build-my-plan/results', priority: '0.7', changefreq: 'weekly' },
     // Legacy template pages (redirect to new system)
     { loc: '/app/body-recomp/fat-loss-beginner-home-workouts', priority: '0.6', changefreq: 'monthly' },
     { loc: '/app/body-recomp/runner-cut-plan', priority: '0.6', changefreq: 'monthly' },
@@ -17,7 +17,7 @@ export function generateSitemapXML(): string {
   ];
 
   const planPages = allSEOPageSlugs.map(slug => ({
-    loc: `/plans/${slug}`,
+    loc: `/workout-plans/${slug}`,
     priority: '0.7',
     changefreq: 'monthly' as const,
   }));

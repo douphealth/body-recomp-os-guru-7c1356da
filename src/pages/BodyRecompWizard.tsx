@@ -77,7 +77,7 @@ const BodyRecompWizard = () => {
     if (!validateStep(step)) return;
     trackCTAClick('generate_plan', 'wizard');
     sessionStorage.setItem('recomp-inputs', JSON.stringify(inputs));
-    navigate('/app/body-recomp/results');
+    navigate('/build-my-plan/results');
   };
 
   const currentBfLabel = bodyFatLabels.find(b => inputs.bodyFatPercent >= b.range[0] && inputs.bodyFatPercent <= b.range[1]);
@@ -94,7 +94,7 @@ const BodyRecompWizard = () => {
       <SEOHead
         title="Body Recomp OS — Build Your Plan | GearUpToFit"
         description="Answer a few questions about your body, goals, and preferences to get a personalized 8-week fitness plan."
-        path="/app/body-recomp"
+        path="/build-my-plan"
       />
       <Header />
 

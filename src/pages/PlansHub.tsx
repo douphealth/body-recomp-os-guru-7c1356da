@@ -29,7 +29,7 @@ const PlansHub = () => {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://app.gearuptofit.com/' },
-      { '@type': 'ListItem', position: 2, name: 'Plans', item: 'https://app.gearuptofit.com/plans' },
+      { '@type': 'ListItem', position: 2, name: 'Plans', item: 'https://app.gearuptofit.com/workout-plans' },
     ],
   };
 
@@ -38,7 +38,7 @@ const PlansHub = () => {
       <SEOHead
         title="Browse All Fitness Plans — Free 8-Week Programs | GearUpToFit"
         description="Browse 100+ free 8-week fitness plans for fat loss, lean muscle, and body recomposition. Filter by experience level, equipment, and diet style."
-        path="/plans"
+        path="/workout-plans"
       />
       <JsonLd data={breadcrumbSchema} />
       <Header />
@@ -95,7 +95,7 @@ const PlansHub = () => {
             {filtered.slice(0, 60).map(slug => {
               const page = seoPages.get(slug)!;
               return (
-                <Link key={slug} to={`/plans/${slug}`} className="block group">
+                <Link key={slug} to={`/workout-plans/${slug}`} className="block group">
                   <div className="stat-card h-full">
                     <h3 className="text-sm font-bold mb-1 group-hover:text-primary transition-colors">{page.title}</h3>
                     <p className="text-xs text-muted-foreground leading-relaxed mb-3">{page.heroSubtitle}</p>
@@ -115,7 +115,7 @@ const PlansHub = () => {
           {/* CTA */}
           <div className="text-center mt-12">
             <p className="text-sm text-muted-foreground mb-4">Want a plan tailored to your exact stats?</p>
-            <Link to="/app/body-recomp">
+            <Link to="/build-my-plan">
               <Button size="lg" className="gradient-red border-0 font-bold gap-2">
                 Build My Personalized Plan <ArrowRight className="h-5 w-5" />
               </Button>
