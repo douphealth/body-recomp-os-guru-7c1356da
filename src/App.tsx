@@ -54,11 +54,21 @@ const App = () => (
 );
 
 // Dynamic plan page wrapper
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
+import { seoPages, legacyPageMap } from "@/lib/seo-pages";
 function DynamicPlanPage() {
   const { pageKey } = useParams<{ pageKey: string }>();
   if (!pageKey) return <NotFound />;
   return <ProgrammaticSEOPage pageKey={pageKey} />;
+}
+
+// Generic alias for any /app/body-recomp/<slug> URL — redirects to /plans/<slug>
+function LegacyAliasRedirect() {
+  const { legacySlug } = useParams<{ legacySlug: string }>();
+  if (!legacySlug) return <NotFound />;
+  const target = legacyPageMap[legacySlug] || legacySlug;
+  if (!seoPages.has(target)) return <NotFound />;
+  return <Navigate to={`/plans/${target}`} replace />;
 }
 
 export default App;
