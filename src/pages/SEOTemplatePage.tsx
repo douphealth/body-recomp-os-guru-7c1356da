@@ -141,7 +141,7 @@ const SEOTemplatePage = ({ pageKey }: { pageKey: string }) => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <SEOHead title={page.metaTitle} description={page.metaDesc} path={`/app/body-recomp/${page.slug}`} />
+      <SEOHead title={page.metaTitle} description={page.metaDesc} path={`/workout-plans/${page.slug}`} />
       <JsonLd data={faqSchema} />
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={articleSchema} />
