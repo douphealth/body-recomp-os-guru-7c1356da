@@ -418,9 +418,9 @@ const Index = () => {
               className="grid md:grid-cols-3 gap-5"
             >
               {[
-                { path: '/app/body-recomp/fat-loss-beginner-home-workouts', title: 'Fat Loss — Beginner Home Workouts', desc: 'Lose fat at home with no gym needed. Perfect for beginners starting their fitness journey.', icon: '🏠' },
-                { path: '/app/body-recomp/runner-cut-plan', title: 'Runner Cut Plan', desc: 'Combine running with calorie control for a lean, athletic physique. Includes shoe recommendations.', icon: '🏃' },
-                { path: '/app/body-recomp/lean-muscle-high-protein', title: 'Lean Muscle — High Protein', desc: 'Build lean muscle with an optimized high-protein nutrition and progressive overload plan.', icon: '💪' },
+                { path: '/plans/fat-loss-beginner-home-standard', title: 'Fat Loss — Beginner Home Workouts', desc: 'Lose fat at home with no gym needed. Perfect for beginners starting their fitness journey.', icon: '🏠' },
+                { path: '/plans/fat-loss-intermediate-gym-standard', title: 'Runner Cut Plan', desc: 'Combine running with calorie control for a lean, athletic physique. Includes shoe recommendations.', icon: '🏃' },
+                { path: '/plans/lean-muscle-intermediate-gym-high-protein', title: 'Lean Muscle — High Protein', desc: 'Build lean muscle with an optimized high-protein nutrition and progressive overload plan.', icon: '💪' },
               ].map((p, i) => (
                 <motion.div key={p.path} variants={fadeUp} custom={i}>
                   <Link to={p.path} className="block group">
