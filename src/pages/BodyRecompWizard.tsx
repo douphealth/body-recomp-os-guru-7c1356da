@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
+import InlineBodyFatEstimator from '@/components/wizard/InlineBodyFatEstimator';
 import { trackCTAClick } from '@/lib/tracking';
 import type { UserInputs } from '@/lib/calculations';
 
@@ -198,11 +199,16 @@ const BodyRecompWizard = () => {
                         <Slider value={[inputs.bodyFatPercent]} onValueChange={([v]) => update('bodyFatPercent', v)} min={3} max={50} step={1} className="mt-3" />
                         <div className="flex justify-between mt-2">
                           {bodyFatLabels.slice(0, 4).map(b => (
-                            <button key={b.label} onClick={() => update('bodyFatPercent', b.range[0])} className="text-[10px] text-muted-foreground hover:text-primary transition-colors px-1">
+                            <button key={b.label} type="button" onClick={() => update('bodyFatPercent', b.range[0])} className="text-[10px] text-muted-foreground hover:text-primary transition-colors px-1">
                               {b.label}
                             </button>
                           ))}
                         </div>
+                        <InlineBodyFatEstimator
+                          sex={inputs.sex as 'male' | 'female'}
+                          heightCm={inputs.heightCm}
+                          onApply={(bf) => update('bodyFatPercent', bf)}
+                        />
                         {errors.bodyFatPercent && <p className="text-xs text-destructive mt-1">{errors.bodyFatPercent}</p>}
                       </div>
                     </div>
