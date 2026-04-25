@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
+import InlineBodyFatEstimator from '@/components/wizard/InlineBodyFatEstimator';
 import { trackCTAClick } from '@/lib/tracking';
 import type { UserInputs } from '@/lib/calculations';
 
