@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
 import JsonLd from '@/components/JsonLd';
 import { trackCTAClick, trackInternalLinkClick } from '@/lib/tracking';
+import { APP_CANONICAL_URL } from '@/lib/site-url';
 import heroImg from '@/assets/hero-gym.jpg';
 import nutritionImg from '@/assets/nutrition-hero.jpg';
 import cardioImg from '@/assets/cardio-hero.jpg';
@@ -52,7 +53,7 @@ const Index = () => {
     '@type': 'WebApplication',
     name: 'GearUpToFit Body Recomp OS',
     description: 'Free body recomposition planner — get personalized calories, macros, workouts, recovery, and habit plans in one place.',
-    url: 'https://fitness-plan.gearuptofit.com',
+    url: APP_CANONICAL_URL,
     applicationCategory: 'HealthApplication',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
     author: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
