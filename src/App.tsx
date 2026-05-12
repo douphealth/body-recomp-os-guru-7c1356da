@@ -52,7 +52,10 @@ const App = () => (
         const href = document.querySelector("base")?.getAttribute("href") || "/";
         try {
           const path = new URL(href, window.location.origin).pathname;
-          return path !== "/" && path.endsWith("/") ? path.slice(0, -1) : path;
+          const basename = path !== "/" && path.endsWith("/") ? path.slice(0, -1) : path;
+          return window.location.pathname.startsWith(`${basename}/`) || window.location.pathname === basename
+            ? basename
+            : "/";
         } catch {
           return "/";
         }
