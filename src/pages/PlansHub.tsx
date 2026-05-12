@@ -7,6 +7,7 @@ import JsonLd from '@/components/JsonLd';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { allSEOPageSlugs, seoPages } from '@/lib/seo-pages';
+import { toCanonicalUrl } from '@/lib/site-url';
 
 const goals = ['all', 'fat-loss', 'lean-muscle', 'recomp'] as const;
 const experiences = ['all', 'beginner', 'intermediate', 'advanced'] as const;
@@ -28,8 +29,8 @@ const PlansHub = () => {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://fitness-plan.gearuptofit.com/' },
-      { '@type': 'ListItem', position: 2, name: 'Plans', item: 'https://fitness-plan.gearuptofit.com/workout-plans' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: toCanonicalUrl('/') },
+      { '@type': 'ListItem', position: 2, name: 'Plans', item: toCanonicalUrl('/workout-plans') },
     ],
   };
 
