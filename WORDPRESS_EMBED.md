@@ -1,72 +1,69 @@
-# Hosting Body Recomp OS at `fitness-plan.gearuptofit.com`
+# Hosting Body Recomp OS natively at `gearuptofit.com/fitness-plan/`
 
-The app is deployed natively at the subdomain
-**`https://fitness-plan.gearuptofit.com/`** — every canonical, OG, Twitter,
-JSON-LD, sitemap and internal-link URL points there.
+The canonical production URL is now:
+
+**`https://gearuptofit.com/fitness-plan/`**
+
+Every canonical, Open Graph, Twitter, JSON-LD, sitemap, and robots reference in this app points to the WordPress path — not the `fitness-plan.gearuptofit.com` subdomain.
 
 ---
 
-## 1. DNS / hosting
+## 1. Required WordPress hosting model
 
-Point the `fitness-plan` subdomain to the Lovable-published project:
+Use a native WordPress path/reverse-proxy setup so the app is served from:
 
-| Type | Name | Value |
-|------|------|-------|
-| A    | fitness-plan | 185.158.133.1 |
+```txt
+https://gearuptofit.com/fitness-plan/
+```
 
-Or, if proxied via Cloudflare, use the CNAME flow inside
-**Project Settings → Domains → Connect Domain → Advanced → Proxy mode**.
+Do **not** use the subdomain as the public canonical destination.
+If `https://fitness-plan.gearuptofit.com/` already exists, configure it as a source/origin only or redirect it permanently to the WordPress path.
 
-Once verified, Lovable provisions SSL automatically.
+## 2. App base path
 
-## 2. WordPress integration
-
-No embed snippet is needed — the subdomain hosts the React app directly.
-From WordPress, link to it like any external page:
+The app ships with:
 
 ```html
-<a href="https://fitness-plan.gearuptofit.com/">Build my free plan →</a>
+<base href="/fitness-plan/" />
 ```
 
-For deep links to specific calculators or plans:
+React Router reads that base path, so internal routes become:
 
+```txt
+https://gearuptofit.com/fitness-plan/build-my-plan
+https://gearuptofit.com/fitness-plan/free-fitness-calculators
+https://gearuptofit.com/fitness-plan/workout-plans
 ```
-https://fitness-plan.gearuptofit.com/build-my-plan
-https://fitness-plan.gearuptofit.com/free-fitness-calculators
-https://fitness-plan.gearuptofit.com/workout-plans
-```
 
-Subdomains pass topical authority to the apex domain via internal linking,
-shared brand, and sitemap cross-references. To maximize SEO juice flow:
-
-- Link **from** `gearuptofit.com` blog posts **to** specific
-  `fitness-plan.gearuptofit.com/...` calculators and plans.
-- Link **back** from in-app pages (Header / Footer) to the main
-  `gearuptofit.com` site.
-- Submit `https://fitness-plan.gearuptofit.com/sitemap.xml` to Google
-  Search Console as a separate property, and add it to the apex domain's
-  `robots.txt` `Sitemap:` directive.
+The same build still works in Lovable preview because the router falls back to `/` when the current host is not actually mounted under `/fitness-plan/`.
 
 ## 3. SEO guarantees baked into the build
 
 | Concern | Implementation |
 |---|---|
-| Canonical URLs | `SEOHead.tsx` sets `https://fitness-plan.gearuptofit.com/<route>` per page |
-| OG / Twitter cards | `SEOHead.tsx` per page + defaults in `index.html` |
-| Structured data | `JsonLd.tsx` + per-page schemas (WebApplication, BreadcrumbList, Article) |
-| Sitemap | `public/sitemap.xml` lists all 50+ pages on the subdomain |
-| robots.txt | `public/robots.txt` references the sitemap and allows crawl |
-| Pre-hydration content | `index.html` ships H1, intro, FAQ, and `<noscript>` fallback inside `#root` so crawlers index content before React boots |
-| Internal links | All routes use `react-router` `<Link>` + central `ROUTES` table |
-| Legacy URLs | Old `/app/body-recomp/...`, `/tools/...`, `/plans/...` paths 301-redirect to the new SEO-optimized paths |
+| Canonical URLs | `SEOHead.tsx` resolves every route under `https://gearuptofit.com/fitness-plan/` |
+| OG / Twitter cards | `index.html` and runtime meta tags point to the WordPress path |
+| Structured data | WebApplication, BreadcrumbList, Article, FAQ, and HowTo URLs point to the WordPress path |
+| Sitemap | `public/sitemap.xml` lists pages under `https://gearuptofit.com/fitness-plan/` |
+| robots.txt | `public/robots.txt` references `https://gearuptofit.com/fitness-plan/sitemap.xml` |
+| Pre-hydration content | `index.html` includes H1, intro, FAQ, and `<noscript>` fallback before React boots |
+| Internal routes | All in-app links remain relative, so they inherit `/fitness-plan/` automatically |
 
-## 4. Quick QA after deploy
+## 4. Server-level redirect required for old subdomain
 
-1. `https://fitness-plan.gearuptofit.com/` — homepage loads.
-2. Navigate to a calculator — URL becomes
-   `/free-fitness-calculators/tdee-calculator`, page renders.
-3. Refresh that deep URL — must still render (Lovable hosting handles SPA
-   fallback automatically).
-4. View source — confirm
-   `<link rel="canonical" href="https://fitness-plan.gearuptofit.com/...">`.
-5. Run the page through Google's Rich Results Test — JSON-LD validates.
+To consolidate authority, redirect the old subdomain to the native WordPress URL with a permanent 301:
+
+```txt
+https://fitness-plan.gearuptofit.com/* → https://gearuptofit.com/fitness-plan/$1
+```
+
+This redirect must be configured in DNS/CDN/hosting or WordPress server rules, because JavaScript cannot issue a true server-side 301.
+
+## 5. Quick QA after deploy
+
+1. Open `https://gearuptofit.com/fitness-plan/` — homepage loads.
+2. Navigate to a calculator — URL becomes `/fitness-plan/free-fitness-calculators/tdee-calculator`.
+3. Refresh that deep URL — the same page still renders.
+4. View source — canonical is `https://gearuptofit.com/fitness-plan/...`.
+5. Rich Results Test validates JSON-LD URLs under the WordPress path.
+6. Open `https://fitness-plan.gearuptofit.com/` — it 301-redirects to `https://gearuptofit.com/fitness-plan/`.

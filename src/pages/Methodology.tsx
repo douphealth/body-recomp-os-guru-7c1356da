@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight, BookOpen, FlaskConical, Calculator, ShieldCheck } from 'lucide-react';
+import { toCanonicalUrl } from '@/lib/site-url';
 
 const Methodology = () => {
   const articleSchema = {
@@ -15,7 +16,7 @@ const Methodology = () => {
     description: 'Learn exactly how we calculate your calorie targets, macro split, and training plan using the Mifflin-St Jeor equation and evidence-based formulas.',
     author: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
     publisher: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
-    mainEntityOfPage: 'https://fitness-plan.gearuptofit.com/methodology',
+    mainEntityOfPage: toCanonicalUrl('/methodology'),
   };
 
   const faqSchema = {
@@ -32,8 +33,8 @@ const Methodology = () => {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://fitness-plan.gearuptofit.com/' },
-      { '@type': 'ListItem', position: 2, name: 'Methodology', item: 'https://fitness-plan.gearuptofit.com/methodology' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: toCanonicalUrl('/') },
+      { '@type': 'ListItem', position: 2, name: 'Methodology', item: toCanonicalUrl('/methodology') },
     ],
   };
 

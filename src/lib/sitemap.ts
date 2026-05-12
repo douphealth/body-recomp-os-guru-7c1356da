@@ -1,8 +1,8 @@
 import { allSEOPageSlugs } from '@/lib/seo-pages';
+import { APP_CANONICAL_URL } from '@/lib/site-url';
 
 // Generate sitemap XML string for all pages
 export function generateSitemapXML(): string {
-  const base = 'https://fitness-plan.gearuptofit.com';
   const today = new Date().toISOString().split('T')[0];
 
   const staticPages = [
@@ -27,7 +27,7 @@ export function generateSitemapXML(): string {
   const allPages = [...staticPages, ...planPages];
 
   const urls = allPages.map(p => `  <url>
-    <loc>${base}${p.loc}</loc>
+    <loc>${APP_CANONICAL_URL}${p.loc}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>${p.changefreq}</changefreq>
     <priority>${p.priority}</priority>
