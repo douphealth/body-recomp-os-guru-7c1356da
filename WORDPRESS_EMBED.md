@@ -4,7 +4,7 @@ The canonical production URL is now:
 
 **`https://gearuptofit.com/fitness-plan/`**
 
-Every canonical, Open Graph, Twitter, JSON-LD, sitemap, and robots reference in this app points to the WordPress path — not the `fitness-plan.gearuptofit.com` subdomain.
+Every canonical, Open Graph, Twitter, JSON-LD, sitemap, and robots reference in this app points only to the WordPress path.
 
 ---
 
@@ -17,7 +17,7 @@ https://gearuptofit.com/fitness-plan/
 ```
 
 Do **not** use the subdomain as the public canonical destination.
-If `https://fitness-plan.gearuptofit.com/` already exists, configure it as a source/origin only or redirect it permanently to the WordPress path.
+If an older subdomain deployment already exists, configure it outside this app as a source/origin only or redirect it permanently to the WordPress path.
 
 ## 2. App base path
 
@@ -54,7 +54,7 @@ The same build still works in Lovable preview because the router falls back to `
 To consolidate authority, redirect the old subdomain to the native WordPress URL with a permanent 301:
 
 ```txt
-https://fitness-plan.gearuptofit.com/* → https://gearuptofit.com/fitness-plan/$1
+old app subdomain URLs → https://gearuptofit.com/fitness-plan/
 ```
 
 This redirect must be configured in DNS/CDN/hosting or WordPress server rules, because JavaScript cannot issue a true server-side 301.
@@ -66,4 +66,4 @@ This redirect must be configured in DNS/CDN/hosting or WordPress server rules, b
 3. Refresh that deep URL — the same page still renders.
 4. View source — canonical is `https://gearuptofit.com/fitness-plan/...`.
 5. Rich Results Test validates JSON-LD URLs under the WordPress path.
-6. Open `https://fitness-plan.gearuptofit.com/` — it 301-redirects to `https://gearuptofit.com/fitness-plan/`.
+6. Open any older app subdomain URL — it 301-redirects to `https://gearuptofit.com/fitness-plan/`.
