@@ -22,4 +22,4 @@ Disallow: /app/body-recomp$
 Disallow: /tools$
 Disallow: /plans$
 
-Sitemap: https://gearuptofit.com/fitness-plan/sitemap.xml
+Sitemap: https://fitness-plan.gearuptofit.com/sitemap.xml

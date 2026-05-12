@@ -52,7 +52,7 @@ const Index = () => {
     '@type': 'WebApplication',
     name: 'GearUpToFit Body Recomp OS',
     description: 'Free body recomposition planner — get personalized calories, macros, workouts, recovery, and habit plans in one place.',
-    url: 'https://gearuptofit.com/fitness-plan',
+    url: 'https://fitness-plan.gearuptofit.com',
     applicationCategory: 'HealthApplication',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
     author: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },

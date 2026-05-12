@@ -3,7 +3,7 @@
 This app is engineered to mount **natively** at any WordPress subpath while
 preserving 100% of its SEO link juice (canonical tags, JSON-LD, sitemap,
 internal links, and pre-hydration SEO/AEO content all point to
-`https://gearuptofit.com/fitness-plan/`).
+`https://fitness-plan.gearuptofit.com/`).
 
 ---
 
@@ -51,14 +51,14 @@ link under `/fitness-plan/...` natively.
       ```
 - [ ] In Yoast/Rank Math, **disable** their canonical/OG output for this
       page — the React app injects its own per-route canonical and OG tags.
-- [ ] Submit `https://gearuptofit.com/fitness-plan/sitemap.xml` to Google
+- [ ] Submit `https://fitness-plan.gearuptofit.com/sitemap.xml` to Google
       Search Console (the sitemap is bundled and served from the app build).
 
 ## 4. SEO guarantees baked into the build
 
 | Concern | Implementation |
 |---|---|
-| Canonical URLs | `SEOHead.tsx` sets `https://gearuptofit.com/fitness-plan/<route>` per page |
+| Canonical URLs | `SEOHead.tsx` sets `https://fitness-plan.gearuptofit.com/<route>` per page |
 | OG / Twitter cards | `SEOHead.tsx` per page + defaults in `index.html` |
 | Structured data | `JsonLd.tsx` + per-page schemas (WebApplication, BreadcrumbList, Article) |
 | Sitemap | `public/sitemap.xml` lists all 50+ pages under `/fitness-plan/` |
@@ -69,11 +69,11 @@ link under `/fitness-plan/...` natively.
 
 ## 5. Quick QA after deploy
 
-1. Visit `https://gearuptofit.com/fitness-plan/` — homepage loads.
+1. Visit `https://fitness-plan.gearuptofit.com/` — homepage loads.
 2. Navigate to a calculator — URL becomes
    `/fitness-plan/free-fitness-calculators/tdee-calculator`, page renders.
 3. Refresh that deep URL — must still render (this is what the WordPress
    rewrite in step 3 ensures).
-4. View source — confirm `<link rel="canonical" href="https://gearuptofit.com/fitness-plan/...">`.
+4. View source — confirm `<link rel="canonical" href="https://fitness-plan.gearuptofit.com/...">`.
 5. Run the page through Google's Rich Results Test — JSON-LD should
    validate.

@@ -2,7 +2,7 @@ import { allSEOPageSlugs } from '@/lib/seo-pages';
 
 // Generate sitemap XML string for all pages
 export function generateSitemapXML(): string {
-  const base = 'https://gearuptofit.com/fitness-plan';
+  const base = 'https://fitness-plan.gearuptofit.com';
   const today = new Date().toISOString().split('T')[0];
 
   const staticPages = [
