@@ -8,6 +8,20 @@
     <meta name="author" content="GearUpToFit" />
     <base href="/fitness-plan/" />
     <link rel="canonical" href="https://gearuptofit.com/fitness-plan/" />
+    <script>
+      (() => {
+        const retiredHost = ['fitness-plan', 'gearuptofit', 'com'].join('.');
+        const canonicalOrigin = `https://${['gearuptofit', 'com'].join('.')}`;
+        const canonicalBase = '/fitness-plan';
+        if (window.location.hostname === retiredHost) {
+          const currentPath = window.location.pathname.replace(/^\/+/, '');
+          const normalizedPath = currentPath && currentPath !== 'fitness-plan'
+            ? `/${currentPath.replace(/^fitness-plan\/?/, '')}`
+            : '/';
+          window.location.replace(`${canonicalOrigin}${canonicalBase}${normalizedPath}${window.location.search}${window.location.hash}`);
+        }
+      })();
+    </script>
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Body Recomp OS — Free 8-Week Fitness Planner | GearUpToFit">
