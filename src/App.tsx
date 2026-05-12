@@ -44,7 +44,19 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter basename={(() => {
+        // Allow WordPress (or any host) to mount this SPA at any subpath
+        // by setting <base href="/your-path/"> in the embedding HTML.
+        // Falls back to "/" so standalone Lovable hosting is unaffected.
+        if (typeof document === "undefined") return "/";
+        const href = document.querySelector("base")?.getAttribute("href") || "/";
+        try {
+          const path = new URL(href, window.location.origin).pathname;
+          return path !== "/" && path.endsWith("/") ? path.slice(0, -1) : path;
+        } catch {
+          return "/";
+        }
+      })()}>
         <Routes>
           {/* === Canonical SEO-optimized routes === */}
           <Route path={ROUTES.home} element={<Index />} />
