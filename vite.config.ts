@@ -5,8 +5,11 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  // Production assets are served from the native WordPress path.
+  // Development stays at / so Lovable preview remains stable.
+  base: mode === "production" ? "/fitness-plan/" : "/",
   // Stable, predictable asset filenames so WordPress can reference
-  // /assets/index.js and /assets/index.css from a <script>/<link> tag
+  // /fitness-plan/assets/index.js and /fitness-plan/assets/index.css
   // without rewriting markup on every deploy.
   build: {
     rollupOptions: {
