@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ExternalLink, CheckCircle } from 'lucide-react';
 import { trackCTAClick, trackInternalLinkClick } from '@/lib/tracking';
+import { toCanonicalUrl } from '@/lib/site-url';
 
 interface TemplatePageProps {
   slug: string;
@@ -123,9 +124,9 @@ const SEOTemplatePage = ({ pageKey }: { pageKey: string }) => {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://fitness-plan.gearuptofit.com/' },
-      { '@type': 'ListItem', position: 2, name: 'Body Recomp OS', item: 'https://fitness-plan.gearuptofit.com/build-my-plan' },
-      { '@type': 'ListItem', position: 3, name: page.title, item: `https://fitness-plan.gearuptofit.com/build-my-plan/${page.slug}` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: toCanonicalUrl('/') },
+      { '@type': 'ListItem', position: 2, name: 'Body Recomp OS', item: toCanonicalUrl('/build-my-plan') },
+      { '@type': 'ListItem', position: 3, name: page.title, item: toCanonicalUrl(`/workout-plans/${page.slug}`) },
     ],
   };
 
@@ -136,7 +137,7 @@ const SEOTemplatePage = ({ pageKey }: { pageKey: string }) => {
     description: page.metaDesc,
     author: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
     publisher: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
-    mainEntityOfPage: `https://fitness-plan.gearuptofit.com/build-my-plan/${page.slug}`,
+    mainEntityOfPage: toCanonicalUrl(`/workout-plans/${page.slug}`),
   };
 
   return (
