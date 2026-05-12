@@ -8,6 +8,11 @@
     <meta name="author" content="GearUpToFit" />
     <base href="/fitness-plan/" />
     <link rel="canonical" href="https://gearuptofit.com/fitness-plan/" />
+    <script>
+      if (location.hostname === 'fitness-plan.gearuptofit.com') {
+        location.replace('https://gearuptofit.com/fitness-plan' + location.pathname + location.search + location.hash);
+      }
+    </script>
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Body Recomp OS — Free 8-Week Fitness Planner | GearUpToFit">
