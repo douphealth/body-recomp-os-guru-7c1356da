@@ -7,7 +7,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ExternalLink, CheckCircle } from 'lucide-react';
 import { trackCTAClick, trackInternalLinkClick } from '@/lib/tracking';
-import { seoPages, legacyPageMap, type SEOPageConfig } from '@/lib/seo-pages';
+import { seoPages, legacyPageMap } from '@/lib/seo-pages';
+import { toCanonicalUrl } from '@/lib/site-url';
 
 const ProgrammaticSEOPage = ({ pageKey }: { pageKey: string }) => {
   // Check legacy map first
@@ -31,9 +32,9 @@ const ProgrammaticSEOPage = ({ pageKey }: { pageKey: string }) => {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://fitness-plan.gearuptofit.com/' },
-      { '@type': 'ListItem', position: 2, name: 'Plans', item: 'https://fitness-plan.gearuptofit.com/workout-plans' },
-      { '@type': 'ListItem', position: 3, name: page.title, item: `https://fitness-plan.gearuptofit.com${basePath}` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: toCanonicalUrl('/') },
+      { '@type': 'ListItem', position: 2, name: 'Plans', item: toCanonicalUrl('/workout-plans') },
+      { '@type': 'ListItem', position: 3, name: page.title, item: toCanonicalUrl(basePath) },
     ],
   };
 
@@ -44,7 +45,7 @@ const ProgrammaticSEOPage = ({ pageKey }: { pageKey: string }) => {
     description: page.metaDesc,
     author: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
     publisher: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
-    mainEntityOfPage: `https://fitness-plan.gearuptofit.com${basePath}`,
+    mainEntityOfPage: toCanonicalUrl(basePath),
   };
 
   const howToSchema = {
