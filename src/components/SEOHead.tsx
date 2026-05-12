@@ -8,7 +8,7 @@ interface SEOHeadProps {
 
 const SEOHead = ({ title, description, path }: SEOHeadProps) => {
   useEffect(() => {
-    const base = 'https://gearuptofit.com/fitness-plan';
+    const base = 'https://fitness-plan.gearuptofit.com';
     document.title = title;
 
     const setMeta = (name: string, content: string, attr = 'name') => {

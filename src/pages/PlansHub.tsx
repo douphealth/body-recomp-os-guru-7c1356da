@@ -28,8 +28,8 @@ const PlansHub = () => {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://gearuptofit.com/fitness-plan/' },
-      { '@type': 'ListItem', position: 2, name: 'Plans', item: 'https://gearuptofit.com/fitness-plan/workout-plans' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://fitness-plan.gearuptofit.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Plans', item: 'https://fitness-plan.gearuptofit.com/workout-plans' },
     ],
   };
 
