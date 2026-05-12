@@ -1,0 +1,8 @@
+name = "gearuptofit-fitness-plan-proxy"
+main = "worker.js"
+compatibility_date = "2026-05-12"
+
+routes = [
+  { pattern = "gearuptofit.com/fitness-plan*", zone_name = "gearuptofit.com" },
+  { pattern = "fitness-plan.gearuptofit.com/*", zone_name = "gearuptofit.com" }
+]

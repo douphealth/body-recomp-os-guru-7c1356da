@@ -5,12 +5,11 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  // Production assets are served from the native WordPress path.
-  // Development stays at / so Lovable preview remains stable.
-  base: mode === "production" ? "/fitness-plan/" : "/",
-  // Stable, predictable asset filenames so WordPress can reference
-  // /fitness-plan/assets/index.js and /fitness-plan/assets/index.css
-  // without rewriting markup on every deploy.
+  // Keep the Lovable origin build rooted at /. The Cloudflare Worker mounts
+  // it at /fitness-plan/ on gearuptofit.com, matching the proven RunMatch setup.
+  base: "/",
+  // Stable, predictable asset filenames so the Worker can proxy
+  // /fitness-plan/assets/index.js to the Lovable origin /assets/index.js.
   build: {
     rollupOptions: {
       output: {
