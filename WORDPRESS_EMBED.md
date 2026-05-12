@@ -1,69 +1,73 @@
-# Hosting Body Recomp OS natively at `gearuptofit.com/fitness-plan/`
+# Body Recomp OS — native WordPress URL deployment
 
-The canonical production URL is now:
-
-**`https://gearuptofit.com/fitness-plan/`**
-
-Every canonical, Open Graph, Twitter, JSON-LD, sitemap, and robots reference in this app points only to the WordPress path.
-
----
-
-## 1. Required WordPress hosting model
-
-Use a native WordPress path/reverse-proxy setup so the app is served from:
+Canonical public URL:
 
 ```txt
 https://gearuptofit.com/fitness-plan/
 ```
 
-Do **not** use the subdomain as the public canonical destination.
-If an older subdomain deployment already exists, configure it outside this app as a source/origin only or redirect it permanently to the WordPress path.
-
-## 2. App base path
-
-The app ships with:
-
-```html
-<base href="/fitness-plan/" />
-```
-
-React Router reads that base path, so internal routes become:
+Retired URL that must **not** serve the app publicly:
 
 ```txt
-https://gearuptofit.com/fitness-plan/build-my-plan
-https://gearuptofit.com/fitness-plan/free-fitness-calculators
-https://gearuptofit.com/fitness-plan/workout-plans
+https://fitness-plan.gearuptofit.com/
 ```
 
-The same build still works in Lovable preview because the router falls back to `/` when the current host is not actually mounted under `/fitness-plan/`.
+## What is actually required
 
-## 3. SEO guarantees baked into the build
+The app cannot turn a live subdomain into a WordPress subfolder by code alone. The browser is currently showing the subdomain because DNS/Cloudflare/hosting still routes that hostname to an old Lovable deployment.
 
-| Concern | Implementation |
+To match the working RunMatch AI setup, deploy the Cloudflare Worker in `cloudflare/worker.js` and attach these two routes:
+
+```txt
+gearuptofit.com/fitness-plan*
+fitness-plan.gearuptofit.com/*
+```
+
+The Worker does two enterprise-critical things:
+
+1. Proxies the Lovable app origin from `https://body-recomp-os-guru.lovable.app` into `https://gearuptofit.com/fitness-plan/`.
+2. Sends a real server-side `301` from `https://fitness-plan.gearuptofit.com/*` to `https://gearuptofit.com/fitness-plan/*`.
+
+## Cloudflare setup
+
+Use the included Worker files:
+
+```txt
+cloudflare/worker.js
+cloudflare/wrangler.toml
+```
+
+Expected routes in Cloudflare:
+
+| Route | Behavior |
 |---|---|
-| Canonical URLs | `SEOHead.tsx` resolves every route under `https://gearuptofit.com/fitness-plan/` |
-| OG / Twitter cards | `index.html` and runtime meta tags point to the WordPress path |
-| Structured data | WebApplication, BreadcrumbList, Article, FAQ, and HowTo URLs point to the WordPress path |
-| Sitemap | `public/sitemap.xml` lists pages under `https://gearuptofit.com/fitness-plan/` |
-| robots.txt | `public/robots.txt` references `https://gearuptofit.com/fitness-plan/sitemap.xml` |
-| Pre-hydration content | `index.html` includes H1, intro, FAQ, and `<noscript>` fallback before React boots |
-| Internal routes | All in-app links remain relative, so they inherit `/fitness-plan/` automatically |
+| `gearuptofit.com/fitness-plan*` | Serve the app natively under the WordPress domain path |
+| `fitness-plan.gearuptofit.com/*` | 301 redirect to `https://gearuptofit.com/fitness-plan/` |
 
-## 4. Server-level redirect required for old subdomain
+## WordPress setup
 
-To consolidate authority, redirect the old subdomain to the native WordPress URL with a permanent 301:
+Create or keep the WordPress page at:
 
 ```txt
-old app subdomain URLs → https://gearuptofit.com/fitness-plan/
+https://gearuptofit.com/fitness-plan/
 ```
 
-This redirect must be configured in DNS/CDN/hosting or WordPress server rules, because JavaScript cannot issue a true server-side 301.
+Then let Cloudflare Worker handle that route before WordPress. This is the same architecture as the RunMatch AI `/shoe-match/` app: the final URL remains on `gearuptofit.com`, preserving SEO link equity, AEO/GEO visibility, AI citations, SERP authority, and organic traffic signals.
 
-## 5. Quick QA after deploy
+## QA after deployment
 
-1. Open `https://gearuptofit.com/fitness-plan/` — homepage loads.
-2. Navigate to a calculator — URL becomes `/fitness-plan/free-fitness-calculators/tdee-calculator`.
-3. Refresh that deep URL — the same page still renders.
-4. View source — canonical is `https://gearuptofit.com/fitness-plan/...`.
-5. Rich Results Test validates JSON-LD URLs under the WordPress path.
-6. Open any older app subdomain URL — it 301-redirects to `https://gearuptofit.com/fitness-plan/`.
+Run these checks after publishing and deploying the Worker:
+
+```bash
+curl -I https://fitness-plan.gearuptofit.com/
+curl -I https://gearuptofit.com/fitness-plan/
+curl -I https://gearuptofit.com/fitness-plan/build-my-plan
+```
+
+Expected results:
+
+1. `https://fitness-plan.gearuptofit.com/` returns `301`.
+2. `Location` points to `https://gearuptofit.com/fitness-plan/`.
+3. `https://gearuptofit.com/fitness-plan/` returns `200` and renders Body Recomp OS.
+4. Page source canonical/OG/JSON-LD URLs point to `https://gearuptofit.com/fitness-plan/`.
+5. Deep routes like `/fitness-plan/free-fitness-calculators/tdee-calculator` refresh correctly.
