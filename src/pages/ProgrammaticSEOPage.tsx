@@ -31,9 +31,9 @@ const ProgrammaticSEOPage = ({ pageKey }: { pageKey: string }) => {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://app.gearuptofit.com/' },
-      { '@type': 'ListItem', position: 2, name: 'Plans', item: 'https://app.gearuptofit.com/workout-plans' },
-      { '@type': 'ListItem', position: 3, name: page.title, item: `https://app.gearuptofit.com${basePath}` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://gearuptofit.com/fitness-plan/' },
+      { '@type': 'ListItem', position: 2, name: 'Plans', item: 'https://gearuptofit.com/fitness-plan/workout-plans' },
+      { '@type': 'ListItem', position: 3, name: page.title, item: `https://gearuptofit.com/fitness-plan${basePath}` },
     ],
   };
 
@@ -44,7 +44,7 @@ const ProgrammaticSEOPage = ({ pageKey }: { pageKey: string }) => {
     description: page.metaDesc,
     author: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
     publisher: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
-    mainEntityOfPage: `https://app.gearuptofit.com${basePath}`,
+    mainEntityOfPage: `https://gearuptofit.com/fitness-plan${basePath}`,
   };
 
   const howToSchema = {

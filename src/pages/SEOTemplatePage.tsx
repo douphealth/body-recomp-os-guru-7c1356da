@@ -123,9 +123,9 @@ const SEOTemplatePage = ({ pageKey }: { pageKey: string }) => {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://app.gearuptofit.com/' },
-      { '@type': 'ListItem', position: 2, name: 'Body Recomp OS', item: 'https://app.gearuptofit.com/build-my-plan' },
-      { '@type': 'ListItem', position: 3, name: page.title, item: `https://app.gearuptofit.com/build-my-plan/${page.slug}` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://gearuptofit.com/fitness-plan/' },
+      { '@type': 'ListItem', position: 2, name: 'Body Recomp OS', item: 'https://gearuptofit.com/fitness-plan/build-my-plan' },
+      { '@type': 'ListItem', position: 3, name: page.title, item: `https://gearuptofit.com/fitness-plan/build-my-plan/${page.slug}` },
     ],
   };
 
@@ -136,7 +136,7 @@ const SEOTemplatePage = ({ pageKey }: { pageKey: string }) => {
     description: page.metaDesc,
     author: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
     publisher: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
-    mainEntityOfPage: `https://app.gearuptofit.com/build-my-plan/${page.slug}`,
+    mainEntityOfPage: `https://gearuptofit.com/fitness-plan/build-my-plan/${page.slug}`,
   };
 
   return (
