@@ -24,7 +24,35 @@
     <link rel="icon" type="image/png" href="/favicon.png">
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Pre-hydration SEO/AEO content. React replaces this on mount, but
+           crawlers (Google, Bing, ChatGPT, Perplexity, Claude) and users on
+           slow connections get the full topical context immediately. -->
+      <noscript>
+        <h1>Body Recomp OS — Free 8-Week Fitness Planner by GearUpToFit</h1>
+        <p>Enable JavaScript to use the interactive planner.</p>
+      </noscript>
+      <div style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden" aria-hidden="false">
+        <h1>Body Recomp OS — Free 8-Week Fitness Planner by GearUpToFit</h1>
+        <p>Build a personalized body recomposition plan in 2 minutes. Get your daily calorie target, macro split (protein, carbs, fat), 8-week periodized training program, cardio guidance, recovery checklist, and week-by-week habit system — 100% free, no signup required.</p>
+        <h2>What you get</h2>
+        <ul>
+          <li>Daily calorie target via Mifflin-St Jeor + Katch-McArdle equations</li>
+          <li>Goal-specific macro split based on lean body mass</li>
+          <li>8-week periodized training plan with deload weeks</li>
+          <li>Cardio plan personalized to your goals using Karvonen heart-rate zones</li>
+          <li>Recovery, sleep, hydration, and mobility protocols</li>
+          <li>Free fitness calculators: TDEE, macros, protein, 1-rep max, body fat</li>
+        </ul>
+        <h2>Frequently asked questions</h2>
+        <h3>Is the Body Recomp OS planner really free?</h3>
+        <p>Yes — every feature, including the 8-week plan, calculators, and PDF export, is 100% free and requires no signup.</p>
+        <h3>What science is behind the calorie and macro targets?</h3>
+        <p>We use the Mifflin-St Jeor equation for BMR, Katch-McArdle when body fat is known, and Karvonen heart-rate zones for cardio. See our methodology page for full formulas.</p>
+        <h3>Can I follow this plan at home without a gym?</h3>
+        <p>Yes. Choose "Home" or "Bodyweight" as your equipment in the wizard and the plan adapts to dumbbells, bands, or no equipment at all.</p>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

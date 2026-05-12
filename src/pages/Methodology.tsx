@@ -15,7 +15,7 @@ const Methodology = () => {
     description: 'Learn exactly how we calculate your calorie targets, macro split, and training plan using the Mifflin-St Jeor equation and evidence-based formulas.',
     author: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
     publisher: { '@type': 'Organization', name: 'GearUpToFit', url: 'https://gearuptofit.com' },
-    mainEntityOfPage: 'https://app.gearuptofit.com/methodology',
+    mainEntityOfPage: 'https://gearuptofit.com/fitness-plan/methodology',
   };
 
   const faqSchema = {
@@ -32,8 +32,8 @@ const Methodology = () => {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://app.gearuptofit.com/' },
-      { '@type': 'ListItem', position: 2, name: 'Methodology', item: 'https://app.gearuptofit.com/methodology' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://gearuptofit.com/fitness-plan/' },
+      { '@type': 'ListItem', position: 2, name: 'Methodology', item: 'https://gearuptofit.com/fitness-plan/methodology' },
     ],
   };
 
