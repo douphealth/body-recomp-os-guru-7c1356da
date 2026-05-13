@@ -91,6 +91,8 @@ const Results = () => {
         </div>
       </div>
 
+      <TodayPanel plan={plan} inputs={inputs} contextLinks={contextLinks} />
+
       {isMobile ? (
         <Accordion type="single" collapsible defaultValue="numbers" className="space-y-2">
           {[
