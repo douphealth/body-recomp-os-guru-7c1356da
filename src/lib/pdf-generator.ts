@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import { type PlanResults, type UserInputs } from '@/lib/calculations';
+import { getSourcesFor } from '@/lib/sources';
 import logoUrl from '@/assets/logo.png';
 
 /* ─── Color Palette (white-background premium) ─── */
@@ -375,7 +376,25 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     tc(doc, LABEL);
     const citLines = doc.splitTextToSize(clean(note.citation), pw - 44);
     doc.text(citLines, 24, y);
-    y += citLines.length * 3.2 + 6;
+    y += citLines.length * 3.2 + 2;
+    // Clickable sources
+    const sources = getSourcesFor(note.title);
+    if (sources.length > 0) {
+      doc.setFontSize(6.5);
+      doc.setFont('helvetica', 'bold');
+      tc(doc, LABEL);
+      doc.text('Sources:', 24, y);
+      y += 3.2;
+      doc.setFont('helvetica', 'normal');
+      tc(doc, BLUE);
+      sources.forEach((s) => {
+        const lbl = clean(`> ${s.label}`);
+        const lines = doc.splitTextToSize(lbl, pw - 50);
+        doc.textWithLink(lines[0], 26, y, { url: s.url });
+        y += 3.2;
+      });
+    }
+    y += 4;
   });
 
   /* ═══ PAGE 3: NUTRITION DETAIL ═══ */

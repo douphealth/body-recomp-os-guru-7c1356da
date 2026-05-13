@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { Activity as ActivityIcon, Heart, Moon, CheckCircle2, Footprints, Timer, Flame, Waves } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import ProgressPhotos from '@/components/results/ProgressPhotos';
+import StreakCard from '@/components/results/StreakCard';
+import { useDailyStreak } from '@/hooks/useDailyStreak';
 import type { PlanResults } from '@/lib/calculations';
 
 interface Props {
@@ -22,9 +24,22 @@ const RecoveryTab = ({ plan, checkedHabits, toggleHabit }: Props) => {
   const completed = checkedHabits.size;
   const total = plan.recoveryChecklist.length;
   const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const streak = useDailyStreak('recomp.recovery.streak');
 
   return (
     <div className="space-y-4">
+      <StreakCard
+        title="Recovery Streak"
+        isDoneToday={streak.isDoneToday}
+        toggleToday={streak.toggleToday}
+        streak={streak.streak}
+        totalDone={streak.totalDone}
+        last7={streak.last7}
+        cta="Mark today's recovery complete"
+        doneCta="Recovery logged for today"
+        accent="sky"
+      />
+
       {/* Cardio Hero */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}

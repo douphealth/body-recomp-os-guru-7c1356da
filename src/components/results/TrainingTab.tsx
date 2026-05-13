@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { FlaskConical, Flame, ChevronDown, Layers, Target, Clock, Zap } from 'lucide-react';
+import { FlaskConical, Flame, ChevronDown, Layers, Target, Clock, Zap, CheckCircle2 } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Checkbox } from '@/components/ui/checkbox';
 import WeeklyCalendarView from '@/components/results/WeeklyCalendarView';
+import StreakCard from '@/components/results/StreakCard';
+import { useDailyStreak } from '@/hooks/useDailyStreak';
 import type { PlanResults } from '@/lib/calculations';
 
 interface Props {
@@ -18,6 +21,26 @@ const phasePalette = [
 
 const TrainingTab = ({ plan }: Props) => {
   const [activeWeek, setActiveWeek] = useState(0);
+  const streak = useDailyStreak('recomp.training.streak');
+
+  // Per-session checkbox state (e.g. "0:Mon"): persisted in localStorage
+  const SESSION_KEY = 'recomp.training.sessions';
+  const [doneSessions, setDoneSessions] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(SESSION_KEY);
+      if (raw) setDoneSessions(new Set(JSON.parse(raw) as string[]));
+    } catch { /* ignore */ }
+  }, []);
+  const toggleSession = useCallback((id: string) => {
+    setDoneSessions((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      try { localStorage.setItem(SESSION_KEY, JSON.stringify(Array.from(next))); } catch { /* ignore */ }
+      return next;
+    });
+  }, []);
 
   // Group weeks into 4 two-week phases
   const phases = [0, 1, 2, 3].map((i) => {
@@ -31,8 +54,50 @@ const TrainingTab = ({ plan }: Props) => {
     };
   });
 
+  // Total sessions across the plan
+  const totalSessions = plan.trainingPlan.reduce((acc, w) => acc + w.days.length, 0);
+  const completedSessions = doneSessions.size;
+  const completionPct = totalSessions > 0 ? Math.round((completedSessions / totalSessions) * 100) : 0;
+
   return (
     <div className="space-y-4">
+      {/* Streak + plan-wide completion */}
+      <div className="grid sm:grid-cols-2 gap-3">
+        <StreakCard
+          title="Training Streak"
+          isDoneToday={streak.isDoneToday}
+          toggleToday={streak.toggleToday}
+          streak={streak.streak}
+          totalDone={streak.totalDone}
+          last7={streak.last7}
+          cta="Mark today's session done"
+          doneCta="Session logged for today"
+        />
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-card to-card/50 p-4"
+        >
+          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Plan Completion</p>
+          <div className="flex items-baseline gap-2 mt-1 mb-2">
+            <CheckCircle2 className={`h-5 w-5 ${completionPct > 0 ? 'text-primary' : 'text-muted-foreground/40'}`} />
+            <span className="text-3xl font-bold font-['Oswald'] tracking-tight text-primary">{completionPct}%</span>
+            <span className="text-[11px] text-muted-foreground">{completedSessions}/{totalSessions} sessions</span>
+          </div>
+          <div className="h-1.5 rounded-full bg-secondary/40 overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${completionPct}%` }}
+              transition={{ duration: 0.6 }}
+              className="h-full bg-gradient-to-r from-primary to-orange-400 rounded-full"
+            />
+          </div>
+          <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
+            Tick each session in the weekly checklist below as you finish.
+          </p>
+        </motion.div>
+      </div>
+
       {/* 8-Week Phase Timeline */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
@@ -172,32 +237,72 @@ const TrainingTab = ({ plan }: Props) => {
                     )}
                   </div>
                 )}
-                <div className="space-y-3">
-                  {week.days.map((day) => (
-                    <div key={day.day} className="rounded-xl bg-gradient-to-br from-secondary/30 to-secondary/10 border border-border/40 p-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className={`h-6 w-6 rounded-md ${p.bg} ${p.text} flex items-center justify-center text-[10px] font-bold`}>
-                          {day.day.slice(0, 3).toUpperCase()}
-                        </div>
-                        <p className="text-sm font-bold text-foreground font-['Oswald'] tracking-wider">{day.focus}</p>
+                {(() => {
+                  const weekIds = week.days.map((d) => `${wi}:${d.day}`);
+                  const weekDone = weekIds.filter((id) => doneSessions.has(id)).length;
+                  const weekPct = weekIds.length > 0 ? Math.round((weekDone / weekIds.length) * 100) : 0;
+                  return (
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between mb-1.5 text-[10px]">
+                        <span className="font-bold uppercase tracking-wider text-muted-foreground">Weekly Checklist</span>
+                        <span className={`font-bold ${p.text}`}>{weekDone}/{weekIds.length} sessions</span>
                       </div>
-                      <div className="space-y-1.5">
-                        {day.exercises.map((ex, j) => (
-                          <div key={j} className="flex justify-between items-start gap-3 text-xs px-3 py-2 rounded-lg bg-card/40 border border-border/30 hover:border-primary/20 transition-colors">
-                            <div className="flex-1 min-w-0">
-                              <p className="text-foreground font-medium leading-snug">{ex.name}</p>
-                              {ex.notes && <p className="text-[10px] text-muted-foreground/70 italic mt-0.5">{ex.notes}</p>}
-                            </div>
-                            <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
-                              <span className="font-mono text-[11px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">{ex.sets}×{ex.reps}</span>
-                              {ex.rpe && <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 font-bold border border-red-500/20">RPE {ex.rpe}</span>}
-                              {ex.rest && <span className="text-[9px] text-muted-foreground bg-secondary/40 px-1.5 py-0.5 rounded border border-border/30">{ex.rest}</span>}
-                            </div>
-                          </div>
-                        ))}
+                      <div className="h-1 rounded-full bg-secondary/40 overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${weekPct}%` }}
+                          transition={{ duration: 0.5 }}
+                          className={`h-full bg-gradient-to-r ${p.bar} rounded-full`}
+                        />
                       </div>
                     </div>
-                  ))}
+                  );
+                })()}
+                <div className="space-y-3">
+                  {week.days.map((day) => {
+                    const sessionId = `${wi}:${day.day}`;
+                    const sessionDone = doneSessions.has(sessionId);
+                    return (
+                      <div
+                        key={day.day}
+                        className={`rounded-xl border p-4 transition-all ${
+                          sessionDone
+                            ? 'bg-primary/5 border-primary/30'
+                            : 'bg-gradient-to-br from-secondary/30 to-secondary/10 border-border/40'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-3">
+                          <Checkbox
+                            checked={sessionDone}
+                            onCheckedChange={() => toggleSession(sessionId)}
+                            className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                          />
+                          <div className={`h-6 w-6 rounded-md ${p.bg} ${p.text} flex items-center justify-center text-[10px] font-bold`}>
+                            {day.day.slice(0, 3).toUpperCase()}
+                          </div>
+                          <p className={`text-sm font-bold font-['Oswald'] tracking-wider transition-all ${
+                            sessionDone ? 'text-muted-foreground line-through' : 'text-foreground'
+                          }`}>{day.focus}</p>
+                          {sessionDone && <CheckCircle2 className="h-4 w-4 text-primary ml-auto" />}
+                        </div>
+                        <div className="space-y-1.5">
+                          {day.exercises.map((ex, j) => (
+                            <div key={j} className="flex justify-between items-start gap-3 text-xs px-3 py-2 rounded-lg bg-card/40 border border-border/30 hover:border-primary/20 transition-colors">
+                              <div className="flex-1 min-w-0">
+                                <p className="text-foreground font-medium leading-snug">{ex.name}</p>
+                                {ex.notes && <p className="text-[10px] text-muted-foreground/70 italic mt-0.5">{ex.notes}</p>}
+                              </div>
+                              <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
+                                <span className="font-mono text-[11px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">{ex.sets}×{ex.reps}</span>
+                                {ex.rpe && <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 font-bold border border-red-500/20">RPE {ex.rpe}</span>}
+                                {ex.rest && <span className="text-[9px] text-muted-foreground bg-secondary/40 px-1.5 py-0.5 rounded border border-border/30">{ex.rest}</span>}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </AccordionContent>
             </AccordionItem>
