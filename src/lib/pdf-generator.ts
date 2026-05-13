@@ -994,7 +994,116 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     hLine(doc, 22, y + 9 + i * 8, pw - 22, [230, 230, 235] as RGB, 0.15);
   }
 
-  /* ═══ REFERENCES ═══ */
+  /* ═══ DAILY LOG TEMPLATE (printable) ═══ */
+  doc.addPage();
+  whiteBg(doc);
+  y = 20;
+  y = section(doc, y, 'Daily Log Template — Print or Duplicate');
+
+  rRect(doc, 15, y, pw - 30, 14, 2, SOFT_AMBER, [230, 220, 190] as RGB);
+  doc.setFontSize(7.5);
+  doc.setFont('helvetica', 'normal');
+  tc(doc, BODY);
+  doc.text('Photocopy this page or recreate it in your notes app. One log per day. Review weekly.', 22, y + 6);
+  doc.text(`Daily targets: ${plan.calorieTarget} kcal  |  ${plan.proteinGrams}g P  |  ${plan.carbGrams}g C  |  ${plan.fatGrams}g F  |  ${plan.waterLiters}L water  |  ${inputs.stepCount.toLocaleString()} steps  |  7-9h sleep`, 22, y + 11);
+  y += 20;
+
+  // Date / weight / sleep header
+  rRect(doc, 15, y, pw - 30, 14, 2, CARD, RULE);
+  doc.setFontSize(7);
+  doc.setFont('helvetica', 'bold');
+  tc(doc, LABEL);
+  ['DATE', 'WEIGHT (AM)', 'SLEEP (h)', 'ENERGY 1-10', 'HUNGER 1-10', 'STEPS'].forEach((lab, i) => {
+    const cx = 18 + i * ((pw - 36) / 6);
+    doc.text(lab, cx, y + 5);
+    dc(doc, [210, 210, 215] as RGB);
+    doc.setLineWidth(0.2);
+    doc.line(cx, y + 11, cx + (pw - 36) / 6 - 4, y + 11);
+  });
+  y += 18;
+
+  // Macro tracker
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  tc(doc, RED);
+  doc.text('FOOD INTAKE', 18, y);
+  y += 3;
+  rRect(doc, 15, y, pw - 30, 56, 2, WHITE, RULE);
+  const fcols = ['MEAL', 'FOOD', 'KCAL', 'P', 'C', 'F'];
+  const fcolX = [18, 50, 120, 140, 155, 170];
+  doc.setFontSize(6.5);
+  doc.setFont('helvetica', 'bold');
+  tc(doc, LABEL);
+  fcols.forEach((c, i) => doc.text(c, fcolX[i], y + 5));
+  hLine(doc, 16, y + 7, pw - 16, RULE, 0.2);
+  ['Breakfast', 'Lunch', 'Snack', 'Dinner', 'Other'].forEach((m, i) => {
+    const ry = y + 12 + i * 8;
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'bold');
+    tc(doc, DARK);
+    doc.text(m, fcolX[0], ry);
+    dc(doc, [220, 220, 225] as RGB);
+    doc.setLineWidth(0.15);
+    for (let c = 1; c < fcols.length; c++) {
+      doc.line(fcolX[c], ry + 1, fcolX[c] + (c === 1 ? 65 : 12), ry + 1);
+    }
+  });
+  // total row
+  hLine(doc, 16, y + 50, pw - 16, RULE, 0.3);
+  doc.setFontSize(7);
+  doc.setFont('helvetica', 'bold');
+  tc(doc, RED);
+  doc.text('DAILY TOTAL', fcolX[0], y + 54);
+  for (let c = 2; c < fcols.length; c++) {
+    dc(doc, RED);
+    doc.setLineWidth(0.3);
+    doc.line(fcolX[c], y + 55, fcolX[c] + 12, y + 55);
+  }
+  y += 60;
+
+  // Training log
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  tc(doc, RED);
+  doc.text('TRAINING LOG', 18, y);
+  y += 3;
+  rRect(doc, 15, y, pw - 30, 50, 2, WHITE, RULE);
+  const tcols = ['EXERCISE', 'SET 1 (kg x reps)', 'SET 2', 'SET 3', 'SET 4', 'RPE'];
+  const tcolX = [18, 65, 100, 130, 155, 175];
+  doc.setFontSize(6.5);
+  doc.setFont('helvetica', 'bold');
+  tc(doc, LABEL);
+  tcols.forEach((c, i) => doc.text(c, tcolX[i], y + 5));
+  hLine(doc, 16, y + 7, pw - 16, RULE, 0.2);
+  for (let r = 0; r < 6; r++) {
+    const ry = y + 12 + r * 6.5;
+    dc(doc, [225, 225, 230] as RGB);
+    doc.setLineWidth(0.12);
+    doc.line(18, ry + 1, pw - 18, ry + 1);
+  }
+  y += 56;
+
+  // Notes
+  y = needPage(doc, y, 30);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  tc(doc, RED);
+  doc.text('NOTES (mood, soreness, wins, adjustments)', 18, y);
+  y += 3;
+  rRect(doc, 15, y, pw - 30, 24, 2, CARD, RULE);
+  for (let i = 0; i < 3; i++) {
+    hLine(doc, 22, y + 8 + i * 7, pw - 22, [225, 225, 230] as RGB, 0.15);
+  }
+  y += 30;
+
+  // Notes
+  y = needPage(doc, y, 55);
+  y = section(doc, y, 'Personal Notes');
+  rRect(doc, 15, y, pw - 30, 48, 3, CARD, RULE);
+  for (let i = 0; i < 5; i++) {
+    hLine(doc, 22, y + 9 + i * 8, pw - 22, [230, 230, 235] as RGB, 0.15);
+  }
+
   y += 58;
   y = needPage(doc, y, 60);
   y = section(doc, y, 'Scientific References');
