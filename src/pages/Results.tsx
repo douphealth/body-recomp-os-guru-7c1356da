@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import EmailGate, { hasSubscribed } from '@/components/EmailGate';
+import InlineEmailCapture from '@/components/InlineEmailCapture';
 import { captureUTM } from '@/lib/utm';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -31,11 +32,11 @@ const Results = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  // Capture UTM on first load + open email gate ~10s after results render (once per visitor)
+  // Capture UTM on first load + open email gate ~25s after results render (once per visitor)
   useEffect(() => {
     captureUTM();
     if (hasSubscribed() || loading) return;
-    const t = setTimeout(() => setEmailGateOpen(true), 10000);
+    const t = setTimeout(() => setEmailGateOpen(true), 25000);
     return () => clearTimeout(t);
   }, [loading]);
 
@@ -101,6 +102,13 @@ const Results = () => {
           </div>
         </div>
       </div>
+
+      <InlineEmailCapture
+        goalLabel={plan.goalLabel}
+        calorieTarget={plan.calorieTarget}
+        proteinGrams={plan.proteinGrams}
+        workoutFrequency={inputs.workoutFrequency}
+      />
 
       <TodayPanel plan={plan} inputs={inputs} contextLinks={contextLinks} />
 
@@ -178,6 +186,17 @@ const Results = () => {
           )}
         </div>
       </main>
+
+      <EmailGate
+        open={emailGateOpen}
+        onClose={() => setEmailGateOpen(false)}
+        onUnlock={() => setEmailGateOpen(false)}
+        goalLabel={plan.goalLabel}
+        calorieTarget={plan.calorieTarget}
+        proteinGrams={plan.proteinGrams}
+        workoutFrequency={inputs.workoutFrequency}
+        source="plan_gate"
+      />
 
       <Footer />
     </div>
