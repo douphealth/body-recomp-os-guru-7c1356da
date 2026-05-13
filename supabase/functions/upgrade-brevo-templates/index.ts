@@ -72,7 +72,11 @@ const checklist = (items: string[]) => `<table width="100%" style="margin:8px 0 
 const divider = () => `<div style="height:1px;background:${BORDER};margin:28px 0;"></div>`;
 const ps = (t: string) => `<p style="font-size:14px;line-height:1.6;margin:24px 0 0;color:${MUTED};font-style:italic;border-top:1px dashed ${BORDER};padding-top:16px;"><strong style="color:${RED};font-style:normal;">P.S.</strong> ${t}</p>`;
 const sig = () => `<p style="font-size:16px;line-height:1.6;margin:28px 0 0;color:${TEXT};">Train smart,<br><strong style="font-family:'Oswald',Arial,sans-serif;font-size:20px;letter-spacing:0.3px;">Alex</strong><br><span style="color:${MUTED};font-size:13px;">Head Coach · GearUpToFit · 18 yrs coaching, 600+ recomp transformations</span></p>`;
-const utm = (slug: string, c: string) => `https://gearuptofit.com/${slug}?utm_source=body-recomp&utm_medium=email&utm_campaign=${c}`;
+// IMPORTANT: the React app is mounted on the WordPress host at /fitness-plan/.
+// All in-app links MUST include that base path or the visitor will hit the
+// WordPress 404 page (this was the cause of the broken "Open My Plan" CTA).
+const APP_BASE = 'https://gearuptofit.com/fitness-plan';
+const utm = (slug: string, c: string) => `${APP_BASE}/${slug.replace(/^\/+/, '')}?utm_source=body-recomp&utm_medium=email&utm_campaign=${c}`;
 
 // ===================================================================
 // DAY 0 — Welcome + Plan
