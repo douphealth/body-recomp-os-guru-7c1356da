@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { Activity as ActivityIcon, Heart, Moon, CheckCircle2, Footprints, Timer, Flame, Waves } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import ProgressPhotos from '@/components/results/ProgressPhotos';
+import StreakCard from '@/components/results/StreakCard';
+import { useDailyStreak } from '@/hooks/useDailyStreak';
 import type { PlanResults } from '@/lib/calculations';
 
 interface Props {
