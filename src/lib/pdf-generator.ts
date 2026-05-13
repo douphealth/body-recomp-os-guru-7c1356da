@@ -705,6 +705,91 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     y += 5;
   });
 
+  /* ═══ 8-WEEK TRAINING COMPLIANCE GRID ═══ */
+  doc.addPage();
+  whiteBg(doc);
+  y = 20;
+  y = section(doc, y, '8-Week Training Compliance Tracker');
+
+  rRect(doc, 15, y, pw - 30, 14, 2, SOFT_GREEN, [200, 230, 210] as RGB);
+  doc.setFontSize(7.5);
+  doc.setFont('helvetica', 'normal');
+  tc(doc, BODY);
+  doc.text('Tick a box after every completed session. Aim for 90%+ compliance per phase.', 22, y + 6);
+  doc.text(`Target: ${inputs.workoutFrequency} sessions/week x 8 weeks = ${inputs.workoutFrequency * 8} sessions total.`, 22, y + 11);
+  y += 20;
+
+  const gridDayCount = inputs.workoutFrequency;
+  const cellW = (pw - 60) / gridDayCount;
+  const cellH = 9;
+  const labelW = 32;
+
+  doc.setFontSize(6.5);
+  doc.setFont('helvetica', 'bold');
+  tc(doc, LABEL);
+  doc.text('WEEK', 18, y + 5);
+  for (let s = 0; s < gridDayCount; s++) {
+    doc.text(`S${s + 1}`, 18 + labelW + s * cellW + cellW / 2, y + 5, { align: 'center' });
+  }
+  doc.text('PHASE', pw - 22, y + 5, { align: 'right' });
+  hLine(doc, 15, y + 7, pw - 15, RULE);
+  y += 10;
+
+  for (let w = 1; w <= 8; w++) {
+    const phaseIdx = Math.floor((w - 1) / 2);
+    const week = plan.trainingPlan[phaseIdx];
+    const isDeloadWeek = week?.deload;
+    const rowBg = w % 2 === 0 ? CARD : WHITE;
+    fc(doc, rowBg);
+    doc.rect(15, y - 1, pw - 30, cellH, 'F');
+
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    tc(doc, isDeloadWeek ? [160, 120, 20] as RGB : DARK);
+    doc.text(`Week ${w}`, 18, y + 5);
+
+    for (let s = 0; s < gridDayCount; s++) {
+      const cx = 18 + labelW + s * cellW + cellW / 2 - 2;
+      dc(doc, isDeloadWeek ? [200, 170, 90] as RGB : RED);
+      doc.setLineWidth(0.4);
+      doc.roundedRect(cx, y + 1, 4, 4, 0.5, 0.5, 'S');
+    }
+
+    doc.setFontSize(6);
+    doc.setFont('helvetica', 'italic');
+    tc(doc, isDeloadWeek ? [160, 120, 20] as RGB : LABEL);
+    const phaseLabel = isDeloadWeek ? 'Deload' : phaseIdx === 0 ? 'Foundation' : phaseIdx === 1 ? 'Build' : 'Peak';
+    doc.text(phaseLabel, pw - 22, y + 5, { align: 'right' });
+    y += cellH;
+  }
+
+  y += 6;
+  y = needPage(doc, y, 30);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  tc(doc, RED);
+  doc.text('PHASE-BY-PHASE PROGRESSION', 18, y);
+  y += 4;
+  plan.trainingPlan.forEach((wk, i) => {
+    y = needPage(doc, y, 20);
+    const bg = wk.deload ? [255, 248, 230] as RGB : i === 2 ? SOFT_RED : SOFT_BLUE;
+    const border = wk.deload ? [220, 195, 130] as RGB : i === 2 ? [240, 200, 200] as RGB : [200, 215, 240] as RGB;
+    rRect(doc, 15, y, pw - 30, 17, 2, bg, border);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    tc(doc, wk.deload ? [160, 120, 20] as RGB : DARK);
+    doc.text(`${clean(wk.weekRange)} - ${clean(wk.phase)}`, 20, y + 5);
+    doc.setFontSize(6.8);
+    doc.setFont('helvetica', 'normal');
+    tc(doc, BODY);
+    doc.text(clean(wk.intensityGuideline || ''), 20, y + 10);
+    doc.setFont('helvetica', 'italic');
+    tc(doc, LABEL);
+    const vc = doc.splitTextToSize(clean(wk.volumeChange || ''), pw - 40);
+    doc.text(vc[0] || '', 20, y + 14);
+    y += 20;
+  });
+
   /* ═══ CARDIO & HEART RATE ZONES ═══ */
   y = needPage(doc, y, 70);
   if (y < 25) y = 20;
