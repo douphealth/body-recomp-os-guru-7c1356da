@@ -986,14 +986,6 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
 
   y += 60;
 
-  // Notes
-  y = needPage(doc, y, 55);
-  y = section(doc, y, 'Personal Notes');
-  rRect(doc, 15, y, pw - 30, 48, 3, CARD, RULE);
-  for (let i = 0; i < 5; i++) {
-    hLine(doc, 22, y + 9 + i * 8, pw - 22, [230, 230, 235] as RGB, 0.15);
-  }
-
   /* ═══ DAILY LOG TEMPLATE (printable) ═══ */
   doc.addPage();
   whiteBg(doc);
