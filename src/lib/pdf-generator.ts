@@ -282,10 +282,68 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   doc.text(`Generated ${today}  |  Formulas: Mifflin-St Jeor + Katch-McArdle  |  Diet: ${inputs.dietStyle}`, pw / 2, ph - 22, { align: 'center' });
   doc.text('For informational purposes only. Consult a healthcare professional before beginning any program.', pw / 2, ph - 17, { align: 'center' });
 
-  /* ═══ PAGE 2: SCIENCE & METHODOLOGY ═══ */
+  /* ═══ PAGE 2: HOW TO USE THIS GUIDE ═══ */
   doc.addPage();
   whiteBg(doc);
   let y = 20;
+  y = section(doc, y, 'How To Use This Guide');
+
+  rRect(doc, 15, y, pw - 30, 18, 3, SOFT_RED, [240, 200, 200] as RGB);
+  doc.setFontSize(8.5);
+  doc.setFont('helvetica', 'normal');
+  tc(doc, BODY);
+  doc.text('Read this once. Then keep the guide on your phone or printed by your kitchen.', 22, y + 7);
+  doc.setFont('helvetica', 'bold');
+  tc(doc, RED);
+  doc.text('Consistency over perfection. Track. Adjust. Repeat.', 22, y + 13);
+  y += 24;
+
+  const usage = [
+    { t: '1. Daily Anchors', d: `Hit your calorie target (${plan.calorieTarget} kcal) within ±100. Hit your protein floor (${plan.proteinGrams}g) every single day — non-negotiable.` },
+    { t: '2. Training Days', d: `${inputs.workoutFrequency} sessions/week. Warm up 5-8 min, then follow the day's prescription. Log every working set: weight, reps, RPE.` },
+    { t: '3. Progressive Overload', d: 'Add reps before load. Hit the top of your rep range across all working sets → add 2.5-5kg next session. This is how you grow / preserve muscle.' },
+    { t: '4. Cardio & Steps', d: `Daily steps target: ${inputs.stepCount.toLocaleString()}. Cardio sessions are scheduled separately — do them on rest days or after lifting.` },
+    { t: '5. Weekly Check-in', d: 'Same morning, same conditions: weigh in, photo (front/side), waist measurement. Use the 4-week trend, not the daily number.' },
+    { t: '6. Adjust Every 2 Weeks', d: inputs.goal === 'fat-loss' ? 'If average weight has not moved in 2 weeks → drop calories by 100-150 OR add 1k steps/day.' : inputs.goal === 'lean-muscle' ? 'If weight is not up 0.25-0.5% bodyweight / week → add 100-150 kcal (mostly carbs).' : 'Track waist + lifts. If waist drops and lifts climb, plan is working — hold the line.' },
+    { t: '7. Phase Transitions', d: 'Each 2-week phase changes your sets/reps/rest. Read the phase header each week before training. Deload week (W7) is mandatory — earned recovery.' },
+    { t: '8. The Three Non-Negotiables', d: 'Sleep 7-9h. Hit protein. Show up to training. If only one of these is happening → fix that first before tweaking anything else.' },
+  ];
+
+  usage.forEach((u) => {
+    y = needPage(doc, y, 18);
+    fc(doc, RED);
+    doc.circle(19, y + 2, 1.6, 'F');
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    tc(doc, DARK);
+    doc.text(clean(u.t), 24, y + 3);
+    y += 5;
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    tc(doc, BODY);
+    const lines = doc.splitTextToSize(clean(u.d), pw - 44);
+    doc.text(lines, 24, y + 3);
+    y += lines.length * 4 + 6;
+  });
+
+  // Quick legend
+  y = needPage(doc, y, 30);
+  rRect(doc, 15, y, pw - 30, 22, 3, CARD, RULE);
+  doc.setFontSize(7);
+  doc.setFont('helvetica', 'bold');
+  tc(doc, RED);
+  doc.text('LEGEND', 22, y + 6);
+  doc.setFontSize(7);
+  doc.setFont('helvetica', 'normal');
+  tc(doc, BODY);
+  doc.text('RPE = Rate of Perceived Exertion (1-10).  RIR = Reps in Reserve.  LBM = Lean Body Mass.  TDEE = Total Daily Energy Expenditure.', 22, y + 12);
+  doc.text('Z2 = aerobic / fat-oxidation zone.  AMRAP = As Many Reps As Possible.  EMOM = Every Minute on the Minute.', 22, y + 17);
+
+  /* ═══ SCIENCE & METHODOLOGY ═══ */
+  doc.addPage();
+  whiteBg(doc);
+  y = 20;
+
   y = section(doc, y, 'The Science Behind Your Plan');
 
   rRect(doc, 15, y, pw - 30, 20, 3, SOFT_BLUE, [200, 215, 240]);
