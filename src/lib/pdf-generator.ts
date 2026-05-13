@@ -669,35 +669,49 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
       doc.text(clean(`${day.day} -- ${day.focus}`), 20, y);
       y += 5;
 
+      // Column anchors (mm) — widened to prevent overlap on long prescriptions
+      const colExercise = 25;
+      const colSets = pw - 82;
+      const colRpe = pw - 40;
+      const colRest = pw - 22;
+      const exerciseMaxW = colSets - colExercise - 3;
+      const setsMaxW = colRpe - colSets - 3;
+
       doc.setFontSize(6);
       doc.setFont('helvetica', 'bold');
       tc(doc, LABEL);
-      doc.text('EXERCISE', 25, y);
-      doc.text('SETS x REPS', pw - 65, y);
-      doc.text('RPE', pw - 35, y);
-      doc.text('REST', pw - 22, y, { align: 'right' });
+      doc.text('EXERCISE', colExercise, y);
+      doc.text('SETS x REPS', colSets, y);
+      doc.text('RPE', colRpe, y);
+      doc.text('REST', colRest, y, { align: 'right' });
       y += 4;
 
       day.exercises.forEach(ex => {
+        const nameLines = doc.splitTextToSize(clean(ex.name), exerciseMaxW);
+        const setsRaw = `${ex.sets} x ${clean(ex.reps)}`;
+        const setsLines = doc.splitTextToSize(setsRaw, setsMaxW);
+        const rowLines = Math.max(nameLines.length, setsLines.length);
+
         doc.setFontSize(8);
         doc.setFont('helvetica', 'normal');
         tc(doc, BODY);
         fc(doc, LABEL);
         doc.circle(22, y - 0.8, 0.6, 'F');
-        doc.text(clean(ex.name), 25, y);
+        doc.text(nameLines, colExercise, y);
         doc.setFont('helvetica', 'bold');
         tc(doc, DARK);
-        doc.text(`${ex.sets} x ${clean(ex.reps)}`, pw - 65, y);
-        if (ex.rpe) { doc.setFont('helvetica', 'normal'); tc(doc, RED); doc.text(ex.rpe, pw - 35, y); }
-        if (ex.rest) { doc.setFont('helvetica', 'normal'); tc(doc, LABEL); doc.text(clean(ex.rest), pw - 22, y, { align: 'right' }); }
+        doc.text(setsLines, colSets, y);
+        if (ex.rpe) { doc.setFont('helvetica', 'normal'); tc(doc, RED); doc.text(clean(ex.rpe), colRpe, y); }
+        if (ex.rest) { doc.setFont('helvetica', 'normal'); tc(doc, LABEL); doc.text(clean(ex.rest), colRest, y, { align: 'right' }); }
+        y += rowLines * 4 + 1.5;
         if (ex.notes) {
           doc.setFontSize(6.5);
           doc.setFont('helvetica', 'italic');
           tc(doc, LABEL);
-          doc.text(clean(ex.notes), 28, y + 4);
-          y += 4;
+          const noteLines = doc.splitTextToSize(clean(ex.notes), exerciseMaxW + 30);
+          doc.text(noteLines, 28, y);
+          y += noteLines.length * 3.2 + 1;
         }
-        y += 5.5;
       });
       y += 2;
     });
