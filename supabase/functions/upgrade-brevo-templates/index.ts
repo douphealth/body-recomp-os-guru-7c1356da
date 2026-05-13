@@ -266,7 +266,7 @@ const T6 = {
       sig() +
       ps('Day 14 → the inflection point. Week 4 is where most plans break — the scale stalls, motivation dips, the body is shifting but you can\'t see it yet. The fix is the most important email in this series. Don\'t miss it.'),
     footerCta:
-      btn(utm('tools/one-rep-max-calculator/', 'lifting'), 'Calculate My 1RMs') +
+      btn(utm('free-fitness-calculators/one-rep-max-calculator/', 'lifting'), 'Calculate My 1RMs') +
       small('Stuck on a lift? Reply with the exercise + your current weights × reps. I\'ll send back the next 3-week progression I\'d use.'),
   }),
 };
