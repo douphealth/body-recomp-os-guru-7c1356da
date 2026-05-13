@@ -32,11 +32,11 @@ const Results = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  // Capture UTM on first load + open email gate ~10s after results render (once per visitor)
+  // Capture UTM on first load + open email gate ~25s after results render (once per visitor)
   useEffect(() => {
     captureUTM();
     if (hasSubscribed() || loading) return;
-    const t = setTimeout(() => setEmailGateOpen(true), 10000);
+    const t = setTimeout(() => setEmailGateOpen(true), 25000);
     return () => clearTimeout(t);
   }, [loading]);
 
