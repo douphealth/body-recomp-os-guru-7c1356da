@@ -15,6 +15,7 @@ import NumbersTab from '@/components/results/NumbersTab';
 import TrainingTab from '@/components/results/TrainingTab';
 import RecoveryTab from '@/components/results/RecoveryTab';
 import ScienceTab from '@/components/results/ScienceTab';
+import TodayPanel from '@/components/results/TodayPanel';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { calculatePlan, getContextualLinks, type UserInputs, type PlanResults } from '@/lib/calculations';
 import { trackResultView } from '@/lib/tracking';
