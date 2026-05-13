@@ -61,6 +61,43 @@ const TrainingTab = ({ plan }: Props) => {
 
   return (
     <div className="space-y-4">
+      {/* Streak + plan-wide completion */}
+      <div className="grid sm:grid-cols-2 gap-3">
+        <StreakCard
+          title="Training Streak"
+          isDoneToday={streak.isDoneToday}
+          toggleToday={streak.toggleToday}
+          streak={streak.streak}
+          totalDone={streak.totalDone}
+          last7={streak.last7}
+          cta="Mark today's session done"
+          doneCta="Session logged for today"
+        />
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-card to-card/50 p-4"
+        >
+          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Plan Completion</p>
+          <div className="flex items-baseline gap-2 mt-1 mb-2">
+            <CheckCircle2 className={`h-5 w-5 ${completionPct > 0 ? 'text-primary' : 'text-muted-foreground/40'}`} />
+            <span className="text-3xl font-bold font-['Oswald'] tracking-tight text-primary">{completionPct}%</span>
+            <span className="text-[11px] text-muted-foreground">{completedSessions}/{totalSessions} sessions</span>
+          </div>
+          <div className="h-1.5 rounded-full bg-secondary/40 overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${completionPct}%` }}
+              transition={{ duration: 0.6 }}
+              className="h-full bg-gradient-to-r from-primary to-orange-400 rounded-full"
+            />
+          </div>
+          <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
+            Tick each session in the weekly checklist below as you finish.
+          </p>
+        </motion.div>
+      </div>
+
       {/* 8-Week Phase Timeline */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
