@@ -29,13 +29,17 @@ const InlineEmailCapture = ({
   const [firstName, setFirstName] = useState('');
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
-  const [hidden, setHidden] = useState(false);
+  const [alreadySubscribed, setAlreadySubscribed] = useState(false);
 
   useEffect(() => {
-    if (hasSubscribed()) setHidden(true);
+    if (hasSubscribed()) setAlreadySubscribed(true);
   }, []);
 
-  if (hidden) return null;
+  const resetSubscription = () => {
+    try { localStorage.removeItem(STORAGE_KEY); } catch {}
+    setAlreadySubscribed(false);
+    setDone(false);
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
