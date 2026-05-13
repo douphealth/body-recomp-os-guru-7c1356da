@@ -106,9 +106,9 @@ const T2 = {
       sig() +
       ps('Your plan is built on 12+ data points — bodyweight, body fat, training history, age, sex, NEAT, dietary preference and more. If anything feels off in the first week, hit reply. I\'ll personally help you re-tune.'),
     footerCta:
-      p('<strong style="color:' + TEXT + ';">Open your full plan + PDF any time</strong> — share with your training partner or the friend who keeps starting Monday:') +
-      btn(utm('build-my-plan/results/', 'welcome'), 'Open My Plan + PDF') +
-      small('Bonus reads: ' + a(utm('tools/tdee-calculator/', 'welcome'), 'TDEE calculator') + ' · ' + a(utm('tools/macro-calculator/', 'welcome'), 'Macro calculator') + ' · ' + a(utm('tools/protein-calculator/', 'welcome'), 'Protein needs by goal')),
+      p('<strong style="color:' + TEXT + ';">Re-open the planner any time</strong> — your numbers are derived from the inputs you provided. To view your dashboard or download the PDF, re-enter the wizard on the device you used:') +
+      btn(utm('build-my-plan/', 'welcome'), 'Open The Planner') +
+      small('Free tools you can use right now (no login needed): ' + a(utm('free-fitness-calculators/tdee-calculator/', 'welcome'), 'TDEE calculator') + ' · ' + a(utm('free-fitness-calculators/macro-calculator/', 'welcome'), 'Macro calculator') + ' · ' + a(utm('free-fitness-calculators/protein-calculator/', 'welcome'), 'Protein needs by goal')),
   }),
 };
 
