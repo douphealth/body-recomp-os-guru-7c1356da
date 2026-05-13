@@ -477,12 +477,12 @@ function generateCardioPlan(inputs: UserInputs): CardioBlock {
 
   if (goal === 'fat-loss') {
     return {
-      type: runningInterest ? 'Running + Walking' : 'Low-Impact Steady State',
+      type: runningInterest ? 'Running + Zone-2 Walking' : 'Zone-2 Steady State + 1 HIIT',
       sessionsPerWeek: runningInterest ? 3 : 4,
-      duration: '25-40 minutes',
-      intensity: 'Zone 2 (conversational pace) + 1 HIIT session/week',
-      notes: baseSteps,
-      runningPlan: runningInterest ? 'Start with Couch-to-5K progression. Week 1-2: Run 1min/Walk 2min x 8. Week 3-4: Run 2min/Walk 1min x 8. Week 5-6: Run 3min/Walk 1min x 6. Week 7-8: Run 20-25 min continuous.' : undefined,
+      duration: 'Progressive: 20→40 min over 8 weeks',
+      intensity: 'Zone 2 (60-70% HRmax, conversational) + 1 weekly HIIT (Zone 4-5)',
+      notes: `${baseSteps}. Cardio progression: W1-2 → 20 min × ${runningInterest ? 3 : 4}. W3-4 → 25 min. W5-6 → 30 min + 1 HIIT (4×4 min @ Z4 / 3 min Z2). W7 deload (20 min easy). W8 → re-test 30-min Z2 distance.`,
+      runningPlan: runningInterest ? 'Couch-to-5K-style ramp. W1-2: 1 min run / 2 min walk × 8. W3-4: 2 min run / 1 min walk × 8. W5-6: Run 5 min / walk 1 min × 5 + 1 tempo session (4×3 min @ threshold). W7: easy 20 min. W8: continuous 25-30 min @ Z2.' : undefined,
       heartRateZones: hrZones,
     };
   }
