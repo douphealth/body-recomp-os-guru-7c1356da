@@ -101,29 +101,45 @@ const ScienceTab = ({ plan, inputs, contextLinks, setInputs, setPlan }: Props) =
 
       {/* Science notes */}
       <div className="space-y-3">
-        {plan.scienceNotes.map((note, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
-            className="stat-card group"
-          >
-            <div className="flex items-start gap-3">
-              <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/15 transition-colors">
-                <FlaskConical className="h-4 w-4 text-primary" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-bold font-['Oswald'] tracking-wider mb-1.5">{note.title}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed mb-3">{note.explanation}</p>
-                <div className="flex items-start gap-2 px-3 py-2 rounded-lg bg-secondary/30 border border-border/30">
-                  <Quote className="h-3 w-3 text-primary/60 flex-shrink-0 mt-0.5" />
-                  <p className="text-[10px] text-muted-foreground/90 italic leading-relaxed">{note.citation}</p>
+        {plan.scienceNotes.map((note, i) => {
+          const sources = getSourcesFor(note.title);
+          return (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05 }}
+              className="stat-card group"
+            >
+              <div className="flex items-start gap-3">
+                <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/15 transition-colors">
+                  <FlaskConical className="h-4 w-4 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-bold font-['Oswald'] tracking-wider mb-1.5">{note.title}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed mb-3">{note.explanation}</p>
+                  <div className="flex items-start gap-2 px-3 py-2 rounded-lg bg-secondary/30 border border-border/30 mb-2">
+                    <Quote className="h-3 w-3 text-primary/60 flex-shrink-0 mt-0.5" />
+                    <p className="text-[10px] text-muted-foreground/90 italic leading-relaxed">{note.citation}</p>
+                  </div>
+                  {sources.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {sources.map((s) => (
+                        <a key={s.url} href={s.url} target="_blank" rel="noopener noreferrer"
+                          onClick={() => trackInternalLinkClick(s.url, 'science_source')}
+                          className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-primary/10 text-primary hover:bg-primary/15 border border-primary/20 transition-all font-medium">
+                          <Link2 className="h-2.5 w-2.5" />
+                          <span className="truncate max-w-[180px]">{s.label}</span>
+                          <ExternalLink className="h-2.5 w-2.5 opacity-60" />
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* Recommended Reading */}
