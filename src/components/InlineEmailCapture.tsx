@@ -87,7 +87,17 @@ const InlineEmailCapture = ({
     >
       <div className="absolute -top-20 -right-20 w-72 h-72 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
 
-      {!done ? (
+      {alreadySubscribed && !done ? (
+        <div className="relative flex items-center gap-4 py-2">
+          <div className="w-12 h-12 rounded-full bg-primary/15 border-2 border-primary flex items-center justify-center flex-shrink-0">
+            <CheckCircle2 className="w-6 h-6 text-primary" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-bold font-['Oswald'] uppercase">You're already subscribed</h3>
+            <p className="text-sm text-muted-foreground">Your 21-day coaching series is queued. Want to use a different email? <button type="button" onClick={resetSubscription} className="underline text-primary hover:opacity-80">Subscribe again</button>.</p>
+          </div>
+        </div>
+      ) : !done ? (
         <div className="relative grid md:grid-cols-[1fr_auto] gap-5 items-center">
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-2">
