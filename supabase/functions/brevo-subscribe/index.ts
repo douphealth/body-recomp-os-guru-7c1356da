@@ -44,6 +44,27 @@ Deno.serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
+    const normalizedEmail = body.email.toLowerCase().trim();
+
+    // DB suppression pre-check (don't subscribe known-bad addresses).
+    const supaUrlPre = Deno.env.get('SUPABASE_URL');
+    const supaKeyPre = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if (supaUrlPre && supaKeyPre) {
+      const supRes = await fetch(
+        `${supaUrlPre}/rest/v1/email_suppressions?contact_email=eq.${encodeURIComponent(normalizedEmail)}&select=reason`,
+        { headers: { apikey: supaKeyPre, authorization: `Bearer ${supaKeyPre}` } },
+      ).catch(() => null);
+      if (supRes?.ok) {
+        const rows = await supRes.json().catch(() => []);
+        if (Array.isArray(rows) && rows.length > 0) {
+          return new Response(
+            JSON.stringify({ success: true, suppressed: true, reason: rows[0].reason }),
+            { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+          );
+        }
+      }
+    }
+
     const attributes: Record<string, unknown> = {
       FIRSTNAME: (body.firstName || '').slice(0, 100),
       SOURCE: body.source,
@@ -57,18 +78,18 @@ Deno.serve(async (req) => {
       OPT_IN_DATE: new Date().toISOString(),
     };
 
-    // Source → Brevo list mapping. Set up via setup-marketing-stack.
+    // Source → Brevo list mapping. IDs from setup-marketing-stack output.
     const listIdBySource: Record<string, number> = {
-      plan_gate: 3,       // Body Recomp Subscribers
+      plan_gate: 7,       // Body Recomp Subscribers
       exit_popup: 4,      // Exit-Intent Popup
-      inline_results: 3,  // Body Recomp Subscribers
-      pdf_unlock: 3,      // Body Recomp Subscribers
+      inline_results: 7,  // Body Recomp Subscribers
+      pdf_unlock: 7,      // Body Recomp Subscribers
       footer: 5,          // Blog Subscribers
     };
-    const listIds = [listIdBySource[body.source] ?? 3];
+    const listIds = [listIdBySource[body.source] ?? 7];
 
     const payload: Record<string, unknown> = {
-      email: body.email.toLowerCase().trim(),
+      email: normalizedEmail,
       attributes,
       listIds,
       updateEnabled: true,

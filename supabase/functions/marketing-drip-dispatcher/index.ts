@@ -22,7 +22,7 @@ const SCHEDULE: Array<{ day: number; templateId: number }> = [
   { day: 21, templateId: 8 }, // Re-assess + next 8 weeks
 ];
 
-const DRIP_LIST_IDS = [3, 4];
+const DRIP_LIST_IDS = [7, 4];
 
 async function brevo(path: string, init: RequestInit = {}) {
   const r = await fetch(`${BREVO}${path}`, {
@@ -84,20 +84,22 @@ Deno.serve(async (req) => {
 
     const emails = contacts.map(c => c.email);
     const sentMap = new Map<string, Set<number>>();
+    const suppressedSet = new Set<string>();
     if (emails.length) {
-      const { data: logs } = await supabase
-        .from('email_drip_log')
-        .select('contact_email, template_id')
-        .in('contact_email', emails);
+      const [{ data: logs }, { data: sups }] = await Promise.all([
+        supabase.from('email_drip_log').select('contact_email, template_id').in('contact_email', emails),
+        supabase.from('email_suppressions').select('contact_email').in('contact_email', emails),
+      ]);
       for (const r of (logs || [])) {
         if (!sentMap.has(r.contact_email)) sentMap.set(r.contact_email, new Set());
         sentMap.get(r.contact_email)!.add(r.template_id);
       }
+      for (const s of (sups || [])) suppressedSet.add(s.contact_email);
     }
 
     for (const c of contacts) {
       const attrs = c.attributes || {};
-      if (attrs.BLACKLIST === 1 || c.emailBlacklisted) {
+      if (attrs.BLACKLIST === 1 || c.emailBlacklisted || suppressedSet.has(c.email)) {
         report.skipped_suppressed++;
         continue;
       }

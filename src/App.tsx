@@ -16,6 +16,7 @@ import MacroCalculator from "./pages/tools/MacroCalculator.tsx";
 import ProteinCalculator from "./pages/tools/ProteinCalculator.tsx";
 import OneRepMaxCalculator from "./pages/tools/OneRepMaxCalculator.tsx";
 import BodyFatCalculator from "./pages/tools/BodyFatCalculator.tsx";
+import Unsubscribe from "./pages/Unsubscribe.tsx";
 import LegacyRedirect from "./components/LegacyRedirect.tsx";
 import { PathRedirect, PlansSlugRedirect, ToolsSlugRedirect } from "./components/PathRedirect.tsx";
 import { ROUTES } from "./lib/routes.ts";
@@ -74,6 +75,8 @@ const App = () => (
           <Route path={ROUTES.protein} element={<ProteinCalculator />} />
           <Route path={ROUTES.oneRepMax} element={<OneRepMaxCalculator />} />
           <Route path={ROUTES.bodyFat} element={<BodyFatCalculator />} />
+          <Route path="/unsubscribe" element={<Unsubscribe />} />
+          <Route path="/email/unsubscribe" element={<Unsubscribe />} />
 
           {/* === Legacy → canonical 301-style redirects === */}
           <Route path="/app/body-recomp" element={<PathRedirect to={ROUTES.wizard} />} />

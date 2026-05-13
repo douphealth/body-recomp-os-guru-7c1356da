@@ -77,9 +77,44 @@ export type Database = {
         }
         Relationships: []
       }
+      email_suppressions: {
+        Row: {
+          contact_email: string
+          created_at: string
+          id: number
+          reason: string
+          source: string | null
+        }
+        Insert: {
+          contact_email: string
+          created_at?: string
+          id?: number
+          reason?: string
+          source?: string | null
+        }
+        Update: {
+          contact_email?: string
+          created_at?: string
+          id?: number
+          reason?: string
+          source?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      email_lead_engagement: {
+        Row: {
+          clicks: number | null
+          contact_email: string | null
+          emails_sent: number | null
+          last_event_at: string | null
+          last_sent_at: string | null
+          opens: number | null
+          unique_templates: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
