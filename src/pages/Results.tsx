@@ -103,6 +103,13 @@ const Results = () => {
         </div>
       </div>
 
+      <InlineEmailCapture
+        goalLabel={plan.goalLabel}
+        calorieTarget={plan.calorieTarget}
+        proteinGrams={plan.proteinGrams}
+        workoutFrequency={inputs.workoutFrequency}
+      />
+
       <TodayPanel plan={plan} inputs={inputs} contextLinks={contextLinks} />
 
       {isMobile ? (
