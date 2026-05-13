@@ -92,22 +92,24 @@ const Results = () => {
 
       {isMobile ? (
         <Accordion type="single" collapsible defaultValue="numbers" className="space-y-2">
-          <AccordionItem value="numbers" className="stat-card !p-0 overflow-hidden border-border">
-            <AccordionTrigger className="px-4 py-3 hover:no-underline font-['Oswald'] text-sm tracking-wider">YOUR NUMBERS</AccordionTrigger>
-            <AccordionContent className="px-4 pb-4"><NumbersTab plan={plan} inputs={inputs} /></AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="training" className="stat-card !p-0 overflow-hidden border-border">
-            <AccordionTrigger className="px-4 py-3 hover:no-underline font-['Oswald'] text-sm tracking-wider">TRAINING PLAN</AccordionTrigger>
-            <AccordionContent className="px-4 pb-4"><TrainingTab plan={plan} /></AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="recovery" className="stat-card !p-0 overflow-hidden border-border">
-            <AccordionTrigger className="px-4 py-3 hover:no-underline font-['Oswald'] text-sm tracking-wider">CARDIO & RECOVERY</AccordionTrigger>
-            <AccordionContent className="px-4 pb-4"><RecoveryTab plan={plan} checkedHabits={checkedHabits} toggleHabit={toggleHabit} /></AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="science" className="stat-card !p-0 overflow-hidden border-border">
-            <AccordionTrigger className="px-4 py-3 hover:no-underline font-['Oswald'] text-sm tracking-wider">SCIENCE & NEXT STEPS</AccordionTrigger>
-            <AccordionContent className="px-4 pb-4"><ScienceTab plan={plan} inputs={inputs} contextLinks={contextLinks} setInputs={setInputs} setPlan={setPlan} /></AccordionContent>
-          </AccordionItem>
+          {[
+            { v: 'numbers', label: 'YOUR NUMBERS', Icon: Calculator, content: <NumbersTab plan={plan} inputs={inputs} /> },
+            { v: 'training', label: 'TRAINING PLAN', Icon: Dumbbell, content: <TrainingTab plan={plan} /> },
+            { v: 'recovery', label: 'CARDIO & RECOVERY', Icon: HeartPulse, content: <RecoveryTab plan={plan} checkedHabits={checkedHabits} toggleHabit={toggleHabit} /> },
+            { v: 'science', label: 'SCIENCE & NEXT STEPS', Icon: FlaskConical, content: <ScienceTab plan={plan} inputs={inputs} contextLinks={contextLinks} setInputs={setInputs} setPlan={setPlan} /> },
+          ].map(({ v, label, Icon, content }) => (
+            <AccordionItem key={v} value={v} className="stat-card !p-0 overflow-hidden border-border data-[state=open]:border-primary/30">
+              <AccordionTrigger className="px-4 py-3.5 hover:no-underline font-['Oswald'] text-sm tracking-wider gap-3">
+                <span className="flex items-center gap-2.5">
+                  <span className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Icon className="h-3.5 w-3.5 text-primary" />
+                  </span>
+                  {label}
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4">{content}</AccordionContent>
+            </AccordionItem>
+          ))}
         </Accordion>
       ) : (
         <Tabs defaultValue="numbers" className="w-full">
