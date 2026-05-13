@@ -24,9 +24,22 @@ const RecoveryTab = ({ plan, checkedHabits, toggleHabit }: Props) => {
   const completed = checkedHabits.size;
   const total = plan.recoveryChecklist.length;
   const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const streak = useDailyStreak('recomp.recovery.streak');
 
   return (
     <div className="space-y-4">
+      <StreakCard
+        title="Recovery Streak"
+        isDoneToday={streak.isDoneToday}
+        toggleToday={streak.toggleToday}
+        streak={streak.streak}
+        totalDone={streak.totalDone}
+        last7={streak.last7}
+        cta="Mark today's recovery complete"
+        doneCta="Recovery logged for today"
+        accent="sky"
+      />
+
       {/* Cardio Hero */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
