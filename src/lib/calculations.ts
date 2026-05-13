@@ -167,135 +167,307 @@ function calculateHeartRateZones(age: number): { zone: string; bpm: string; purp
   ];
 }
 
+/* ─── Phase Scheme (true periodization per goal) ───
+   Linear periodization for fat-loss preserves strength via maintained intensity
+   while reducing fatigue. For lean-muscle, classic accumulation→intensification.
+   Recomp uses DUP-style undulation. Deload reduces volume ~50% per Bell et al. (2020).
+   Refs: Helms et al. (2014), Schoenfeld (2010), Rhea et al. (2003), Bell et al. (2020).
+*/
+interface PhaseScheme {
+  label: string;
+  intensityGuideline: string;
+  volumeChange: string;
+  compoundSets: number;
+  compoundReps: string;
+  compoundRpe: string;
+  compoundRest: string;
+  accessorySets: number;
+  accessoryReps: string;
+  accessoryRpe: string;
+  accessoryRest: string;
+  loadProgression: string;
+  finisher?: { name: string; sets: number; reps: string; rpe: string; rest: string; notes: string };
+  deload?: boolean;
+}
+
+function getPhaseScheme(goal: UserInputs['goal'], phaseIdx: number): PhaseScheme {
+  // phaseIdx: 0..3 (Weeks 1-2, 3-4, 5-6, 7-8)
+  if (goal === 'fat-loss') {
+    const phases: PhaseScheme[] = [
+      {
+        label: 'Foundation — Movement Quality & Capacity',
+        intensityGuideline: 'RPE 6-7 across the board. Leave 3 reps in reserve.',
+        volumeChange: 'Hard sets per muscle group / week: 10-12 (within MEV-MAV range)',
+        compoundSets: 3, compoundReps: '8-10', compoundRpe: '6-7', compoundRest: '2:00',
+        accessorySets: 3, accessoryReps: '10-12', accessoryRpe: '7-8', accessoryRest: '60-90s',
+        loadProgression: 'Establish baseline weights. Log every set.',
+        finisher: { name: 'Metabolic Finisher (KB swings or bike intervals)', sets: 3, reps: '40s on / 20s off', rpe: '8', rest: '60s', notes: '8-10 min total. Optional but recommended for fat loss.' },
+      },
+      {
+        label: 'Strength Preservation — Hold the Bar',
+        intensityGuideline: 'RPE 7-8 on compounds. Maintain or add 2.5-5kg vs P1.',
+        volumeChange: 'Hard sets per muscle group / week: 10-12 (volume held — intensity up)',
+        compoundSets: 4, compoundReps: '5-7', compoundRpe: '7-8', compoundRest: '2:30-3:00',
+        accessorySets: 3, accessoryReps: '8-12', accessoryRpe: '8', accessoryRest: '75s',
+        loadProgression: 'Add load before adding reps. Strength = muscle insurance in a deficit.',
+        finisher: { name: 'Density Finisher (paired DB carries + push-ups)', sets: 3, reps: '45s circuit', rpe: '8', rest: '90s', notes: 'Heart-rate up; preserves work capacity.' },
+      },
+      {
+        label: 'Density Phase — Same Work, Less Rest',
+        intensityGuideline: 'RPE 8 on accessories. Compress rest periods 25-30%.',
+        volumeChange: 'Hard sets / muscle / week: 12. Density up, total volume steady.',
+        compoundSets: 4, compoundReps: '5-7', compoundRpe: '7-8', compoundRest: '2:00',
+        accessorySets: 3, accessoryReps: '10-15', accessoryRpe: '8-9', accessoryRest: '45-60s',
+        loadProgression: 'Hold loads from P2. Win the workout in less time.',
+        finisher: { name: 'EMOM Conditioning (10 cal row + 5 burpees / min)', sets: 8, reps: 'every 60s', rpe: '8-9', rest: 'remainder of minute', notes: '8-min EMOM. Great metabolic stimulus.' },
+      },
+      {
+        label: 'Deload & Re-Test — Rebound Week',
+        intensityGuideline: 'RPE 5-6. Half the sets, same weights. Re-test top set in W8.',
+        volumeChange: 'Hard sets reduced ~50% (Bell et al. 2020). Recovery is the work.',
+        compoundSets: 2, compoundReps: '5', compoundRpe: '5-6', compoundRest: '2:00',
+        accessorySets: 2, accessoryReps: '10', accessoryRpe: '6-7', accessoryRest: '60s',
+        loadProgression: 'W7 deload. W8: optional 1-rep top-set test on key lifts.',
+        deload: true,
+      },
+    ];
+    return phases[phaseIdx];
+  }
+  if (goal === 'lean-muscle') {
+    const phases: PhaseScheme[] = [
+      {
+        label: 'Accumulation — Volume Base',
+        intensityGuideline: 'RPE 6-7. Build technical proficiency. 3 RIR.',
+        volumeChange: 'Hard sets / muscle / week: 12-14 (MEV → MAV).',
+        compoundSets: 3, compoundReps: '8-10', compoundRpe: '6-7', compoundRest: '2:00',
+        accessorySets: 3, accessoryReps: '10-12', accessoryRpe: '7-8', accessoryRest: '90s',
+        loadProgression: 'Add 1 rep / week before adding load.',
+      },
+      {
+        label: 'Hypertrophy Build — Add Volume',
+        intensityGuideline: 'RPE 7-8. 2 RIR.',
+        volumeChange: '+1 set on compounds. Hard sets / muscle / week: 14-18.',
+        compoundSets: 4, compoundReps: '8-10', compoundRpe: '7-8', compoundRest: '2:00',
+        accessorySets: 4, accessoryReps: '10-12', accessoryRpe: '8', accessoryRest: '90s',
+        loadProgression: 'Double progression: hit top reps × all sets → +2.5-5kg.',
+      },
+      {
+        label: 'Intensification — Heavier, Closer to Failure',
+        intensityGuideline: 'RPE 8-9. 0-1 RIR on last sets. Add cluster set on top compound.',
+        volumeChange: 'Hard sets / muscle / week: 14-16. Intensity peaks.',
+        compoundSets: 4, compoundReps: '5-8', compoundRpe: '8-9', compoundRest: '2:30-3:00',
+        accessorySets: 4, accessoryReps: '8-12', accessoryRpe: '8-9', accessoryRest: '90s',
+        loadProgression: 'Push load. Last set: AMRAP @ RPE 9.',
+      },
+      {
+        label: 'Deload & Test — Realize Gains',
+        intensityGuideline: 'RPE 5-6. Half volume. W8: test 5RM or 1RM on 1-2 main lifts.',
+        volumeChange: 'Hard sets ~50% reduction. Movement quality focus.',
+        compoundSets: 2, compoundReps: '5', compoundRpe: '5-6', compoundRest: '2:00',
+        accessorySets: 2, accessoryReps: '10', accessoryRpe: '6', accessoryRest: '60s',
+        loadProgression: 'Recover, then test PRs in week 8.',
+        deload: true,
+      },
+    ];
+    return phases[phaseIdx];
+  }
+  // recomp — DUP undulation
+  const phases: PhaseScheme[] = [
+    {
+      label: 'Foundation — Mixed Stimulus',
+      intensityGuideline: 'RPE 7. Alternate strength/hypertrophy session-to-session.',
+      volumeChange: 'Hard sets / muscle / week: 10-14.',
+      compoundSets: 4, compoundReps: '6-8', compoundRpe: '7', compoundRest: '2:30',
+      accessorySets: 3, accessoryReps: '10-12', accessoryRpe: '7-8', accessoryRest: '75s',
+      loadProgression: 'Track both top set and total tonnage.',
+    },
+    {
+      label: 'Build — Undulating Loading',
+      intensityGuideline: 'RPE 7-8. Heavy day + volume day per body part.',
+      volumeChange: '+1 set top compound. Hard sets: 12-16.',
+      compoundSets: 4, compoundReps: '5-8', compoundRpe: '7-8', compoundRest: '2:30',
+      accessorySets: 4, accessoryReps: '10-15', accessoryRpe: '8', accessoryRest: '75s',
+      loadProgression: 'Heavy day: +2.5kg. Volume day: +1 rep.',
+    },
+    {
+      label: 'Peak — Density + Intensity',
+      intensityGuideline: 'RPE 8. Mini-circuits on accessories. 1 metabolic finisher.',
+      volumeChange: 'Hard sets: 14-16. Compress accessory rest.',
+      compoundSets: 4, compoundReps: '5-8', compoundRpe: '8', compoundRest: '2:00',
+      accessorySets: 3, accessoryReps: '12-15', accessoryRpe: '8-9', accessoryRest: '60s',
+      loadProgression: 'Hold loads, raise density.',
+      finisher: { name: 'Conditioning Finisher (sled push or bike sprints)', sets: 4, reps: '30s on / 90s off', rpe: '9', rest: '90s', notes: 'Optional. Skip if recovery is poor.' },
+    },
+    {
+      label: 'Deload — Reset & Reassess',
+      intensityGuideline: 'RPE 5-6. Re-measure body comp at end of W8.',
+      volumeChange: '~50% volume reduction. Movement focus.',
+      compoundSets: 2, compoundReps: '6', compoundRpe: '5-6', compoundRest: '2:00',
+      accessorySets: 2, accessoryReps: '10', accessoryRpe: '6', accessoryRest: '60s',
+      loadProgression: 'Reassess and plan next 8-week block.',
+      deload: true,
+    },
+  ];
+  return phases[phaseIdx];
+}
+
+interface BaseExercise { name: string; type: 'compound' | 'accessory'; notes?: string }
+
 function generateTrainingPlan(inputs: UserInputs): TrainingWeek[] {
   const { workoutFrequency, equipmentAccess, goal } = inputs;
   const isGym = equipmentAccess === 'gym';
 
-  const gymExercises = {
+  const gymPool: Record<string, BaseExercise[]> = {
     push: [
-      { name: 'Barbell Bench Press', sets: 4, reps: '6-8', rpe: '7-8', rest: '2-3 min', notes: 'Flat bench, full ROM' },
-      { name: 'Overhead Press', sets: 3, reps: '8-10', rpe: '7-8', rest: '2 min' },
-      { name: 'Incline Dumbbell Press', sets: 3, reps: '10-12', rpe: '7-8', rest: '90s' },
-      { name: 'Cable Lateral Raises', sets: 3, reps: '12-15', rpe: '8-9', rest: '60s' },
-      { name: 'Tricep Pushdowns', sets: 3, reps: '12-15', rpe: '8-9', rest: '60s' },
+      { name: 'Barbell Bench Press', type: 'compound', notes: 'Flat bench, full ROM. Pause briefly on chest.' },
+      { name: 'Overhead Press', type: 'compound', notes: 'Standing or seated. Brace core.' },
+      { name: 'Incline Dumbbell Press', type: 'accessory' },
+      { name: 'Cable Lateral Raises', type: 'accessory' },
+      { name: 'Tricep Rope Pushdowns', type: 'accessory' },
     ],
     pull: [
-      { name: 'Barbell Rows', sets: 4, reps: '6-8', rpe: '7-8', rest: '2-3 min', notes: 'Pendlay or bent-over' },
-      { name: 'Pull-ups / Lat Pulldowns', sets: 3, reps: '8-12', rpe: '7-8', rest: '2 min' },
-      { name: 'Seated Cable Rows', sets: 3, reps: '10-12', rpe: '7-8', rest: '90s' },
-      { name: 'Face Pulls', sets: 3, reps: '15-20', rpe: '7-8', rest: '60s', notes: 'External rotation at top' },
-      { name: 'Barbell Curls', sets: 3, reps: '10-12', rpe: '8-9', rest: '60s' },
+      { name: 'Barbell Row (Pendlay or Bent-Over)', type: 'compound', notes: 'Hinge at hips. Pull to lower chest.' },
+      { name: 'Pull-ups / Lat Pulldowns', type: 'compound', notes: 'Full hang at bottom.' },
+      { name: 'Seated Cable Rows', type: 'accessory' },
+      { name: 'Face Pulls', type: 'accessory', notes: 'External rotation at top — shoulder health.' },
+      { name: 'Incline DB Curls', type: 'accessory' },
     ],
     legs: [
-      { name: 'Barbell Back Squats', sets: 4, reps: '5-8', rpe: '7-8', rest: '3 min', notes: 'Below parallel' },
-      { name: 'Romanian Deadlifts', sets: 3, reps: '8-10', rpe: '7-8', rest: '2 min', notes: 'Hinge at hips, slight knee bend' },
-      { name: 'Leg Press', sets: 3, reps: '10-12', rpe: '8', rest: '90s' },
-      { name: 'Walking Lunges', sets: 3, reps: '12 each', rpe: '7-8', rest: '90s' },
-      { name: 'Standing Calf Raises', sets: 4, reps: '12-15', rpe: '8-9', rest: '60s', notes: 'Full stretch at bottom' },
+      { name: 'Barbell Back Squat', type: 'compound', notes: 'At or below parallel. Brace before descent.' },
+      { name: 'Romanian Deadlift', type: 'compound', notes: 'Hinge at hips, soft knees. Feel hamstrings stretch.' },
+      { name: 'Leg Press', type: 'accessory' },
+      { name: 'Walking Lunges', type: 'accessory' },
+      { name: 'Standing Calf Raises', type: 'accessory', notes: 'Pause 1s at full stretch.' },
     ],
     upper: [
-      { name: 'Dumbbell Bench Press', sets: 4, reps: '8-10', rpe: '7-8', rest: '2 min' },
-      { name: 'Dumbbell Rows', sets: 4, reps: '8-10', rpe: '7-8', rest: '2 min', notes: 'One arm at a time' },
-      { name: 'Overhead Press', sets: 3, reps: '10-12', rpe: '7-8', rest: '90s' },
-      { name: 'Lat Pulldowns', sets: 3, reps: '10-12', rpe: '7-8', rest: '90s' },
-      { name: 'Lateral Raises', sets: 3, reps: '12-15', rpe: '8-9', rest: '60s' },
+      { name: 'Dumbbell Bench Press', type: 'compound' },
+      { name: 'Chest-Supported Row', type: 'compound' },
+      { name: 'Seated DB Shoulder Press', type: 'accessory' },
+      { name: 'Lat Pulldowns', type: 'accessory' },
+      { name: 'Lateral Raises', type: 'accessory' },
     ],
     lower: [
-      { name: 'Conventional Deadlifts', sets: 4, reps: '4-6', rpe: '7-8', rest: '3-4 min', notes: 'Brace core, hinge pattern' },
-      { name: 'Front Squats', sets: 3, reps: '8-10', rpe: '7-8', rest: '2 min' },
-      { name: 'Hip Thrusts', sets: 3, reps: '10-12', rpe: '8', rest: '90s', notes: 'Pause at top, squeeze glutes' },
-      { name: 'Leg Curls', sets: 3, reps: '12-15', rpe: '8-9', rest: '60s' },
-      { name: 'Calf Raises (Seated)', sets: 4, reps: '15-20', rpe: '8-9', rest: '60s' },
+      { name: 'Conventional Deadlift', type: 'compound', notes: 'Brace, hinge, drive floor away.' },
+      { name: 'Front Squat or Hack Squat', type: 'compound' },
+      { name: 'Hip Thrust', type: 'accessory', notes: 'Pause + squeeze at top.' },
+      { name: 'Lying Leg Curl', type: 'accessory' },
+      { name: 'Seated Calf Raise', type: 'accessory' },
     ],
     core: [
-      { name: 'Hanging Leg Raises', sets: 3, reps: '12-15', rpe: '8', rest: '60s' },
-      { name: 'Cable Woodchops', sets: 3, reps: '12 each', rpe: '7-8', rest: '60s' },
-      { name: 'Ab Wheel Rollouts', sets: 3, reps: '10-12', rpe: '8-9', rest: '60s' },
+      { name: 'Hanging Leg Raises', type: 'accessory' },
+      { name: 'Cable Woodchops', type: 'accessory' },
+      { name: 'Ab Wheel Rollouts', type: 'accessory' },
     ],
   };
 
-  const homeExercises = {
+  const homePool: Record<string, BaseExercise[]> = {
     push: [
-      { name: 'Push-ups (varied grips)', sets: 4, reps: '15-20', rpe: '7-8', rest: '60s', notes: 'Tempo: 2s down, 1s up' },
-      { name: 'Pike Push-ups', sets: 3, reps: '10-12', rpe: '7-8', rest: '60s' },
-      { name: 'Diamond Push-ups', sets: 3, reps: '12-15', rpe: '8-9', rest: '60s' },
-      { name: 'Dips (chair)', sets: 3, reps: '10-15', rpe: '7-8', rest: '60s' },
+      { name: 'Push-ups (varied grips)', type: 'compound', notes: 'Tempo 2-1-1. Elevate feet for progression.' },
+      { name: 'Pike Push-ups', type: 'compound' },
+      { name: 'Diamond Push-ups', type: 'accessory' },
+      { name: 'Chair / Bench Dips', type: 'accessory' },
     ],
     pull: [
-      { name: 'Doorframe Rows / Band Rows', sets: 4, reps: '12-15', rpe: '7-8', rest: '60s' },
-      { name: 'Resistance Band Pull-aparts', sets: 3, reps: '15-20', rpe: '7-8', rest: '45s' },
-      { name: 'Superman Holds', sets: 3, reps: '15-20', rpe: '7', rest: '45s' },
-      { name: 'Bicep Curls (bands/jugs)', sets: 3, reps: '12-15', rpe: '8-9', rest: '45s' },
+      { name: 'Doorframe Rows / Band Rows', type: 'compound', notes: 'Squeeze shoulder blades.' },
+      { name: 'Resistance Band Pull-aparts', type: 'accessory' },
+      { name: 'Superman Holds', type: 'accessory' },
+      { name: 'Bicep Curls (bands)', type: 'accessory' },
     ],
     legs: [
-      { name: 'Bodyweight Squats', sets: 4, reps: '20-25', rpe: '7-8', rest: '60s', notes: 'Add tempo for difficulty' },
-      { name: 'Bulgarian Split Squats', sets: 3, reps: '12 each', rpe: '8-9', rest: '90s' },
-      { name: 'Glute Bridges', sets: 3, reps: '15-20', rpe: '7-8', rest: '60s', notes: 'Single-leg for progression' },
-      { name: 'Step-ups', sets: 3, reps: '12 each', rpe: '7-8', rest: '60s' },
-      { name: 'Calf Raises', sets: 4, reps: '20-25', rpe: '8-9', rest: '45s' },
+      { name: 'Bodyweight Squat (tempo or weighted)', type: 'compound', notes: '3-1-1 tempo. Add backpack load.' },
+      { name: 'Bulgarian Split Squats', type: 'compound' },
+      { name: 'Glute Bridges (single-leg)', type: 'accessory' },
+      { name: 'Step-ups', type: 'accessory' },
+      { name: 'Calf Raises', type: 'accessory' },
     ],
     upper: [
-      { name: 'Push-ups', sets: 4, reps: '15-20', rpe: '7-8', rest: '60s' },
-      { name: 'Resistance Band Rows', sets: 4, reps: '12-15', rpe: '7-8', rest: '60s' },
-      { name: 'Pike Push-ups', sets: 3, reps: '10-12', rpe: '7-8', rest: '60s' },
-      { name: 'Band Pull-aparts', sets: 3, reps: '15-20', rpe: '7-8', rest: '45s' },
+      { name: 'Push-ups', type: 'compound' },
+      { name: 'Resistance Band Rows', type: 'compound' },
+      { name: 'Pike Push-ups', type: 'accessory' },
+      { name: 'Band Pull-aparts', type: 'accessory' },
     ],
     lower: [
-      { name: 'Jump Squats', sets: 4, reps: '12-15', rpe: '8', rest: '90s' },
-      { name: 'Single-leg Deadlifts', sets: 3, reps: '10 each', rpe: '7-8', rest: '60s' },
-      { name: 'Wall Sits', sets: 3, reps: '45-60s', rpe: '8-9', rest: '60s' },
-      { name: 'Lateral Lunges', sets: 3, reps: '12 each', rpe: '7-8', rest: '60s' },
+      { name: 'Jump Squats (or weighted squats)', type: 'compound' },
+      { name: 'Single-Leg Deadlift', type: 'compound' },
+      { name: 'Wall Sit', type: 'accessory' },
+      { name: 'Lateral Lunges', type: 'accessory' },
     ],
     core: [
-      { name: 'Planks', sets: 3, reps: '45-60s', rpe: '7-8', rest: '45s' },
-      { name: 'Bicycle Crunches', sets: 3, reps: '20 each', rpe: '8', rest: '45s' },
-      { name: 'Mountain Climbers', sets: 3, reps: '30s', rpe: '8-9', rest: '45s' },
+      { name: 'Plank', type: 'accessory' },
+      { name: 'Bicycle Crunches', type: 'accessory' },
+      { name: 'Mountain Climbers', type: 'accessory' },
     ],
   };
 
-  const ex = isGym ? gymExercises : homeExercises;
+  const pool = isGym ? gymPool : homePool;
 
-  let splitDays: TrainingDay[] = [];
-  if (workoutFrequency <= 3) {
-    splitDays = [
-      { day: 'Day 1', focus: 'Full Body (Push Focus)', exercises: [...ex.push.slice(0, 3), ...ex.legs.slice(0, 2)] },
-      { day: 'Day 2', focus: 'Full Body (Pull Focus)', exercises: [...ex.pull.slice(0, 3), ...ex.legs.slice(2, 4)] },
-      { day: 'Day 3', focus: 'Full Body (Legs Focus)', exercises: [...ex.legs, ...ex.core] },
+  const buildSplit = (): { day: string; focus: string; exercises: BaseExercise[] }[] => {
+    if (workoutFrequency <= 3) {
+      return [
+        { day: 'Day 1', focus: 'Full Body A (Push focus)', exercises: [...pool.push.slice(0, 3), ...pool.legs.slice(0, 2)] },
+        { day: 'Day 2', focus: 'Full Body B (Pull focus)', exercises: [...pool.pull.slice(0, 3), ...pool.legs.slice(2, 4)] },
+        { day: 'Day 3', focus: 'Full Body C (Legs focus)', exercises: [...pool.legs, pool.core[0]] },
+      ];
+    }
+    if (workoutFrequency === 4) {
+      return [
+        { day: 'Day 1', focus: 'Upper Body', exercises: pool.upper },
+        { day: 'Day 2', focus: 'Lower Body', exercises: pool.legs },
+        { day: 'Day 3', focus: 'Push + Core', exercises: [...pool.push.slice(0, 3), pool.core[0]] },
+        { day: 'Day 4', focus: 'Pull + Posterior', exercises: [...pool.pull.slice(0, 3), ...pool.lower.slice(0, 2)] },
+      ];
+    }
+    if (workoutFrequency === 5) {
+      return [
+        { day: 'Day 1', focus: 'Push', exercises: pool.push },
+        { day: 'Day 2', focus: 'Pull', exercises: pool.pull },
+        { day: 'Day 3', focus: 'Legs', exercises: pool.legs },
+        { day: 'Day 4', focus: 'Upper Body', exercises: pool.upper },
+        { day: 'Day 5', focus: 'Lower + Core', exercises: [...pool.lower.slice(0, 3), ...pool.core] },
+      ];
+    }
+    return [
+      { day: 'Day 1', focus: 'Push', exercises: pool.push },
+      { day: 'Day 2', focus: 'Pull', exercises: pool.pull },
+      { day: 'Day 3', focus: 'Legs', exercises: pool.legs },
+      { day: 'Day 4', focus: 'Upper Body', exercises: pool.upper },
+      { day: 'Day 5', focus: 'Lower Body', exercises: pool.lower },
+      { day: 'Day 6', focus: 'Core + Conditioning', exercises: pool.core },
     ];
-  } else if (workoutFrequency === 4) {
-    splitDays = [
-      { day: 'Day 1', focus: 'Upper Body', exercises: ex.upper },
-      { day: 'Day 2', focus: 'Lower Body', exercises: ex.legs },
-      { day: 'Day 3', focus: 'Push + Core', exercises: [...ex.push.slice(0, 3), ...ex.core] },
-      { day: 'Day 4', focus: 'Pull + Lower', exercises: [...ex.pull.slice(0, 3), ...ex.lower.slice(0, 2)] },
-    ];
-  } else if (workoutFrequency === 5) {
-    splitDays = [
-      { day: 'Day 1', focus: 'Push', exercises: ex.push },
-      { day: 'Day 2', focus: 'Pull', exercises: ex.pull },
-      { day: 'Day 3', focus: 'Legs', exercises: ex.legs },
-      { day: 'Day 4', focus: 'Upper Body', exercises: ex.upper },
-      { day: 'Day 5', focus: 'Lower + Core', exercises: [...ex.lower.slice(0, 3), ...ex.core] },
-    ];
-  } else {
-    splitDays = [
-      { day: 'Day 1', focus: 'Push', exercises: ex.push },
-      { day: 'Day 2', focus: 'Pull', exercises: ex.pull },
-      { day: 'Day 3', focus: 'Legs', exercises: ex.legs },
-      { day: 'Day 4', focus: 'Upper Body', exercises: ex.upper },
-      { day: 'Day 5', focus: 'Lower Body', exercises: ex.lower },
-      { day: 'Day 6', focus: 'Core + Conditioning', exercises: [...ex.core, { name: 'HIIT Circuit', sets: 3, reps: '10 min', rpe: '8-9', rest: '2 min' }] },
-    ];
-  }
+  };
 
-  const intensityModifier = goal === 'fat-loss' ? 'higher reps, shorter rest' : goal === 'lean-muscle' ? 'progressive overload focus' : 'moderate intensity, volume cycling';
+  const baseSplit = buildSplit();
+  const phaseRanges = ['Weeks 1-2', 'Weeks 3-4', 'Weeks 5-6', 'Weeks 7-8'];
 
-  return [
-    { weekRange: 'Weeks 1-2', phase: `Foundation (${intensityModifier})`, days: splitDays, volumeChange: 'Baseline volume — focus on form and mind-muscle connection', intensityGuideline: 'RPE 6-7 for compounds, RPE 7-8 for isolations' },
-    { weekRange: 'Weeks 3-4', phase: `Build Phase (increase weight 5-10%)`, days: splitDays, volumeChange: '+1 set on compound lifts', intensityGuideline: 'RPE 7-8 across the board, track weights' },
-    { weekRange: 'Weeks 5-6', phase: `Peak Phase (intensity peak)`, days: splitDays, volumeChange: 'Peak volume — add drop sets on final set of each exercise', intensityGuideline: 'RPE 8-9, push close to failure on last sets' },
-    { weekRange: 'Weeks 7-8', phase: `Deload & Test (reduce volume 40%)`, days: splitDays, deload: true, volumeChange: 'Reduce sets by 40%, maintain weight', intensityGuideline: 'RPE 5-6, focus on recovery and movement quality' },
-  ];
+  return phaseRanges.map((weekRange, phaseIdx) => {
+    const scheme = getPhaseScheme(goal, phaseIdx);
+    const days: TrainingDay[] = baseSplit.map(d => {
+      const exercises = d.exercises.map(e => {
+        const isCompound = e.type === 'compound';
+        return {
+          name: e.name,
+          sets: isCompound ? scheme.compoundSets : scheme.accessorySets,
+          reps: isCompound ? scheme.compoundReps : scheme.accessoryReps,
+          rpe: isCompound ? scheme.compoundRpe : scheme.accessoryRpe,
+          rest: isCompound ? scheme.compoundRest : scheme.accessoryRest,
+          notes: e.notes,
+        };
+      });
+      // Append finisher to last training day of week if scheme has one and not deload
+      if (scheme.finisher && d === baseSplit[baseSplit.length - 1]) {
+        exercises.push(scheme.finisher);
+      }
+      return { day: d.day, focus: d.focus, exercises };
+    });
+    return {
+      weekRange,
+      phase: scheme.label,
+      days,
+      deload: scheme.deload,
+      volumeChange: `${scheme.volumeChange}  •  ${scheme.loadProgression}`,
+      intensityGuideline: scheme.intensityGuideline,
+    };
+  });
 }
 
 function generateCardioPlan(inputs: UserInputs): CardioBlock {
@@ -305,12 +477,12 @@ function generateCardioPlan(inputs: UserInputs): CardioBlock {
 
   if (goal === 'fat-loss') {
     return {
-      type: runningInterest ? 'Running + Walking' : 'Low-Impact Steady State',
+      type: runningInterest ? 'Running + Zone-2 Walking' : 'Zone-2 Steady State + 1 HIIT',
       sessionsPerWeek: runningInterest ? 3 : 4,
-      duration: '25-40 minutes',
-      intensity: 'Zone 2 (conversational pace) + 1 HIIT session/week',
-      notes: baseSteps,
-      runningPlan: runningInterest ? 'Start with Couch-to-5K progression. Week 1-2: Run 1min/Walk 2min x 8. Week 3-4: Run 2min/Walk 1min x 8. Week 5-6: Run 3min/Walk 1min x 6. Week 7-8: Run 20-25 min continuous.' : undefined,
+      duration: 'Progressive: 20→40 min over 8 weeks',
+      intensity: 'Zone 2 (60-70% HRmax, conversational) + 1 weekly HIIT (Zone 4-5)',
+      notes: `${baseSteps}. Cardio progression: W1-2 → 20 min × ${runningInterest ? 3 : 4}. W3-4 → 25 min. W5-6 → 30 min + 1 HIIT (4×4 min @ Z4 / 3 min Z2). W7 deload (20 min easy). W8 → re-test 30-min Z2 distance.`,
+      runningPlan: runningInterest ? 'Couch-to-5K-style ramp. W1-2: 1 min run / 2 min walk × 8. W3-4: 2 min run / 1 min walk × 8. W5-6: Run 5 min / walk 1 min × 5 + 1 tempo session (4×3 min @ threshold). W7: easy 20 min. W8: continuous 25-30 min @ Z2.' : undefined,
       heartRateZones: hrZones,
     };
   }
