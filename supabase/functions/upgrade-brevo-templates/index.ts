@@ -47,11 +47,13 @@ const layout = (opts: {
     <tr><td style="padding:24px 32px 32px;border-top:1px solid ${BORDER};background:#10101A;">${opts.footerCta}</td></tr>
   </table>
   <table role="presentation" width="600" style="max-width:600px;width:100%;margin-top:18px;"><tr><td style="text-align:center;font-size:11px;color:${MUTED};line-height:1.7;padding:8px 16px;">
-    You're getting this because you built your 8-week body recomp plan at gearuptofit.com.<br>
-    Written personally by Alex, head coach @ GearUpToFit · Hit reply — a real human reads every email.<br>
-    <a href="https://gearuptofit.com/?utm_source=body-recomp&utm_medium=email" style="color:${MUTED};text-decoration:underline;">gearuptofit.com</a> ·
-    <a href="{{ unsubscribe }}" style="color:${MUTED};text-decoration:underline;">Unsubscribe</a> ·
-    <a href="{{ mirror }}" style="color:${MUTED};text-decoration:underline;">View in browser</a>
+    You are receiving this email because you used the free body-recomposition planner at gearuptofit.com and opted in to the 21-day coaching series. Reply any time — Alex personally reads and answers.<br><br>
+    <strong style="color:${TEXT};">GearUpToFit</strong> · Alexios Papaioannou, Certified Strength &amp; Nutrition Coach<br>
+    Postal: 25is Martiou 12, 26442 Patras, Greece · <a href="mailto:info@gearuptofit.com" style="color:${MUTED};text-decoration:underline;">info@gearuptofit.com</a><br><br>
+    <a href="https://gearuptofit.com/fitness-plan/?utm_source=body-recomp&amp;utm_medium=email" style="color:${MUTED};text-decoration:underline;">Visit site</a> ·
+    <a href="{{ unsubscribe }}" style="color:${MUTED};text-decoration:underline;">Unsubscribe in one click</a> ·
+    <a href="{{ mirror }}" style="color:${MUTED};text-decoration:underline;">View in browser</a><br>
+    <span style="opacity:0.7;">© ${new Date().getFullYear()} GearUpToFit. Educational content — not medical advice. Consult a physician before starting any new training or nutrition program.</span>
   </td></tr></table>
 </td></tr></table></body></html>`;
 
