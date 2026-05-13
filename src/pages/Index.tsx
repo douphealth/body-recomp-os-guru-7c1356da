@@ -92,13 +92,18 @@ const Index = () => {
 
       <main className="flex-1">
         {/* Hero */}
-        <section className="relative min-h-[90vh] md:min-h-[85vh] flex items-center overflow-hidden">
+        <section className="relative min-h-[92vh] md:min-h-[85vh] flex items-center overflow-hidden">
           {/* Background image */}
           <div className="absolute inset-0">
-            <img src={heroImg} alt="" className="w-full h-full object-cover" width={1920} height={1080} />
-            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/60" />
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40" />
+            <img src={heroImg} alt="" className="w-full h-full object-cover scale-105" width={1920} height={1080} />
+            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/92 to-background/55" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-background/40" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_0%,hsl(0_85%_55%/0.18),transparent)]" />
           </div>
+
+          {/* Ambient orbs */}
+          <div className="ambient-orb ambient-orb-red w-[280px] h-[280px] -top-16 -right-12 md:w-[420px] md:h-[420px]" />
+          <div className="ambient-orb ambient-orb-soft w-[240px] h-[240px] bottom-10 -left-16 md:w-[360px] md:h-[360px]" />
 
           <div className="container relative z-10 py-16 md:py-24">
             <div className="max-w-2xl">
@@ -106,21 +111,24 @@ const Index = () => {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full glass glass-border"
+                className="inline-flex items-center gap-2 mb-6 px-3.5 py-1.5 rounded-full glass glass-border"
               >
-                <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                <span className="text-xs font-semibold text-primary uppercase tracking-wider">Free • No Credit Card • Instant Results</span>
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-75 animate-ping" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+                </span>
+                <span className="text-[10px] font-bold text-primary/90 uppercase tracking-[0.18em]">Free • No Credit Card • Instant Results</span>
               </motion.div>
 
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] mb-6"
+                className="text-[2.6rem] leading-[1.02] sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6"
               >
                 BUILD YOUR<br />
-                <span className="text-primary text-glow">8-WEEK FITNESS</span><br />
-                <span className="text-primary text-glow">PLAN</span>
+                <span className="text-gradient-red">8-WEEK FITNESS</span><br />
+                <span className="text-gradient-red">PLAN</span>
               </motion.h1>
 
               <motion.p
@@ -136,14 +144,14 @@ const Index = () => {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="flex flex-col sm:flex-row gap-4"
+                className="flex flex-col sm:flex-row gap-4 sm:items-center"
               >
                 <Link to="/build-my-plan" onClick={() => trackCTAClick('hero_cta', 'homepage')}>
-                  <Button size="lg" className="gradient-red border-0 text-base sm:text-lg px-8 sm:px-10 py-6 font-bold tracking-wide shadow-lg shadow-primary/25 hover:shadow-primary/50 transition-all duration-300 hover:scale-[1.02] w-full sm:w-auto">
+                  <Button size="lg" className="gradient-red border-0 text-base sm:text-lg px-8 sm:px-10 py-6 font-bold tracking-wide btn-glow-red transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] w-full sm:w-auto rounded-xl">
                     Build My Plan <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
-                <a href="#features" className="flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors py-3">
+                <a href="#features" className="flex items-center justify-center gap-2 text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground transition-colors py-3">
                   See what's included ↓
                 </a>
               </motion.div>

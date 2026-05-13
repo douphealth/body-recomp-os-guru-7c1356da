@@ -99,40 +99,47 @@ const BodyRecompWizard = () => {
       />
       <Header />
 
-      <main className="flex-1 py-8 md:py-16">
-        <div className="container max-w-2xl">
+      <main className="flex-1 py-8 md:py-16 relative overflow-hidden">
+        {/* Ambient orbs */}
+        <div className="ambient-orb ambient-orb-red w-[280px] h-[280px] -top-20 -right-16" />
+        <div className="ambient-orb ambient-orb-soft w-[260px] h-[260px] bottom-0 -left-20" />
+
+        <div className="container max-w-2xl relative z-10">
           {/* Step indicators */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
               {stepMeta.map((s, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <div className={`h-9 w-9 rounded-xl flex items-center justify-center text-xs font-bold transition-all duration-300 ${
-                    i + 1 <= step ? 'gradient-red text-primary-foreground shadow-lg shadow-primary/20' : 'bg-secondary text-muted-foreground'
+                    i + 1 <= step ? 'gradient-red text-primary-foreground btn-glow-red' : 'bg-secondary/60 text-muted-foreground border border-white/5'
                   }`}>
                     {i + 1}
                   </div>
-                  <span className={`hidden sm:block text-xs font-medium transition-colors ${i + 1 === step ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  <span className={`hidden sm:block text-xs font-semibold uppercase tracking-[0.14em] transition-colors ${i + 1 === step ? 'text-foreground' : 'text-muted-foreground'}`}>
                     {s.title.split(' ')[0]}
                   </span>
                   {i < 2 && <div className={`hidden sm:block w-12 md:w-20 h-px mx-2 ${i + 1 < step ? 'bg-primary/50' : 'bg-border'}`} />}
                 </div>
               ))}
+              <span className="sm:hidden text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">Step {String(step).padStart(2,'0')}/0{totalSteps}</span>
             </div>
             <Progress value={(step / totalSteps) * 100} className="h-1.5" />
           </div>
 
           {/* Card */}
-          <div className="stat-card !p-0 overflow-hidden">
+          <div className="premium-card !p-0">
+            <div className="premium-card-hairline" />
             {/* Step header */}
             {meta && (
-              <div className={`bg-gradient-to-r ${meta.color} p-6 border-b border-border/50`}>
-                <div className="flex items-center gap-3">
-                  <div className="h-11 w-11 rounded-xl gradient-red flex items-center justify-center shadow-lg shadow-primary/20">
+              <div className="relative p-6 border-b border-white/5">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none" />
+                <div className="relative flex items-center gap-3">
+                  <div className="h-11 w-11 rounded-2xl gradient-red flex items-center justify-center btn-glow-red">
                     <meta.icon className="h-5 w-5 text-primary-foreground" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold">{meta.title}</h2>
-                    <p className="text-sm text-muted-foreground">{meta.desc}</p>
+                    <h2 className="text-xl font-bold tracking-wide">{meta.title}</h2>
+                    <p className="text-xs text-muted-foreground uppercase tracking-[0.14em] mt-0.5">{meta.desc}</p>
                   </div>
                 </div>
               </div>
