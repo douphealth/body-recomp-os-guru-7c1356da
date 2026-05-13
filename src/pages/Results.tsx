@@ -187,6 +187,17 @@ const Results = () => {
         </div>
       </main>
 
+      <EmailGate
+        open={emailGateOpen}
+        onClose={() => setEmailGateOpen(false)}
+        onUnlock={() => setEmailGateOpen(false)}
+        goalLabel={plan.goalLabel}
+        calorieTarget={plan.calorieTarget}
+        proteinGrams={plan.proteinGrams}
+        workoutFrequency={inputs.workoutFrequency}
+        source="plan_gate"
+      />
+
       <Footer />
     </div>
   );
