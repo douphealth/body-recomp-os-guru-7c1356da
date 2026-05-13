@@ -47,11 +47,13 @@ const layout = (opts: {
     <tr><td style="padding:24px 32px 32px;border-top:1px solid ${BORDER};background:#10101A;">${opts.footerCta}</td></tr>
   </table>
   <table role="presentation" width="600" style="max-width:600px;width:100%;margin-top:18px;"><tr><td style="text-align:center;font-size:11px;color:${MUTED};line-height:1.7;padding:8px 16px;">
-    You're getting this because you built your 8-week body recomp plan at gearuptofit.com.<br>
-    Written personally by Alex, head coach @ GearUpToFit · Hit reply — a real human reads every email.<br>
-    <a href="https://gearuptofit.com/?utm_source=body-recomp&utm_medium=email" style="color:${MUTED};text-decoration:underline;">gearuptofit.com</a> ·
-    <a href="{{ unsubscribe }}" style="color:${MUTED};text-decoration:underline;">Unsubscribe</a> ·
-    <a href="{{ mirror }}" style="color:${MUTED};text-decoration:underline;">View in browser</a>
+    You are receiving this email because you used the free body-recomposition planner at gearuptofit.com and opted in to the 21-day coaching series. Reply any time — Alex personally reads and answers.<br><br>
+    <strong style="color:${TEXT};">GearUpToFit</strong> · Alexios Papaioannou, Certified Strength &amp; Nutrition Coach<br>
+    Postal: 25is Martiou 12, 26442 Patras, Greece · <a href="mailto:info@gearuptofit.com" style="color:${MUTED};text-decoration:underline;">info@gearuptofit.com</a><br><br>
+    <a href="https://gearuptofit.com/fitness-plan/?utm_source=body-recomp&amp;utm_medium=email" style="color:${MUTED};text-decoration:underline;">Visit site</a> ·
+    <a href="{{ unsubscribe }}" style="color:${MUTED};text-decoration:underline;">Unsubscribe in one click</a> ·
+    <a href="{{ mirror }}" style="color:${MUTED};text-decoration:underline;">View in browser</a><br>
+    <span style="opacity:0.7;">© ${new Date().getFullYear()} GearUpToFit. Educational content — not medical advice. Consult a physician before starting any new training or nutrition program.</span>
   </td></tr></table>
 </td></tr></table></body></html>`;
 
@@ -70,7 +72,11 @@ const checklist = (items: string[]) => `<table width="100%" style="margin:8px 0 
 const divider = () => `<div style="height:1px;background:${BORDER};margin:28px 0;"></div>`;
 const ps = (t: string) => `<p style="font-size:14px;line-height:1.6;margin:24px 0 0;color:${MUTED};font-style:italic;border-top:1px dashed ${BORDER};padding-top:16px;"><strong style="color:${RED};font-style:normal;">P.S.</strong> ${t}</p>`;
 const sig = () => `<p style="font-size:16px;line-height:1.6;margin:28px 0 0;color:${TEXT};">Train smart,<br><strong style="font-family:'Oswald',Arial,sans-serif;font-size:20px;letter-spacing:0.3px;">Alex</strong><br><span style="color:${MUTED};font-size:13px;">Head Coach · GearUpToFit · 18 yrs coaching, 600+ recomp transformations</span></p>`;
-const utm = (slug: string, c: string) => `https://gearuptofit.com/${slug}?utm_source=body-recomp&utm_medium=email&utm_campaign=${c}`;
+// IMPORTANT: the React app is mounted on the WordPress host at /fitness-plan/.
+// All in-app links MUST include that base path or the visitor will hit the
+// WordPress 404 page (this was the cause of the broken "Open My Plan" CTA).
+const APP_BASE = 'https://gearuptofit.com/fitness-plan';
+const utm = (slug: string, c: string) => `${APP_BASE}/${slug.replace(/^\/+/, '')}?utm_source=body-recomp&utm_medium=email&utm_campaign=${c}`;
 
 // ===================================================================
 // DAY 0 — Welcome + Plan
@@ -100,9 +106,9 @@ const T2 = {
       sig() +
       ps('Your plan is built on 12+ data points — bodyweight, body fat, training history, age, sex, NEAT, dietary preference and more. If anything feels off in the first week, hit reply. I\'ll personally help you re-tune.'),
     footerCta:
-      p('<strong style="color:' + TEXT + ';">Open your full plan + PDF any time</strong> — share with your training partner or the friend who keeps starting Monday:') +
-      btn(utm('build-my-plan/results/', 'welcome'), 'Open My Plan + PDF') +
-      small('Bonus reads: ' + a(utm('tools/tdee-calculator/', 'welcome'), 'TDEE calculator') + ' · ' + a(utm('tools/macro-calculator/', 'welcome'), 'Macro calculator') + ' · ' + a(utm('tools/protein-calculator/', 'welcome'), 'Protein needs by goal')),
+      p('<strong style="color:' + TEXT + ';">Re-open the planner any time</strong> — your numbers are derived from the inputs you provided. To view your dashboard or download the PDF, re-enter the wizard on the device you used:') +
+      btn(utm('build-my-plan/', 'welcome'), 'Open The Planner') +
+      small('Free tools you can use right now (no login needed): ' + a(utm('free-fitness-calculators/tdee-calculator/', 'welcome'), 'TDEE calculator') + ' · ' + a(utm('free-fitness-calculators/macro-calculator/', 'welcome'), 'Macro calculator') + ' · ' + a(utm('free-fitness-calculators/protein-calculator/', 'welcome'), 'Protein needs by goal')),
   }),
 };
 
@@ -140,7 +146,7 @@ const T3 = {
       sig() +
       ps('Day 4 → protein. The single most misunderstood macro and the lever with the highest ROI for body recomposition. Don\'t skip it — it changes how you\'ll eat for the rest of your life.'),
     footerCta:
-      btn(utm('build-my-plan/results/', 'setup'), 'Open My Dashboard') +
+      btn(utm('build-my-plan/', 'setup'), 'Open My Dashboard') +
       small('Reply with one obstacle from your week 1 — work travel, dinner out, kids\' bedtime — and I\'ll send you a 1-line workaround.'),
   }),
 };
@@ -181,7 +187,7 @@ const T4 = {
       sig() +
       ps('Day 7 (Sunday) → the lever no one talks about: NEAT. Why your <em>step count</em> matters more than your cardio. The fix is shockingly low-effort and adds up to 400 kcal/day for most people.'),
     footerCta:
-      btn(utm('tools/protein-calculator/', 'protein'), 'Recalculate My Protein') +
+      btn(utm('free-fitness-calculators/protein-calculator/', 'protein'), 'Recalculate My Protein') +
       small('Reply with what you ate yesterday — I\'ll show you exactly where the 30g protein gaps are. Free, no catch.'),
   }),
 };
@@ -221,7 +227,7 @@ const T5 = {
       sig() +
       ps('Day 10 → strength training rules for recomp. The non-obvious differences vs a pure bulk or pure cut. Keep most clients lift heavier <em>during</em> a recomp than they do bulking. Counter-intuitive, but the data is iron-clad.'),
     footerCta:
-      btn(utm('build-my-plan/results/', 'neat'), 'Check My Step Target'),
+      btn(utm('build-my-plan/', 'neat'), 'Check My Step Target'),
   }),
 };
 
@@ -260,7 +266,7 @@ const T6 = {
       sig() +
       ps('Day 14 → the inflection point. Week 4 is where most plans break — the scale stalls, motivation dips, the body is shifting but you can\'t see it yet. The fix is the most important email in this series. Don\'t miss it.'),
     footerCta:
-      btn(utm('tools/one-rep-max-calculator/', 'lifting'), 'Calculate My 1RMs') +
+      btn(utm('free-fitness-calculators/one-rep-max-calculator/', 'lifting'), 'Calculate My 1RMs') +
       small('Stuck on a lift? Reply with the exercise + your current weights × reps. I\'ll send back the next 3-week progression I\'d use.'),
   }),
 };
@@ -306,7 +312,7 @@ const T7 = {
       sig() +
       ps('Day 21 (final email) → the re-assess. Did the plan work? What changes for the next 8 weeks? How to keep recomping without burning out. The graduation email.'),
     footerCta:
-      btn(utm('build-my-plan/results/', 'inflection'), 'Re-Open My Plan'),
+      btn(utm('build-my-plan/', 'inflection'), 'Re-Open My Plan'),
   }),
 };
 
@@ -353,7 +359,7 @@ const T8 = {
       ps('This is the last "scheduled" email. But I\'m not going anywhere. Stay subscribed for occasional drops — new training cycles, the rare deep-dive worth your inbox, and the next gen of Body Recomp OS as we ship it.'),
     footerCta:
       p('<strong style="color:' + TEXT + ';">Keep going:</strong>') +
-      small('🏋 ' + a(utm('build-my-plan/', 'rematch'), 'Re-build my 8-week plan') + '<br>📚 ' + a(utm('learn/', 'rematch'), 'Training & nutrition library') + '<br>🛠 ' + a(utm('tools/', 'rematch'), 'Calculators (TDEE, macros, 1RM, body fat)') + '<br>📩 ' + a('mailto:info@gearuptofit.com', 'Email Alex directly')),
+      small('🏋 ' + a(utm('build-my-plan/', 'rematch'), 'Re-build my 8-week plan') + '<br>📚 ' + a(utm('workout-plans/', 'rematch'), 'Training & nutrition library') + '<br>🛠 ' + a(utm('free-fitness-calculators/', 'rematch'), 'Calculators (TDEE, macros, 1RM, body fat)') + '<br>📩 ' + a('mailto:info@gearuptofit.com', 'Email Alex directly')),
   }),
 };
 
