@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import EmailGate, { hasSubscribed } from '@/components/EmailGate';
+import { captureUTM } from '@/lib/utm';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Calculator, Dumbbell, HeartPulse, FlaskConical } from 'lucide-react';
@@ -25,8 +27,17 @@ const Results = () => {
   const [inputs, setInputs] = useState<UserInputs | null>(null);
   const [loading, setLoading] = useState(true);
   const [checkedHabits, setCheckedHabits] = useState<Set<number>>(new Set());
+  const [emailGateOpen, setEmailGateOpen] = useState(false);
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+
+  // Capture UTM on first load + open email gate ~10s after results render (once per visitor)
+  useEffect(() => {
+    captureUTM();
+    if (hasSubscribed() || loading) return;
+    const t = setTimeout(() => setEmailGateOpen(true), 10000);
+    return () => clearTimeout(t);
+  }, [loading]);
 
   useEffect(() => {
     const stored = sessionStorage.getItem('recomp-inputs');
