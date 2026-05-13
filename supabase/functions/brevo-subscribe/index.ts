@@ -44,6 +44,27 @@ Deno.serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
+    const normalizedEmail = body.email.toLowerCase().trim();
+
+    // DB suppression pre-check (don't subscribe known-bad addresses).
+    const supaUrlPre = Deno.env.get('SUPABASE_URL');
+    const supaKeyPre = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if (supaUrlPre && supaKeyPre) {
+      const supRes = await fetch(
+        `${supaUrlPre}/rest/v1/email_suppressions?contact_email=eq.${encodeURIComponent(normalizedEmail)}&select=reason`,
+        { headers: { apikey: supaKeyPre, authorization: `Bearer ${supaKeyPre}` } },
+      ).catch(() => null);
+      if (supRes?.ok) {
+        const rows = await supRes.json().catch(() => []);
+        if (Array.isArray(rows) && rows.length > 0) {
+          return new Response(
+            JSON.stringify({ success: true, suppressed: true, reason: rows[0].reason }),
+            { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+          );
+        }
+      }
+    }
+
     const attributes: Record<string, unknown> = {
       FIRSTNAME: (body.firstName || '').slice(0, 100),
       SOURCE: body.source,
@@ -68,7 +89,7 @@ Deno.serve(async (req) => {
     const listIds = [listIdBySource[body.source] ?? 3];
 
     const payload: Record<string, unknown> = {
-      email: body.email.toLowerCase().trim(),
+      email: normalizedEmail,
       attributes,
       listIds,
       updateEnabled: true,
