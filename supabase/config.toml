@@ -1,1 +1,16 @@
 project_id = "nzvhdfcewogkcnzxkrav"
+
+[functions.brevo-subscribe]
+verify_jwt = false
+
+[functions.brevo-webhook]
+verify_jwt = false
+
+[functions.marketing-drip-dispatcher]
+verify_jwt = false
+
+[functions.setup-marketing-stack]
+verify_jwt = false
+
+[functions.upgrade-brevo-templates]
+verify_jwt = false
