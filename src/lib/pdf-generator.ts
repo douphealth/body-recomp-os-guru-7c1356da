@@ -734,18 +734,25 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
   y += 20;
 
   const gridDayCount = inputs.workoutFrequency;
-  const cellW = (pw - 60) / gridDayCount;
+  const labelW = 22;          // "Week N" column
+  const phaseColW = 28;       // dedicated phase column on the right
+  const gridLeft = 18;
+  const gridRight = pw - 18;
+  const sessionAreaW = (gridRight - gridLeft) - labelW - phaseColW;
+  const cellW = sessionAreaW / gridDayCount;
   const cellH = 9;
-  const labelW = 32;
+  const sessionsLeft = gridLeft + labelW;
+  const phaseColX = gridRight - phaseColW;
 
+  // Header row
   doc.setFontSize(6.5);
   doc.setFont('helvetica', 'bold');
   tc(doc, LABEL);
-  doc.text('WEEK', 18, y + 5);
+  doc.text('WEEK', gridLeft, y + 5);
   for (let s = 0; s < gridDayCount; s++) {
-    doc.text(`S${s + 1}`, 18 + labelW + s * cellW + cellW / 2, y + 5, { align: 'center' });
+    doc.text(`S${s + 1}`, sessionsLeft + s * cellW + cellW / 2, y + 5, { align: 'center' });
   }
-  doc.text('PHASE', pw - 22, y + 5, { align: 'right' });
+  doc.text('PHASE', phaseColX + phaseColW / 2, y + 5, { align: 'center' });
   hLine(doc, 15, y + 7, pw - 15, RULE);
   y += 10;
 
@@ -760,20 +767,20 @@ export async function generatePlanPDF(plan: PlanResults, inputs: UserInputs) {
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
     tc(doc, isDeloadWeek ? [160, 120, 20] as RGB : DARK);
-    doc.text(`Week ${w}`, 18, y + 5);
+    doc.text(`Week ${w}`, gridLeft, y + 5);
 
     for (let s = 0; s < gridDayCount; s++) {
-      const cx = 18 + labelW + s * cellW + cellW / 2 - 2;
+      const cx = sessionsLeft + s * cellW + cellW / 2 - 2;
       dc(doc, isDeloadWeek ? [200, 170, 90] as RGB : RED);
       doc.setLineWidth(0.4);
       doc.roundedRect(cx, y + 1, 4, 4, 0.5, 0.5, 'S');
     }
 
-    doc.setFontSize(6);
+    doc.setFontSize(6.5);
     doc.setFont('helvetica', 'italic');
     tc(doc, isDeloadWeek ? [160, 120, 20] as RGB : LABEL);
     const phaseLabel = isDeloadWeek ? 'Deload' : phaseIdx === 0 ? 'Foundation' : phaseIdx === 1 ? 'Build' : 'Peak';
-    doc.text(phaseLabel, pw - 22, y + 5, { align: 'right' });
+    doc.text(phaseLabel, phaseColX + phaseColW / 2, y + 5, { align: 'center' });
     y += cellH;
   }
 
