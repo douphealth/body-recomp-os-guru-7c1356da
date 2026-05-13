@@ -146,7 +146,7 @@ const T3 = {
       sig() +
       ps('Day 4 → protein. The single most misunderstood macro and the lever with the highest ROI for body recomposition. Don\'t skip it — it changes how you\'ll eat for the rest of your life.'),
     footerCta:
-      btn(utm('build-my-plan/results/', 'setup'), 'Open My Dashboard') +
+      btn(utm('build-my-plan/', 'setup'), 'Open My Dashboard') +
       small('Reply with one obstacle from your week 1 — work travel, dinner out, kids\' bedtime — and I\'ll send you a 1-line workaround.'),
   }),
 };
@@ -187,7 +187,7 @@ const T4 = {
       sig() +
       ps('Day 7 (Sunday) → the lever no one talks about: NEAT. Why your <em>step count</em> matters more than your cardio. The fix is shockingly low-effort and adds up to 400 kcal/day for most people.'),
     footerCta:
-      btn(utm('tools/protein-calculator/', 'protein'), 'Recalculate My Protein') +
+      btn(utm('free-fitness-calculators/protein-calculator/', 'protein'), 'Recalculate My Protein') +
       small('Reply with what you ate yesterday — I\'ll show you exactly where the 30g protein gaps are. Free, no catch.'),
   }),
 };
@@ -227,7 +227,7 @@ const T5 = {
       sig() +
       ps('Day 10 → strength training rules for recomp. The non-obvious differences vs a pure bulk or pure cut. Keep most clients lift heavier <em>during</em> a recomp than they do bulking. Counter-intuitive, but the data is iron-clad.'),
     footerCta:
-      btn(utm('build-my-plan/results/', 'neat'), 'Check My Step Target'),
+      btn(utm('build-my-plan/', 'neat'), 'Check My Step Target'),
   }),
 };
 
@@ -312,7 +312,7 @@ const T7 = {
       sig() +
       ps('Day 21 (final email) → the re-assess. Did the plan work? What changes for the next 8 weeks? How to keep recomping without burning out. The graduation email.'),
     footerCta:
-      btn(utm('build-my-plan/results/', 'inflection'), 'Re-Open My Plan'),
+      btn(utm('build-my-plan/', 'inflection'), 'Re-Open My Plan'),
   }),
 };
 
@@ -359,7 +359,7 @@ const T8 = {
       ps('This is the last "scheduled" email. But I\'m not going anywhere. Stay subscribed for occasional drops — new training cycles, the rare deep-dive worth your inbox, and the next gen of Body Recomp OS as we ship it.'),
     footerCta:
       p('<strong style="color:' + TEXT + ';">Keep going:</strong>') +
-      small('🏋 ' + a(utm('build-my-plan/', 'rematch'), 'Re-build my 8-week plan') + '<br>📚 ' + a(utm('learn/', 'rematch'), 'Training & nutrition library') + '<br>🛠 ' + a(utm('tools/', 'rematch'), 'Calculators (TDEE, macros, 1RM, body fat)') + '<br>📩 ' + a('mailto:info@gearuptofit.com', 'Email Alex directly')),
+      small('🏋 ' + a(utm('build-my-plan/', 'rematch'), 'Re-build my 8-week plan') + '<br>📚 ' + a(utm('workout-plans/', 'rematch'), 'Training & nutrition library') + '<br>🛠 ' + a(utm('free-fitness-calculators/', 'rematch'), 'Calculators (TDEE, macros, 1RM, body fat)') + '<br>📩 ' + a('mailto:info@gearuptofit.com', 'Email Alex directly')),
   }),
 };
 
