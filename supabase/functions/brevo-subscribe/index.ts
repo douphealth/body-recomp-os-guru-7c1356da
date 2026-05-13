@@ -78,15 +78,15 @@ Deno.serve(async (req) => {
       OPT_IN_DATE: new Date().toISOString(),
     };
 
-    // Source → Brevo list mapping. Set up via setup-marketing-stack.
+    // Source → Brevo list mapping. IDs from setup-marketing-stack output.
     const listIdBySource: Record<string, number> = {
-      plan_gate: 3,       // Body Recomp Subscribers
+      plan_gate: 7,       // Body Recomp Subscribers
       exit_popup: 4,      // Exit-Intent Popup
-      inline_results: 3,  // Body Recomp Subscribers
-      pdf_unlock: 3,      // Body Recomp Subscribers
+      inline_results: 7,  // Body Recomp Subscribers
+      pdf_unlock: 7,      // Body Recomp Subscribers
       footer: 5,          // Blog Subscribers
     };
-    const listIds = [listIdBySource[body.source] ?? 3];
+    const listIds = [listIdBySource[body.source] ?? 7];
 
     const payload: Record<string, unknown> = {
       email: normalizedEmail,

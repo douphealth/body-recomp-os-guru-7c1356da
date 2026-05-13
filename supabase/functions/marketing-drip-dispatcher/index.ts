@@ -22,7 +22,7 @@ const SCHEDULE: Array<{ day: number; templateId: number }> = [
   { day: 21, templateId: 8 }, // Re-assess + next 8 weeks
 ];
 
-const DRIP_LIST_IDS = [3, 4];
+const DRIP_LIST_IDS = [7, 4];
 
 async function brevo(path: string, init: RequestInit = {}) {
   const r = await fetch(`${BREVO}${path}`, {
