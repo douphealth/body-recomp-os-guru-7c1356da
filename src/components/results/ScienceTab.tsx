@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ExternalLink, ArrowRight, FlaskConical, BookOpen, Sparkles, ShieldCheck, Microscope, Quote } from 'lucide-react';
+import { ExternalLink, ArrowRight, FlaskConical, BookOpen, Sparkles, ShieldCheck, Microscope, Quote, Link2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ComparePlans from '@/components/results/ComparePlans';
 import { trackInternalLinkClick } from '@/lib/tracking';
 import { calculatePlan, type UserInputs, type PlanResults } from '@/lib/calculations';
+import { getSourcesFor } from '@/lib/sources';
 
 interface Props {
   plan: PlanResults;
