@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { FlaskConical, Flame, ChevronDown, Layers, Target, Clock, Zap } from 'lucide-react';
+import { FlaskConical, Flame, ChevronDown, Layers, Target, Clock, Zap, CheckCircle2 } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Checkbox } from '@/components/ui/checkbox';
 import WeeklyCalendarView from '@/components/results/WeeklyCalendarView';
+import StreakCard from '@/components/results/StreakCard';
+import { useDailyStreak } from '@/hooks/useDailyStreak';
 import type { PlanResults } from '@/lib/calculations';
 
 interface Props {
