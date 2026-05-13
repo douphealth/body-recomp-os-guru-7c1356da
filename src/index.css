@@ -146,6 +146,62 @@
                 linear-gradient(to bottom, hsl(220 20% 7%), hsl(220 20% 5%));
   }
 
+  .text-gradient-red {
+    background: linear-gradient(135deg, hsl(0 85% 62%), hsl(15 92% 58%) 60%, hsl(0 85% 70%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  .ambient-orb {
+    position: absolute;
+    border-radius: 9999px;
+    pointer-events: none;
+    filter: blur(90px);
+    z-index: 0;
+  }
+
+  .ambient-orb-red {
+    background: hsl(0 85% 55% / 0.18);
+  }
+
+  .ambient-orb-soft {
+    background: hsl(0 85% 55% / 0.08);
+  }
+
+  .premium-card {
+    @apply relative overflow-hidden rounded-3xl border border-white/[0.07];
+    background:
+      linear-gradient(180deg, hsl(0 0% 100% / 0.04), hsl(0 0% 100% / 0.01)),
+      hsl(220 18% 10% / 0.6);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    box-shadow:
+      0 1px 0 0 hsl(0 0% 100% / 0.05) inset,
+      0 30px 60px -30px hsl(220 30% 0% / 0.6),
+      0 0 60px -20px hsl(0 85% 55% / 0.15);
+  }
+
+  .premium-card-hairline {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(160deg, hsl(0 0% 100% / 0.12), transparent 40%, hsl(0 85% 55% / 0.18));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .btn-glow-red {
+    box-shadow:
+      0 10px 30px -8px hsl(0 85% 55% / 0.55),
+      0 0 0 1px hsl(0 85% 70% / 0.25) inset,
+      0 1px 0 0 hsl(0 0% 100% / 0.18) inset;
+  }
+
   .stat-card {
     @apply relative overflow-hidden rounded-xl border border-border bg-card p-5;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
