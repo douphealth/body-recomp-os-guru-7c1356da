@@ -21,6 +21,26 @@ const phasePalette = [
 
 const TrainingTab = ({ plan }: Props) => {
   const [activeWeek, setActiveWeek] = useState(0);
+  const streak = useDailyStreak('recomp.training.streak');
+
+  // Per-session checkbox state (e.g. "0:Mon"): persisted in localStorage
+  const SESSION_KEY = 'recomp.training.sessions';
+  const [doneSessions, setDoneSessions] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(SESSION_KEY);
+      if (raw) setDoneSessions(new Set(JSON.parse(raw) as string[]));
+    } catch { /* ignore */ }
+  }, []);
+  const toggleSession = useCallback((id: string) => {
+    setDoneSessions((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      try { localStorage.setItem(SESSION_KEY, JSON.stringify(Array.from(next))); } catch { /* ignore */ }
+      return next;
+    });
+  }, []);
 
   // Group weeks into 4 two-week phases
   const phases = [0, 1, 2, 3].map((i) => {
@@ -33,6 +53,11 @@ const TrainingTab = ({ plan }: Props) => {
       ...phasePalette[i],
     };
   });
+
+  // Total sessions across the plan
+  const totalSessions = plan.trainingPlan.reduce((acc, w) => acc + w.days.length, 0);
+  const completedSessions = doneSessions.size;
+  const completionPct = totalSessions > 0 ? Math.round((completedSessions / totalSessions) * 100) : 0;
 
   return (
     <div className="space-y-4">
