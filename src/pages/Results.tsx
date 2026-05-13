@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Calculator, Dumbbell, HeartPulse, FlaskConical } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
@@ -68,14 +69,18 @@ const Results = () => {
   const resultContent = (
     <>
       {/* Personalized banner */}
-      <div className="relative overflow-hidden rounded-xl border-l-4 border-l-primary bg-card p-4 md:p-5 mb-6">
-        <div className="flex items-center justify-between flex-wrap gap-3">
-          <div>
-            <h1 className="text-xl md:text-2xl font-bold font-['Oswald'] tracking-wider">
-              YOUR 8-WEEK <span className="text-primary">{plan.goalLabel.toUpperCase()}</span> PLAN
+      <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent p-5 md:p-6 mb-6 card-glow">
+        <div className="absolute -top-16 -right-16 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 left-0 h-full w-1 bg-gradient-to-b from-primary via-primary/60 to-transparent" />
+        <div className="relative flex items-start justify-between flex-wrap gap-4">
+          <div className="min-w-0">
+            <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-1.5">8-Week Personalized Plan</p>
+            <h1 className="text-2xl md:text-3xl font-bold font-['Oswald'] tracking-wider leading-tight">
+              YOUR <span className="text-primary text-glow">{plan.goalLabel.toUpperCase()}</span> SYSTEM
             </h1>
-            <p className="text-xs text-muted-foreground mt-1">
-              {inputs.age}yo {inputs.sex} • {inputs.weightKg}kg • {inputs.bodyFatPercent}% BF • {plan.leanBodyMass}kg LBM • {inputs.equipmentAccess} • {inputs.dietStyle} • Generated {today}
+            <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
+              {inputs.age}yo {inputs.sex} • {inputs.weightKg}kg • {inputs.bodyFatPercent}% BF • {plan.leanBodyMass}kg LBM • {inputs.equipmentAccess} • {inputs.dietStyle}
+              <span className="block mt-0.5 opacity-70">Generated {today}</span>
             </p>
           </div>
           <div className="flex gap-2 no-print" data-no-print>
@@ -87,30 +92,42 @@ const Results = () => {
 
       {isMobile ? (
         <Accordion type="single" collapsible defaultValue="numbers" className="space-y-2">
-          <AccordionItem value="numbers" className="stat-card !p-0 overflow-hidden border-border">
-            <AccordionTrigger className="px-4 py-3 hover:no-underline font-['Oswald'] text-sm tracking-wider">YOUR NUMBERS</AccordionTrigger>
-            <AccordionContent className="px-4 pb-4"><NumbersTab plan={plan} inputs={inputs} /></AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="training" className="stat-card !p-0 overflow-hidden border-border">
-            <AccordionTrigger className="px-4 py-3 hover:no-underline font-['Oswald'] text-sm tracking-wider">TRAINING PLAN</AccordionTrigger>
-            <AccordionContent className="px-4 pb-4"><TrainingTab plan={plan} /></AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="recovery" className="stat-card !p-0 overflow-hidden border-border">
-            <AccordionTrigger className="px-4 py-3 hover:no-underline font-['Oswald'] text-sm tracking-wider">CARDIO & RECOVERY</AccordionTrigger>
-            <AccordionContent className="px-4 pb-4"><RecoveryTab plan={plan} checkedHabits={checkedHabits} toggleHabit={toggleHabit} /></AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="science" className="stat-card !p-0 overflow-hidden border-border">
-            <AccordionTrigger className="px-4 py-3 hover:no-underline font-['Oswald'] text-sm tracking-wider">SCIENCE & NEXT STEPS</AccordionTrigger>
-            <AccordionContent className="px-4 pb-4"><ScienceTab plan={plan} inputs={inputs} contextLinks={contextLinks} setInputs={setInputs} setPlan={setPlan} /></AccordionContent>
-          </AccordionItem>
+          {[
+            { v: 'numbers', label: 'YOUR NUMBERS', Icon: Calculator, content: <NumbersTab plan={plan} inputs={inputs} /> },
+            { v: 'training', label: 'TRAINING PLAN', Icon: Dumbbell, content: <TrainingTab plan={plan} /> },
+            { v: 'recovery', label: 'CARDIO & RECOVERY', Icon: HeartPulse, content: <RecoveryTab plan={plan} checkedHabits={checkedHabits} toggleHabit={toggleHabit} /> },
+            { v: 'science', label: 'SCIENCE & NEXT STEPS', Icon: FlaskConical, content: <ScienceTab plan={plan} inputs={inputs} contextLinks={contextLinks} setInputs={setInputs} setPlan={setPlan} /> },
+          ].map(({ v, label, Icon, content }) => (
+            <AccordionItem key={v} value={v} className="stat-card !p-0 overflow-hidden border-border data-[state=open]:border-primary/30">
+              <AccordionTrigger className="px-4 py-3.5 hover:no-underline font-['Oswald'] text-sm tracking-wider gap-3">
+                <span className="flex items-center gap-2.5">
+                  <span className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Icon className="h-3.5 w-3.5 text-primary" />
+                  </span>
+                  {label}
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4">{content}</AccordionContent>
+            </AccordionItem>
+          ))}
         </Accordion>
       ) : (
         <Tabs defaultValue="numbers" className="w-full">
-          <TabsList className="w-full bg-secondary/30 border border-border/50 h-11 p-1">
-            <TabsTrigger value="numbers" className="flex-1 data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-['Oswald'] text-xs tracking-wider">NUMBERS</TabsTrigger>
-            <TabsTrigger value="training" className="flex-1 data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-['Oswald'] text-xs tracking-wider">TRAINING</TabsTrigger>
-            <TabsTrigger value="recovery" className="flex-1 data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-['Oswald'] text-xs tracking-wider">RECOVERY</TabsTrigger>
-            <TabsTrigger value="science" className="flex-1 data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-['Oswald'] text-xs tracking-wider">SCIENCE</TabsTrigger>
+          <TabsList className="w-full bg-secondary/30 border border-border/50 h-12 p-1 rounded-xl backdrop-blur">
+            {[
+              { v: 'numbers', label: 'NUMBERS', Icon: Calculator },
+              { v: 'training', label: 'TRAINING', Icon: Dumbbell },
+              { v: 'recovery', label: 'RECOVERY', Icon: HeartPulse },
+              { v: 'science', label: 'SCIENCE', Icon: FlaskConical },
+            ].map(({ v, label, Icon }) => (
+              <TabsTrigger
+                key={v}
+                value={v}
+                className="flex-1 gap-2 rounded-lg data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary/20 data-[state=active]:to-primary/5 data-[state=active]:text-primary data-[state=active]:shadow-md data-[state=active]:shadow-primary/10 font-['Oswald'] text-xs tracking-wider transition-all"
+              >
+                <Icon className="h-3.5 w-3.5" /> {label}
+              </TabsTrigger>
+            ))}
           </TabsList>
           <TabsContent value="numbers" className="mt-4"><NumbersTab plan={plan} inputs={inputs} /></TabsContent>
           <TabsContent value="training" className="mt-4"><TrainingTab plan={plan} /></TabsContent>
