@@ -17,3 +17,9 @@ verify_jwt = false
 
 [functions.email-unsubscribe]
 verify_jwt = false
+
+[functions.save-plan]
+verify_jwt = false
+
+[functions.get-plan]
+verify_jwt = false

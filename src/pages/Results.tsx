@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import EmailGate, { hasSubscribed } from '@/components/EmailGate';
 import InlineEmailCapture from '@/components/InlineEmailCapture';
@@ -22,14 +22,17 @@ import TodayPanel from '@/components/results/TodayPanel';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { calculatePlan, getContextualLinks, type UserInputs, type PlanResults } from '@/lib/calculations';
 import { trackResultView } from '@/lib/tracking';
+import { fetchPlanByToken, readCachedInputs, savePlan, setStoredShareToken, getStoredShareToken } from '@/lib/plan-store';
 
 const Results = () => {
   const [plan, setPlan] = useState<PlanResults | null>(null);
   const [inputs, setInputs] = useState<UserInputs | null>(null);
   const [loading, setLoading] = useState(true);
+  const [shareToken, setShareToken] = useState<string | null>(null);
   const [checkedHabits, setCheckedHabits] = useState<Set<number>>(new Set());
   const [emailGateOpen, setEmailGateOpen] = useState(false);
   const navigate = useNavigate();
+  const { token: tokenParam } = useParams<{ token?: string }>();
   const isMobile = useIsMobile();
 
   // Capture UTM on first load + open email gate ~25s after results render (once per visitor)
@@ -41,17 +44,51 @@ const Results = () => {
   }, [loading]);
 
   useEffect(() => {
-    const stored = sessionStorage.getItem('recomp-inputs');
-    if (!stored) { navigate('/build-my-plan'); return; }
-    try {
-      const parsed = JSON.parse(stored) as UserInputs;
-      setInputs(parsed);
-      setPlan(calculatePlan(parsed));
-      trackResultView(parsed.goal);
-    } catch {
+    let cancelled = false;
+
+    const hydrate = async () => {
+      // 1. Token in URL → fetch from server.
+      if (tokenParam) {
+        const fetched = await fetchPlanByToken(tokenParam, 'results_page');
+        if (cancelled) return;
+        if (fetched) {
+          setStoredShareToken(fetched.shareToken);
+          setShareToken(fetched.shareToken);
+          setInputs(fetched.inputs);
+          setPlan(fetched.outputs || calculatePlan(fetched.inputs));
+          trackResultView(fetched.inputs.goal);
+          return;
+        }
+        // Token in URL but not found → fall through to cached inputs or wizard.
+      }
+
+      // 2. Fall back to sessionStorage cache.
+      const cached = readCachedInputs();
+      if (cached) {
+        setInputs(cached);
+        const calc = calculatePlan(cached);
+        setPlan(calc);
+        trackResultView(cached.goal);
+        // Persist + upgrade URL to include the token.
+        const t = await savePlan({ inputs: cached, outputs: calc });
+        if (!cancelled && t) {
+          setShareToken(t);
+          navigate(`/build-my-plan/results/${t}`, { replace: true });
+        } else if (!cancelled) {
+          // Try previously stored token from localStorage as last resort.
+          const existing = getStoredShareToken();
+          if (existing) setShareToken(existing);
+        }
+        return;
+      }
+
+      // 3. Nothing → wizard.
       navigate('/build-my-plan');
-    }
-  }, [navigate]);
+    };
+
+    hydrate();
+    return () => { cancelled = true; };
+  }, [navigate, tokenParam]);
 
   const handleLoadingComplete = useCallback(() => {
     setLoading(false);
@@ -108,6 +145,7 @@ const Results = () => {
         calorieTarget={plan.calorieTarget}
         proteinGrams={plan.proteinGrams}
         workoutFrequency={inputs.workoutFrequency}
+        shareToken={shareToken || undefined}
       />
 
       <TodayPanel plan={plan} inputs={inputs} contextLinks={contextLinks} />
@@ -195,6 +233,7 @@ const Results = () => {
         calorieTarget={plan.calorieTarget}
         proteinGrams={plan.proteinGrams}
         workoutFrequency={inputs.workoutFrequency}
+        shareToken={shareToken || undefined}
         source="plan_gate"
       />
 

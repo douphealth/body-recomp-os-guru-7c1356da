@@ -15,12 +15,15 @@ interface SubscribePayload {
   calorieTarget?: number;
   proteinGrams?: number;
   workoutFrequency?: number;
+  shareToken?: string;
   utm?: { source?: string; medium?: string; campaign?: string; term?: string; content?: string };
   consent?: boolean;
   doubleOptIn?: boolean;
   templateId?: number;
   redirectionUrl?: string;
 }
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 
@@ -72,11 +75,17 @@ Deno.serve(async (req) => {
       CALORIE_TARGET: body.calorieTarget ?? null,
       PROTEIN_G: body.proteinGrams ?? null,
       WORKOUT_FREQ: body.workoutFrequency ?? null,
+      PLAN_TOKEN: body.shareToken && UUID_RE.test(body.shareToken) ? body.shareToken : '',
       UTM_SOURCE: body.utm?.source || '',
       UTM_MEDIUM: body.utm?.medium || '',
       UTM_CAMPAIGN: body.utm?.campaign || '',
       OPT_IN_DATE: new Date().toISOString(),
     };
+
+    const planToken = body.shareToken && UUID_RE.test(body.shareToken) ? body.shareToken : '';
+    const planUrl = planToken
+      ? `https://gearuptofit.com/fitness-plan/build-my-plan/results/${planToken}?utm_source=email&utm_medium=drip&utm_campaign=body_recomp&utm_content=day0`
+      : 'https://gearuptofit.com/fitness-plan/build-my-plan';
 
     // Source → Brevo list mapping. IDs from setup-marketing-stack output.
     const listIdBySource: Record<string, number> = {
@@ -138,6 +147,8 @@ Deno.serve(async (req) => {
                 GOAL: body.goalLabel || 'body recomposition',
                 CALORIE_TARGET: body.calorieTarget || '',
                 PROTEIN_G: body.proteinGrams || '',
+                PLAN_URL: planUrl,
+                PLAN_TOKEN: planToken,
               },
               tags: ['drip-day-0', 'body-recomp-welcome', `source-${body.source}`],
               headers: { 'X-Mailin-Custom': 'drip:0:2' },

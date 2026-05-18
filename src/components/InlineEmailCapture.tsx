@@ -15,6 +15,7 @@ interface Props {
   calorieTarget?: number;
   proteinGrams?: number;
   workoutFrequency?: number;
+  shareToken?: string;
   source?: 'inline_results' | 'plan_gate' | 'pdf_unlock' | 'footer';
 }
 
@@ -23,6 +24,7 @@ const InlineEmailCapture = ({
   calorieTarget,
   proteinGrams,
   workoutFrequency,
+  shareToken,
   source = 'inline_results',
 }: Props) => {
   const [email, setEmail] = useState('');
@@ -58,6 +60,7 @@ const InlineEmailCapture = ({
           calorieTarget,
           proteinGrams,
           workoutFrequency,
+          shareToken,
           consent: true,
           utm: getUTM(),
         },

@@ -114,6 +114,11 @@ Deno.serve(async (req) => {
       const already = sentMap.get(c.email);
       if (already?.has(due.templateId)) { report.skipped_already_sent++; continue; }
 
+      const planToken = (attrs.PLAN_TOKEN || '').toString();
+      const planUrl = planToken
+        ? `https://gearuptofit.com/fitness-plan/build-my-plan/results/${planToken}?utm_source=email&utm_medium=drip&utm_campaign=body_recomp&utm_content=day${due.day}`
+        : 'https://gearuptofit.com/fitness-plan/build-my-plan';
+
       const send = await brevo('/smtp/email', {
         method: 'POST',
         body: JSON.stringify({
@@ -125,6 +130,8 @@ Deno.serve(async (req) => {
             GOAL: attrs.GOAL || 'body recomposition',
             CALORIE_TARGET: attrs.CALORIE_TARGET || '',
             PROTEIN_G: attrs.PROTEIN_G || '',
+            PLAN_URL: planUrl,
+            PLAN_TOKEN: planToken,
           },
           tags: [`drip-day-${due.day}`, 'body-recomp-sequence'],
           headers: { 'X-Mailin-Custom': `drip:${due.day}:${due.templateId}` },
