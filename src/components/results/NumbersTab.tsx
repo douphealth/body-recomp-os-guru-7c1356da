@@ -138,8 +138,12 @@ const NumbersTab = ({ plan, inputs }: Props) => {
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
-        <MacroDonutChart plan={plan} />
-        <TDEEBarChart plan={plan} />
+        <Suspense fallback={<ChartFallback />}>
+          <MacroDonutChart plan={plan} />
+        </Suspense>
+        <Suspense fallback={<ChartFallback />}>
+          <TDEEBarChart plan={plan} />
+        </Suspense>
       </div>
 
       {/* Meal Timing */}
