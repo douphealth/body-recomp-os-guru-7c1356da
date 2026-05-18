@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import {
   Droplets, Leaf, Dumbbell, Activity as ActivityIcon, Utensils, Clock,
@@ -5,10 +6,14 @@ import {
 } from 'lucide-react';
 import AnimatedNumber from '@/components/AnimatedNumber';
 import GlossaryTooltip from '@/components/results/GlossaryTooltip';
-import MacroDonutChart from '@/components/results/MacroDonutChart';
-import TDEEBarChart from '@/components/results/TDEEBarChart';
+const MacroDonutChart = lazy(() => import('@/components/results/MacroDonutChart'));
+const TDEEBarChart = lazy(() => import('@/components/results/TDEEBarChart'));
 import SampleMealPlan from '@/components/results/SampleMealPlan';
 import type { PlanResults, UserInputs } from '@/lib/calculations';
+
+const ChartFallback = () => (
+  <div className="h-48 rounded-2xl bg-secondary/20 border border-border/40 animate-pulse" aria-hidden="true" />
+);
 
 interface Props {
   plan: PlanResults;
