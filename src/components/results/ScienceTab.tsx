@@ -123,17 +123,31 @@ const ScienceTab = ({ plan, inputs, contextLinks, setInputs, setPlan }: Props) =
                     <p className="text-[10px] text-muted-foreground/90 italic leading-relaxed">{note.citation}</p>
                   </div>
                   {sources.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5">
-                      {sources.map((s) => (
-                        <a key={s.url} href={s.url} target="_blank" rel="noopener noreferrer"
-                          onClick={() => trackInternalLinkClick(s.url, 'science_source')}
-                          className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-primary/10 text-primary hover:bg-primary/15 border border-primary/20 transition-all font-medium">
-                          <Link2 className="h-2.5 w-2.5" />
-                          <span className="truncate max-w-[180px]">{s.label}</span>
-                          <ExternalLink className="h-2.5 w-2.5 opacity-60" />
-                        </a>
-                      ))}
-                    </div>
+                    <details className="group/refs rounded-lg border border-border/40 bg-secondary/20 overflow-hidden">
+                      <summary className="flex items-center justify-between cursor-pointer list-none px-3 py-2 text-[10px] font-bold text-primary uppercase tracking-wider hover:bg-secondary/30 transition-colors">
+                        <span className="inline-flex items-center gap-1.5">
+                          <BookOpen className="h-3 w-3" />
+                          {sources.length} peer-reviewed source{sources.length > 1 ? 's' : ''}
+                        </span>
+                        <span className="text-muted-foreground/60 transition-transform group-open/refs:rotate-180" aria-hidden="true">▾</span>
+                      </summary>
+                      <ol className="px-3 pb-3 pt-1 space-y-1.5 text-[10px] text-muted-foreground/90 list-decimal list-inside marker:text-primary/60">
+                        {sources.map((s) => (
+                          <li key={s.url}>
+                            <a
+                              href={s.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => trackInternalLinkClick(s.url, 'science_source')}
+                              className="inline-flex items-center gap-1 text-foreground/85 hover:text-primary underline-offset-2 hover:underline"
+                            >
+                              {s.label}
+                              <ExternalLink className="h-2.5 w-2.5 opacity-60" />
+                            </a>
+                          </li>
+                        ))}
+                      </ol>
+                    </details>
                   )}
                 </div>
               </div>
