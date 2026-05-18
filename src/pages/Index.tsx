@@ -203,6 +203,8 @@ const Index = () => {
           </div>
         </section>
 
+        <SocialProof />
+
         {/* Features */}
         <section id="features" className="py-20 md:py-28">
           <div className="container">
