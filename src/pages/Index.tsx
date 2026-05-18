@@ -379,6 +379,7 @@ const Index = () => {
                   Get My Free Plan <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
+              <GuaranteeBadge className="mt-5" />
             </motion.div>
           </div>
         </section>
