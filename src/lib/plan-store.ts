@@ -100,3 +100,30 @@ export const fetchPlanByToken = async (
     return null;
   }
 };
+
+export interface PlanPdfResult {
+  signedUrl: string;
+  expiresIn: number;
+  path: string;
+}
+
+export const getPlanPdf = async (
+  token: string,
+  regenerate = false,
+): Promise<PlanPdfResult | null> => {
+  try {
+    const { data, error } = await supabase.functions.invoke('plan-pdf', {
+      body: { token, regenerate },
+    });
+    if (error || (data as any)?.error) {
+      console.warn('getPlanPdf failed', error || (data as any)?.error);
+      return null;
+    }
+    const d = data as any;
+    if (!d?.signedUrl) return null;
+    return { signedUrl: d.signedUrl, expiresIn: d.expiresIn, path: d.path };
+  } catch (e) {
+    console.warn('getPlanPdf exception', e);
+    return null;
+  }
+};
