@@ -6,11 +6,13 @@ export interface SEOPageConfig {
   metaTitle: string;
   metaDesc: string;
   heroSubtitle: string;
+  intro: string;
   quickAnswer: string;
   highlights: string[];
   faqs: { q: string; a: string }[];
   relatedLinks: { url: string; title: string; desc: string }[];
   relatedPlans: { slug: string; title: string }[];
+  relatedTools: { url: string; title: string; desc: string }[];
 }
 
 type Goal = 'fat-loss' | 'lean-muscle' | 'recomp';
