@@ -66,6 +66,7 @@ const App = () => (
           <Route path={ROUTES.home} element={<Index />} />
           <Route path={ROUTES.wizard} element={<BodyRecompWizard />} />
           <Route path={ROUTES.results} element={<Results />} />
+          <Route path="/build-my-plan/results/:token" element={<Results />} />
           <Route path={ROUTES.plansHub} element={<PlansHub />} />
           <Route path="/workout-plans/:pageKey" element={<DynamicPlanPage />} />
           <Route path={ROUTES.methodology} element={<Methodology />} />

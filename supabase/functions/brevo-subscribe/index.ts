@@ -15,12 +15,15 @@ interface SubscribePayload {
   calorieTarget?: number;
   proteinGrams?: number;
   workoutFrequency?: number;
+  shareToken?: string;
   utm?: { source?: string; medium?: string; campaign?: string; term?: string; content?: string };
   consent?: boolean;
   doubleOptIn?: boolean;
   templateId?: number;
   redirectionUrl?: string;
 }
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 
