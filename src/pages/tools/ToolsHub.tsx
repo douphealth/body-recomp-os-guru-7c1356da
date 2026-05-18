@@ -4,6 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
 import JsonLd from '@/components/JsonLd';
+import { toCanonicalUrl } from '@/lib/site-url';
 
 const tools = [
   { path: '/free-fitness-calculators/tdee-calculator', name: 'TDEE Calculator', desc: 'Calculate your Total Daily Energy Expenditure using the Mifflin-St Jeor equation.', icon: Calculator },
