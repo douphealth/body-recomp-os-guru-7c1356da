@@ -1,74 +1,69 @@
+## Goal
+Ship the P0/P1 audit items in sequenced phases. Each phase is independently shippable and verifiable. We'll execute phase-by-phase, confirming after each.
 
+## Phase 1 — Persistent Plans + Tokenized Email Links (fixes the 404)
+**Why first:** Unblocks the email "Open My Plan + PDF" button, removes sessionStorage dependency, and lays the foundation for everything else.
 
-# GearUpToFit Body Recomp OS
+- DB: `plans` table (`share_token uuid pk`, `email`, `inputs jsonb`, `outputs jsonb`, `pdf_url text`, `created_at`, `updated_at`). RLS: anon SELECT by token only; service-role INSERT/UPDATE.
+- DB: `plan_events` table for view/open analytics (token, event, ua, ip_hash, ts).
+- Edge function `save-plan`: validates inputs (zod), generates `share_token`, upserts row, returns `{ token, url }`.
+- Edge function `get-plan`: returns plan by token (rate-limited, 200ms cache).
+- `BodyRecompWizard` → on completion calls `save-plan`, stores token in URL (`/results/:token`), sessionStorage becomes cache only.
+- `Results.tsx` → reads `:token` param, hydrates from `get-plan`, falls back to sessionStorage.
+- `brevo-subscribe` → accepts `shareToken`, stores on contact attribute `PLAN_TOKEN`, all email templates use `{{ contact.PLAN_TOKEN }}` in CTA URLs.
+- Brevo templates: update Day-0/Day-2/etc. CTA links to `https://gearuptofit.com/fitness-plan/results/{{ contact.PLAN_TOKEN }}?utm_source=email&utm_campaign=drip&utm_content=day{{N}}`.
+- `InlineEmailCapture` / `EmailGate` → pass `shareToken` to subscribe call, single source of truth via shared hook `useEmailCapture`.
 
-A premium, formula-based body recomposition planner that generates personalized calorie targets, macro splits, 8-week training plans, cardio guidance, recovery checklists, and habit plans — with context-aware internal links to GearUpToFit.com content.
+## Phase 2 — Server-side PDF + Storage
+- Storage bucket `plan-pdfs` (private, signed-url access).
+- Edge function `generate-plan-pdf`: renders premium PDF (Puppeteer-free, using `@react-pdf/renderer` in Deno or HTML→PDF via Browserless). Returns signed URL, stores `pdf_url`.
+- Trigger from `save-plan` (async, non-blocking).
+- Welcome email gets the signed PDF URL via `params.PDF_URL`.
 
-## Brand & Design
-- Dark theme matching gearuptofit.com (dark background, red accents, bold uppercase headings)
-- "GEAR UP TO FIT" logo/wordmark in header with red "TO FIT" accent
-- Fully responsive — mobile-first design
-- Professional card-based layouts with smooth transitions between steps
+## Phase 3 — Email Drip Hardening
+- Idempotency: unique index `email_drip_log (contact_email, day_offset)`.
+- One-click unsubscribe header (`List-Unsubscribe`, `List-Unsubscribe-Post`) in every send.
+- Plain-text alternative for every template (Brevo template editor or `textContent` param).
+- Engagement-based throttling: skip Day N if previous 2 emails unopened (query `email_engagement_events`).
+- Preview text per template.
+- Rate-limit `brevo-subscribe` (10/min/IP via Deno KV or Supabase).
 
-## Pages & Routes
+## Phase 4 — Trust + Conversion Polish
+- Real coach bio component (`Alex` — photo, credentials, 1-line story) on Results + landing.
+- Citations as expandable footnotes on `ScienceTab`.
+- Press logos / social proof strip on `Index`.
+- 3 testimonials (placeholder copy, swap later).
+- Money-back / guarantee microcopy near CTA.
 
-### `/` — Landing / CTA Page
-- Hero section: **"Build My 8-Week Fitness Plan"** with bold headline and red CTA button
-- Brief value proposition cards (Calories • Macros • Workouts • Recovery • Habits)
-- Trust signals linking to gearuptofit.com/about-us/
-- Quick preview of what the plan includes
+## Phase 5 — Performance + SEO
+- Drop font weights to 2 (Oswald 700, Inter 400/600).
+- Lazy-load Recharts via `React.lazy` on Results tabs.
+- Convert hero/section images to AVIF + WebP fallback.
+- Dynamic `sitemap.xml` (Vite plugin + `seo-pages.ts`).
+- `BreadcrumbList` JSON-LD on plans + tools.
+- Internal linking block on each programmatic page (3 related plans + 2 tools).
+- Unique 60-word intro per programmatic page (template-driven, not duplicated).
 
-### `/app/body-recomp` — Multi-Step Input Wizard
-- **Step 1**: Age, sex, height, weight, body-fat estimate (with visual guide)
-- **Step 2**: Goal (fat loss / lean muscle / recomp), workout frequency, step count
-- **Step 3**: Diet style (standard, keto, high-protein, vegetarian), equipment access (gym, home, minimal), running interest (yes/no)
-- Progress bar, back/next navigation, input validation
-- Email signup/login gate before generating results (Supabase Auth)
+## Phase 6 — Security
+- Run `supabase--linter`, fix all findings.
+- Rotate `BREVO_WEBHOOK_SECRET` + verify HMAC on `brevo-webhook`.
+- CSP meta tag in `index.html`.
+- Zod validation on all edge function inputs.
+- Review RLS: ensure anon can read `plans` ONLY by exact token match.
 
-### `/app/body-recomp/results` — Personalized Plan Dashboard
-- **Quick Answer Summary** at top (one-paragraph snapshot of the entire plan)
-- **Calorie Target** card — TDEE via Mifflin-St Jeor, deficit/surplus based on goal
-- **Protein & Macro Split** card — protein target (g/kg), carb/fat distribution
-- **8-Week Training Split** — phased program based on frequency, equipment, and goal
-- **Cardio Plan** — based on step count, running interest, and goal
-- **Recovery Checklist** — sleep, hydration, deload week, stretching
-- **Habit Formation Plan** — weekly habit stacking suggestions
-- **"Today / This Week / Next Best Article"** panel — context-aware GearUpToFit links
-- **Top 3 Next Reads** — cherry-picked links based on user profile
+## Phase 7 (Optional / Future) — Auth + Next.js
+- Email/password + Google auth via Lovable Cloud.
+- `useDailyStreak` → server-backed `user_streaks` table.
+- Cross-device plan history.
+- Next.js App Router migration (separate large workstream — recommend doing after #1-6 ship).
 
-### Public Result Template Pages (static/prerendered content pages for SEO)
-- `/app/body-recomp/fat-loss-beginner-home-workouts`
-- `/app/body-recomp/runner-cut-plan`
-- `/app/body-recomp/lean-muscle-high-protein`
-- Each with unique meta titles, descriptions, FAQ section, JSON-LD structured data, and internal links
+---
 
-## Cherry-Picked Internal Links (injected contextually)
-- **Homepage** — https://gearuptofit.com/ (broad discovery, shown in all results)
-- **About page** — https://gearuptofit.com/about-us/ (trust/E-E-A-T, shown in footer/trust section)
-- **Running shoe guide** — https://gearuptofit.com/running/how-to-choose-the-right-running-shoes/ (shown when plan includes running)
-- **Running shoes hub** — https://gearuptofit.com/review/running-shoes/ (shown when running interest = yes)
-- Additional contextual links to fitness, nutrition, weight-loss, and health categories based on user goals
+## Execution model
+I'll execute Phase 1 in this turn (the 404 fix is critical), then stop and let you greenlight Phase 2. Each subsequent phase is one focused turn so we never break a working state.
 
-## User Accounts (Supabase Auth)
-- Email/password signup before plan generation
-- Save and revisit plans
-- Profile with saved preferences
-
-## SEO & AI Search Optimization
-- Custom meta tags with unique title/description per page
-- JSON-LD structured data: FAQ, Breadcrumb, Article schemas on result template pages
-- "Quick answer" summary block above the fold on every result page
-- Semantic HTML with proper heading hierarchy
-- Open Graph tags for social sharing
-
-## Calculation Engine (Formula-Based)
-- **TDEE**: Mifflin-St Jeor equation × activity multiplier
-- **Calorie target**: TDEE ± adjustment based on goal (fat loss: -20%, lean muscle: +10%, recomp: maintenance with cycling)
-- **Protein**: 1.6-2.2 g/kg lean body mass based on goal
-- **Macro split**: Protein-first, then fat/carb distribution based on diet style
-- **Training split**: Generated based on frequency (3-6 days), equipment, and goal
-- **Cardio**: Based on step count baseline, running interest, and goal phase
-
-## Event Tracking
-- CTA clicks, result page views, internal link clicks tracked via custom analytics hooks (console-based, extensible)
-
+## Technical notes
+- All edge functions: zod validation, CORS, error logging, idempotency keys.
+- All new tables: RLS-first design, deny-all default, explicit policies.
+- All new components: semantic design tokens (no raw colors).
+- No business logic changes to calculation formulas — purely additive.
