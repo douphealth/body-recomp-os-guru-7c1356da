@@ -147,6 +147,28 @@ const ProgrammaticSEOPage = ({ pageKey }: { pageKey: string }) => {
             </>
           )}
 
+          {/* Related Tools (internal linking) */}
+          {page.relatedTools.length > 0 && (
+            <>
+              <h2 className="text-xl font-bold mb-4">FREE <span className="text-primary">CALCULATORS</span></h2>
+              <div className="grid sm:grid-cols-2 gap-3 mb-10">
+                {page.relatedTools.map((t) => (
+                  <Link
+                    key={t.url}
+                    to={t.url}
+                    onClick={() => trackInternalLinkClick(t.url, `seo_tools_${page.slug}`)}
+                    className="block p-4 bg-secondary/20 rounded-lg hover:bg-secondary/40 transition-colors border border-border/50 hover:border-primary/30"
+                  >
+                    <p className="text-sm font-semibold text-primary flex items-center gap-2">
+                      {t.title} <ArrowRight className="h-3 w-3" />
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">{t.desc}</p>
+                  </Link>
+                ))}
+              </div>
+            </>
+          )}
+
           {/* Related Links */}
           <h2 className="text-xl font-bold mb-4">RELATED <span className="text-primary">RESOURCES</span></h2>
           <div className="space-y-3 mb-10">
