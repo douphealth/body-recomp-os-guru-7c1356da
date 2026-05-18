@@ -17,17 +17,6 @@ const PrintButton = ({ plan, inputs, shareToken }: PrintButtonProps) => {
   const handleDownload = async () => {
     setGenerating(true);
     try {
-      // Prefer server-side PDF (branded, persistent, identical across devices).
-      if (shareToken) {
-        const result = await getPlanPdf(shareToken);
-        if (result?.signedUrl) {
-          window.open(result.signedUrl, '_blank', 'noopener,noreferrer');
-          toast.success('Your plan PDF is ready.');
-          return;
-        }
-        console.warn('server PDF unavailable, falling back to client PDF');
-      }
-      // Fallback: legacy client-side generator.
       const { generatePlanPDF } = await import('@/lib/pdf-generator');
       await generatePlanPDF(plan, inputs);
       toast.success('Your plan has been downloaded!');
