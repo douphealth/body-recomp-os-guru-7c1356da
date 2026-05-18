@@ -383,10 +383,16 @@ const Index = () => {
           </div>
         </section>
 
+        <Testimonials />
+
         {/* Trust / E-E-A-T */}
         <section className="py-20 md:py-28 relative overflow-hidden">
           <div className="absolute inset-0 hero-gradient opacity-30" />
-          <div className="container max-w-2xl text-center relative">
+          <div className="container max-w-3xl relative">
+            <div className="mb-10">
+              <CoachBio variant="full" />
+            </div>
+            <div className="text-center">
             <motion.div
               initial="hidden"
               whileInView="visible"
