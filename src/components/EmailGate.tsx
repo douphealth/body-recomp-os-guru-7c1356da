@@ -15,6 +15,7 @@ interface EmailGateProps {
   calorieTarget?: number;
   proteinGrams?: number;
   workoutFrequency?: number;
+  shareToken?: string;
   source?: 'plan_gate' | 'exit_popup' | 'inline_results' | 'pdf_unlock' | 'footer';
   title?: string;
   subtitle?: string;
@@ -35,6 +36,7 @@ const EmailGate = ({
   calorieTarget,
   proteinGrams,
   workoutFrequency,
+  shareToken,
   source = 'plan_gate',
   title = 'Unlock Your 8-Week Body Recomp Plan',
   subtitle = 'Get the full PDF playbook, daily checklists, and a free 21-day coaching series from Alex — straight to your inbox.',
@@ -71,6 +73,7 @@ const EmailGate = ({
           calorieTarget,
           proteinGrams,
           workoutFrequency,
+          shareToken,
           consent: true,
           utm: getUTM(),
         },

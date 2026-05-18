@@ -60,6 +60,7 @@ const InlineEmailCapture = ({
           calorieTarget,
           proteinGrams,
           workoutFrequency,
+          shareToken,
           consent: true,
           utm: getUTM(),
         },
