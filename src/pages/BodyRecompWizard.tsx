@@ -15,7 +15,9 @@ import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
 import InlineBodyFatEstimator from '@/components/wizard/InlineBodyFatEstimator';
 import { trackCTAClick } from '@/lib/tracking';
-import type { UserInputs } from '@/lib/calculations';
+import { calculatePlan, type UserInputs } from '@/lib/calculations';
+import { savePlan, cacheInputs } from '@/lib/plan-store';
+import { getUTM } from '@/lib/utm';
 
 const defaultInputs: UserInputs = {
   age: 30, sex: 'male', heightCm: 175, weightKg: 80, bodyFatPercent: 20,
@@ -74,11 +76,25 @@ const BodyRecompWizard = () => {
   const next = () => { if (validateStep(step)) { setDirection(1); setStep((s) => Math.min(s + 1, totalSteps + 1)); } };
   const prev = () => { setDirection(-1); setStep((s) => Math.max(s - 1, 1)); };
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!validateStep(step)) return;
     trackCTAClick('generate_plan', 'wizard');
-    sessionStorage.setItem('recomp-inputs', JSON.stringify(inputs));
-    navigate('/build-my-plan/results');
+    cacheInputs(inputs);
+    // Optimistically route to legacy page; we'll upgrade to /:token once saved.
+    const outputs = calculatePlan(inputs);
+    // Kick off persistence in the background but await briefly so we can route by token when possible.
+    const tokenPromise = savePlan({ inputs, outputs, utm: getUTM() });
+    const fast = await Promise.race([
+      tokenPromise,
+      new Promise<null>((r) => setTimeout(() => r(null), 600)),
+    ]);
+    if (fast) {
+      navigate(`/build-my-plan/results/${fast}`);
+    } else {
+      navigate('/build-my-plan/results');
+      // Continue saving in background; Results.tsx will pick up the token from localStorage.
+      tokenPromise.catch(() => {});
+    }
   };
 
   const currentBfLabel = bodyFatLabels.find(b => inputs.bodyFatPercent >= b.range[0] && inputs.bodyFatPercent <= b.range[1]);
