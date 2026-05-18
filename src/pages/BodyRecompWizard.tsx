@@ -83,7 +83,7 @@ const BodyRecompWizard = () => {
     // Optimistically route to legacy page; we'll upgrade to /:token once saved.
     const outputs = calculatePlan(inputs);
     // Kick off persistence in the background but await briefly so we can route by token when possible.
-    const tokenPromise = savePlan({ inputs, outputs, utm: getUTM() });
+    const tokenPromise = savePlan({ inputs, outputs, utm: getUTM() as unknown as Record<string, unknown> });
     const fast = await Promise.race([
       tokenPromise,
       new Promise<null>((r) => setTimeout(() => r(null), 600)),
