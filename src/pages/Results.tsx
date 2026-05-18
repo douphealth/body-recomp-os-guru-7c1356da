@@ -149,6 +149,10 @@ const Results = () => {
         shareToken={shareToken || undefined}
       />
 
+      <div className="mt-6">
+        <CoachBio />
+      </div>
+
       <TodayPanel plan={plan} inputs={inputs} contextLinks={contextLinks} />
 
       {isMobile ? (
