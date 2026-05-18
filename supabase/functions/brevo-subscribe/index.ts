@@ -1,6 +1,11 @@
 // Edge function: subscribe a body-recomp lead to Brevo with rich attributes,
 // fire the welcome email immediately, and let the hourly drip dispatcher
 // continue with the 21-day coaching series.
+//
+// Hardening (Phase 3):
+//  - Per-IP rate limit (10/min) via consume_rate_limit RPC.
+//  - HMAC one-click unsubscribe header on every welcome send (RFC 8058).
+//  - Idempotent welcome log insert (unique constraint on email_drip_log).
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -24,46 +29,88 @@ interface SubscribePayload {
 }
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
+const UNSUB_HOST = 'https://nzvhdfcewogkcnzxkrav.supabase.co/functions/v1/email-unsubscribe';
 const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+const json = (b: unknown, status = 200) =>
+  new Response(JSON.stringify(b), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+
+const b64url = (bytes: ArrayBuffer | Uint8Array) => {
+  const arr = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+  let bin = ''; for (const b of arr) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+};
+async function buildUnsubToken(email: string): Promise<string> {
+  const secret = Deno.env.get('BREVO_WEBHOOK_SECRET') || '';
+  const emailPart = b64url(new TextEncoder().encode(email));
+  const key = await crypto.subtle.importKey(
+    'raw', new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'],
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(emailPart));
+  return `${emailPart}.${b64url(sig)}`;
+}
+
+function clientIp(req: Request): string {
+  const fwd = req.headers.get('x-forwarded-for') || '';
+  const ip = fwd.split(',')[0].trim() || req.headers.get('cf-connecting-ip') || req.headers.get('x-real-ip') || 'unknown';
+  return ip.slice(0, 64);
+}
+
+async function rateLimit(supaUrl: string, supaKey: string, ip: string): Promise<boolean> {
+  try {
+    const r = await fetch(`${supaUrl}/rest/v1/rpc/consume_rate_limit`, {
+      method: 'POST',
+      headers: {
+        apikey: supaKey, authorization: `Bearer ${supaKey}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ p_bucket: 'brevo-subscribe', p_key: ip, p_limit: 10, p_window_seconds: 60 }),
+    });
+    if (!r.ok) return true; // fail-open if the RPC itself errors
+    const allowed = await r.json();
+    return allowed === true;
+  } catch { return true; }
+}
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
     const apiKey = Deno.env.get('BREVO_API_KEY');
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: 'Email service not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    const supaUrl = Deno.env.get('SUPABASE_URL');
+    const supaKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if (!apiKey) return json({ error: 'Email service not configured' }, 500);
+
+    // Rate limit per IP
+    if (supaUrl && supaKey) {
+      const allowed = await rateLimit(supaUrl, supaKey, clientIp(req));
+      if (!allowed) {
+        return new Response(JSON.stringify({ error: 'Too many requests. Try again in a minute.' }), {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '60' },
+        });
+      }
     }
 
     const body: SubscribePayload = await req.json();
-    if (!body?.email || !isEmail(body.email) || body.email.length > 255) {
-      return new Response(JSON.stringify({ error: 'Invalid email' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-    }
-    if (!body.consent) {
-      return new Response(JSON.stringify({ error: 'Consent required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    if (!body?.email || !isEmail(body.email) || body.email.length > 255) return json({ error: 'Invalid email' }, 400);
+    if (!body.consent) return json({ error: 'Consent required' }, 400);
+    if (!['plan_gate','exit_popup','inline_results','pdf_unlock','footer'].includes(body.source)) {
+      return json({ error: 'Invalid source' }, 400);
     }
 
     const normalizedEmail = body.email.toLowerCase().trim();
 
-    // DB suppression pre-check (don't subscribe known-bad addresses).
-    const supaUrlPre = Deno.env.get('SUPABASE_URL');
-    const supaKeyPre = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-    if (supaUrlPre && supaKeyPre) {
+    // DB suppression pre-check.
+    if (supaUrl && supaKey) {
       const supRes = await fetch(
-        `${supaUrlPre}/rest/v1/email_suppressions?contact_email=eq.${encodeURIComponent(normalizedEmail)}&select=reason`,
-        { headers: { apikey: supaKeyPre, authorization: `Bearer ${supaKeyPre}` } },
+        `${supaUrl}/rest/v1/email_suppressions?contact_email=eq.${encodeURIComponent(normalizedEmail)}&select=reason`,
+        { headers: { apikey: supaKey, authorization: `Bearer ${supaKey}` } },
       ).catch(() => null);
       if (supRes?.ok) {
         const rows = await supRes.json().catch(() => []);
         if (Array.isArray(rows) && rows.length > 0) {
-          return new Response(
-            JSON.stringify({ success: true, suppressed: true, reason: rows[0].reason }),
-            { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
-          );
+          return json({ success: true, suppressed: true, reason: rows[0].reason });
         }
       }
     }
@@ -87,21 +134,13 @@ Deno.serve(async (req) => {
       ? `https://gearuptofit.com/fitness-plan/build-my-plan/results/${planToken}?utm_source=email&utm_medium=drip&utm_campaign=body_recomp&utm_content=day0`
       : 'https://gearuptofit.com/fitness-plan/build-my-plan';
 
-    // Source → Brevo list mapping. IDs from setup-marketing-stack output.
     const listIdBySource: Record<string, number> = {
-      plan_gate: 7,       // Body Recomp Subscribers
-      exit_popup: 4,      // Exit-Intent Popup
-      inline_results: 7,  // Body Recomp Subscribers
-      pdf_unlock: 7,      // Body Recomp Subscribers
-      footer: 5,          // Blog Subscribers
+      plan_gate: 7, exit_popup: 4, inline_results: 7, pdf_unlock: 7, footer: 5,
     };
     const listIds = [listIdBySource[body.source] ?? 7];
 
     const payload: Record<string, unknown> = {
-      email: normalizedEmail,
-      attributes,
-      listIds,
-      updateEnabled: true,
+      email: normalizedEmail, attributes, listIds, updateEnabled: true,
     };
 
     const useDoi = !!(body.doubleOptIn && body.templateId);
@@ -118,29 +157,25 @@ Deno.serve(async (req) => {
 
     const res = await fetch(endpoint, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'api-key': apiKey,
-        'accept': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json', 'api-key': apiKey, 'accept': 'application/json' },
       body: JSON.stringify(payload),
     });
 
     const text = await res.text();
-    let parsed: any = null;
-    try { parsed = text ? JSON.parse(text) : null; } catch {}
+    let parsed: any = null; try { parsed = text ? JSON.parse(text) : null; } catch {}
 
     if (res.ok || parsed?.code === 'duplicate_parameter') {
-      // Send Day-0 Welcome immediately (template 2). Hourly dispatcher handles Day 2-21.
       let welcomeSent = false;
       if (!useDoi) {
         try {
+          const unsubToken = await buildUnsubToken(normalizedEmail);
+          const unsubUrl = `${UNSUB_HOST}?token=${unsubToken}`;
           const sendRes = await fetch('https://api.brevo.com/v3/smtp/email', {
             method: 'POST',
             headers: { 'api-key': apiKey, 'content-type': 'application/json', 'accept': 'application/json' },
             body: JSON.stringify({
               sender: { name: 'Alex · GearUpToFit', email: 'info@gearuptofit.com' },
-              to: [{ email: body.email.toLowerCase().trim(), name: body.firstName || undefined }],
+              to: [{ email: normalizedEmail, name: body.firstName || undefined }],
               templateId: 2,
               params: {
                 FIRSTNAME: body.firstName || 'there',
@@ -149,35 +184,36 @@ Deno.serve(async (req) => {
                 PROTEIN_G: body.proteinGrams || '',
                 PLAN_URL: planUrl,
                 PLAN_TOKEN: planToken,
+                UNSUBSCRIBE_URL: unsubUrl,
               },
               tags: ['drip-day-0', 'body-recomp-welcome', `source-${body.source}`],
-              headers: { 'X-Mailin-Custom': 'drip:0:2' },
+              headers: {
+                'X-Mailin-Custom': 'drip:0:2',
+                'List-Unsubscribe': `<${unsubUrl}>, <mailto:unsubscribe@gearuptofit.com?subject=unsubscribe>`,
+                'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+              },
             }),
           });
           welcomeSent = sendRes.ok;
-          if (sendRes.ok) {
+          if (sendRes.ok && supaUrl && supaKey) {
             const sendJson: any = await sendRes.json().catch(() => ({}));
-            const supaUrl = Deno.env.get('SUPABASE_URL');
-            const supaKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-            if (supaUrl && supaKey) {
-              await fetch(`${supaUrl}/rest/v1/email_drip_log`, {
-                method: 'POST',
-                headers: {
-                  'apikey': supaKey,
-                  'authorization': `Bearer ${supaKey}`,
-                  'content-type': 'application/json',
-                  'prefer': 'return=minimal',
-                },
-                body: JSON.stringify({
-                  contact_email: body.email.toLowerCase().trim(),
-                  template_id: 2,
-                  day_offset: 0,
-                  brevo_message_id: sendJson?.messageId || null,
-                  status: 'sent',
-                }),
-              }).catch(() => {});
-            }
-          } else {
+            // Idempotent: unique constraint on (contact_email, template_id) makes this safe.
+            await fetch(`${supaUrl}/rest/v1/email_drip_log`, {
+              method: 'POST',
+              headers: {
+                apikey: supaKey, authorization: `Bearer ${supaKey}`,
+                'content-type': 'application/json',
+                prefer: 'return=minimal,resolution=ignore-duplicates',
+              },
+              body: JSON.stringify({
+                contact_email: normalizedEmail,
+                template_id: 2,
+                day_offset: 0,
+                brevo_message_id: sendJson?.messageId || null,
+                status: 'sent',
+              }),
+            }).catch(() => {});
+          } else if (!sendRes.ok) {
             const errTxt = await sendRes.text();
             console.error('Welcome send failed', sendRes.status, errTxt);
           }
@@ -186,16 +222,13 @@ Deno.serve(async (req) => {
         }
       }
 
-      return new Response(JSON.stringify({ success: true, doubleOptIn: useDoi, welcomeSent }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return json({ success: true, doubleOptIn: useDoi, welcomeSent });
     }
 
     console.error('Brevo error', res.status, text);
-    return new Response(JSON.stringify({ error: 'Subscription failed', detail: parsed?.message || text }),
-      { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return json({ error: 'Subscription failed', detail: parsed?.message || text }, 502);
   } catch (err) {
     console.error('brevo-subscribe exception', err);
-    return new Response(JSON.stringify({ error: 'Internal error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return json({ error: 'Internal error' }, 500);
   }
 });
