@@ -4,6 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
 import JsonLd from '@/components/JsonLd';
+import { toCanonicalUrl } from '@/lib/site-url';
 
 const tools = [
   { path: '/free-fitness-calculators/tdee-calculator', name: 'TDEE Calculator', desc: 'Calculate your Total Daily Energy Expenditure using the Mifflin-St Jeor equation.', icon: Calculator },
@@ -15,11 +16,20 @@ const tools = [
 
 const ToolsHub = () => {
   const schema = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Free Fitness Calculators — GearUpToFit', description: 'Science-backed fitness calculators for TDEE, macros, protein, 1RM, and body fat.' };
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: toCanonicalUrl('/') },
+      { '@type': 'ListItem', position: 2, name: 'Free Fitness Calculators', item: toCanonicalUrl('/free-fitness-calculators') },
+    ],
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
       <SEOHead title="Free Fitness Calculators — TDEE, Macros, Protein, 1RM & More | GearUpToFit" description="Science-backed fitness calculators to plan your journey. Calculate TDEE, macros, protein needs, one-rep max, and body fat — all free." path="/free-fitness-calculators" />
       <JsonLd data={schema} />
+      <JsonLd data={breadcrumbSchema} />
       <Header />
       <main className="flex-1 py-8 md:py-16">
         <div className="container max-w-3xl">

@@ -6,11 +6,13 @@ export interface SEOPageConfig {
   metaTitle: string;
   metaDesc: string;
   heroSubtitle: string;
+  intro: string;
   quickAnswer: string;
   highlights: string[];
   faqs: { q: string; a: string }[];
   relatedLinks: { url: string; title: string; desc: string }[];
   relatedPlans: { slug: string; title: string }[];
+  relatedTools: { url: string; title: string; desc: string }[];
 }
 
 type Goal = 'fat-loss' | 'lean-muscle' | 'recomp';
@@ -116,6 +118,25 @@ function buildRelatedLinks(goal: Goal, _exp: Experience, _equip: Equipment): { u
   return links;
 }
 
+function buildIntro(goal: Goal, exp: Experience, equip: Equipment, diet: Diet): string {
+  // Unique ~60-word, deterministic intro per slug. Combinatorial wording avoids
+  // duplicate-content penalties across the 100+ programmatic pages.
+  return `This ${expLabels[exp].toLowerCase()} ${goalLabels[goal].toLowerCase()} plan is engineered for lifters training with ${equipDesc[equip]} on a ${dietLabels[diet].toLowerCase()} diet. Over eight progressive weeks you will dial in a ${goalDeficits[goal]}, hit ${goalProtein[goal]} protein per kg of lean body mass, and train ${goalFreq[goal]} with ${expSets[exp]}. Every number is derived from peer-reviewed sports-science research and tuned to your real-world recovery capacity.`;
+}
+
+function buildRelatedTools(goal: Goal): { url: string; title: string; desc: string }[] {
+  const tools = [
+    { url: '/free-fitness-calculators/tdee-calculator', title: 'TDEE Calculator', desc: 'Find the exact maintenance calories this plan is built around.' },
+    { url: '/free-fitness-calculators/macro-calculator', title: 'Macro Calculator', desc: 'Split calories into protein, carbs, and fat for your goal.' },
+  ];
+  if (goal === 'lean-muscle' || goal === 'recomp') {
+    tools.push({ url: '/free-fitness-calculators/protein-calculator', title: 'Protein Calculator', desc: 'Pin down the daily protein floor needed to build muscle.' });
+  } else {
+    tools.push({ url: '/free-fitness-calculators/body-fat-calculator', title: 'Body Fat Calculator', desc: 'Track lean mass changes through the cut to verify recomp.' });
+  }
+  return tools.slice(0, 2);
+}
+
 function generatePage(goal: Goal, exp: Experience, equip: Equipment, diet: Diet): SEOPageConfig {
   const slug = `${goal}-${exp}-${equip}-${diet}`;
   const title = `${goalLabels[goal]} — ${expLabels[exp]} ${equipLabels[equip]} ${dietLabels[diet]} Plan`;
@@ -134,11 +155,13 @@ function generatePage(goal: Goal, exp: Experience, equip: Equipment, diet: Diet)
     metaTitle: metaTitle.slice(0, 60),
     metaDesc: metaDesc.slice(0, 160),
     heroSubtitle: `${expLabels[exp]}-level ${goalLabels[goal].toLowerCase()} with ${equipLabels[equip].toLowerCase()} workouts and ${dietLabels[diet].toLowerCase()} nutrition`,
+    intro: buildIntro(goal, exp, equip, diet),
     quickAnswer: buildQuickAnswer(goal, exp, equip, diet),
     highlights: buildHighlights(goal, exp, equip, diet),
     faqs: buildFAQs(goal, exp, equip, diet),
     relatedLinks: buildRelatedLinks(goal, exp, equip),
     relatedPlans,
+    relatedTools: buildRelatedTools(goal),
   };
 }
 

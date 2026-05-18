@@ -82,7 +82,12 @@ const ProgrammaticSEOPage = ({ pageKey }: { pageKey: string }) => {
           </nav>
 
           <h1 className="text-3xl md:text-4xl font-bold mb-2">{page.title}</h1>
-          <p className="text-lg text-muted-foreground mb-8">{page.heroSubtitle}</p>
+          <p className="text-lg text-muted-foreground mb-6">{page.heroSubtitle}</p>
+
+          {/* Unique programmatic intro (~60 words, no duplicate content) */}
+          <p className="text-sm text-foreground/80 leading-relaxed mb-8 border-l-2 border-primary/40 pl-4">
+            {page.intro}
+          </p>
 
           {/* Quick Answer */}
           <Card className="bg-primary/5 border-primary/30 mb-8">
@@ -136,6 +141,28 @@ const ProgrammaticSEOPage = ({ pageKey }: { pageKey: string }) => {
                     <p className="text-sm font-semibold text-foreground flex items-center gap-2">
                       {rp.title} <ArrowRight className="h-3 w-3 text-primary" />
                     </p>
+                  </Link>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Related Tools (internal linking) */}
+          {page.relatedTools.length > 0 && (
+            <>
+              <h2 className="text-xl font-bold mb-4">FREE <span className="text-primary">CALCULATORS</span></h2>
+              <div className="grid sm:grid-cols-2 gap-3 mb-10">
+                {page.relatedTools.map((t) => (
+                  <Link
+                    key={t.url}
+                    to={t.url}
+                    onClick={() => trackInternalLinkClick(t.url, `seo_tools_${page.slug}`)}
+                    className="block p-4 bg-secondary/20 rounded-lg hover:bg-secondary/40 transition-colors border border-border/50 hover:border-primary/30"
+                  >
+                    <p className="text-sm font-semibold text-primary flex items-center gap-2">
+                      {t.title} <ArrowRight className="h-3 w-3" />
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">{t.desc}</p>
                   </Link>
                 ))}
               </div>
