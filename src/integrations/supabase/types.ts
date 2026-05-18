@@ -101,6 +101,86 @@ export type Database = {
         }
         Relationships: []
       }
+      plan_events: {
+        Row: {
+          created_at: string
+          event: string
+          id: number
+          ip_hash: string | null
+          meta: Json | null
+          share_token: string
+          source: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          event: string
+          id?: number
+          ip_hash?: string | null
+          meta?: Json | null
+          share_token: string
+          source?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          event?: string
+          id?: number
+          ip_hash?: string | null
+          meta?: Json | null
+          share_token?: string
+          source?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_events_share_token_fkey"
+            columns: ["share_token"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["share_token"]
+          },
+        ]
+      }
+      plans: {
+        Row: {
+          created_at: string
+          email: string | null
+          first_name: string | null
+          goal_label: string | null
+          inputs: Json
+          outputs: Json
+          pdf_url: string | null
+          share_token: string
+          updated_at: string
+          utm: Json | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          goal_label?: string | null
+          inputs: Json
+          outputs: Json
+          pdf_url?: string | null
+          share_token?: string
+          updated_at?: string
+          utm?: Json | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          goal_label?: string | null
+          inputs?: Json
+          outputs?: Json
+          pdf_url?: string | null
+          share_token?: string
+          updated_at?: string
+          utm?: Json | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       email_lead_engagement: {
