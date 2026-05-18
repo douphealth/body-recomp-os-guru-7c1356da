@@ -1,20 +1,33 @@
 import { useState } from 'react';
-import { Printer, Download, Loader2 } from 'lucide-react';
+import { Download, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { type PlanResults, type UserInputs } from '@/lib/calculations';
+import { getPlanPdf } from '@/lib/plan-store';
 
 interface PrintButtonProps {
   plan: PlanResults;
   inputs: UserInputs;
+  shareToken?: string | null;
 }
 
-const PrintButton = ({ plan, inputs }: PrintButtonProps) => {
+const PrintButton = ({ plan, inputs, shareToken }: PrintButtonProps) => {
   const [generating, setGenerating] = useState(false);
 
   const handleDownload = async () => {
     setGenerating(true);
     try {
+      // Prefer server-side PDF (branded, persistent, identical across devices).
+      if (shareToken) {
+        const result = await getPlanPdf(shareToken);
+        if (result?.signedUrl) {
+          window.open(result.signedUrl, '_blank', 'noopener,noreferrer');
+          toast.success('Your plan PDF is ready.');
+          return;
+        }
+        console.warn('server PDF unavailable, falling back to client PDF');
+      }
+      // Fallback: legacy client-side generator.
       const { generatePlanPDF } = await import('@/lib/pdf-generator');
       await generatePlanPDF(plan, inputs);
       toast.success('Your plan has been downloaded!');

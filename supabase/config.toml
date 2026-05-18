@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.get-plan]
 verify_jwt = false
+
+[functions.plan-pdf]
+verify_jwt = false
