@@ -145,6 +145,7 @@ const Results = () => {
         calorieTarget={plan.calorieTarget}
         proteinGrams={plan.proteinGrams}
         workoutFrequency={inputs.workoutFrequency}
+        shareToken={shareToken || undefined}
       />
 
       <TodayPanel plan={plan} inputs={inputs} contextLinks={contextLinks} />
@@ -232,6 +233,7 @@ const Results = () => {
         calorieTarget={plan.calorieTarget}
         proteinGrams={plan.proteinGrams}
         workoutFrequency={inputs.workoutFrequency}
+        shareToken={shareToken || undefined}
         source="plan_gate"
       />
 
