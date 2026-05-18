@@ -19,6 +19,7 @@ import TrainingTab from '@/components/results/TrainingTab';
 import RecoveryTab from '@/components/results/RecoveryTab';
 import ScienceTab from '@/components/results/ScienceTab';
 import TodayPanel from '@/components/results/TodayPanel';
+import CoachBio from '@/components/CoachBio';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { calculatePlan, getContextualLinks, type UserInputs, type PlanResults } from '@/lib/calculations';
 import { trackResultView } from '@/lib/tracking';
@@ -147,6 +148,10 @@ const Results = () => {
         workoutFrequency={inputs.workoutFrequency}
         shareToken={shareToken || undefined}
       />
+
+      <div className="mt-6">
+        <CoachBio />
+      </div>
 
       <TodayPanel plan={plan} inputs={inputs} contextLinks={contextLinks} />
 

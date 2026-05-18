@@ -6,6 +6,10 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
 import JsonLd from '@/components/JsonLd';
+import SocialProof from '@/components/SocialProof';
+import Testimonials from '@/components/Testimonials';
+import CoachBio from '@/components/CoachBio';
+import GuaranteeBadge from '@/components/GuaranteeBadge';
 import { trackCTAClick, trackInternalLinkClick } from '@/lib/tracking';
 import { APP_CANONICAL_URL } from '@/lib/site-url';
 import heroImg from '@/assets/hero-gym.jpg';
@@ -155,6 +159,15 @@ const Index = () => {
                   See what's included ↓
                 </a>
               </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.45 }}
+                className="mt-6"
+              >
+                <GuaranteeBadge align="left" />
+              </motion.div>
             </div>
           </div>
 
@@ -189,6 +202,8 @@ const Index = () => {
             </div>
           </div>
         </section>
+
+        <SocialProof />
 
         {/* Features */}
         <section id="features" className="py-20 md:py-28">
@@ -364,14 +379,21 @@ const Index = () => {
                   Get My Free Plan <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
+              <GuaranteeBadge className="mt-5" />
             </motion.div>
           </div>
         </section>
 
+        <Testimonials />
+
         {/* Trust / E-E-A-T */}
         <section className="py-20 md:py-28 relative overflow-hidden">
           <div className="absolute inset-0 hero-gradient opacity-30" />
-          <div className="container max-w-2xl text-center relative">
+          <div className="container max-w-3xl relative">
+            <div className="mb-10">
+              <CoachBio variant="full" />
+            </div>
+            <div className="text-center">
             <motion.div
               initial="hidden"
               whileInView="visible"
@@ -400,6 +422,7 @@ const Index = () => {
                 </a>
               </motion.div>
             </motion.div>
+            </div>
           </div>
         </section>
 
