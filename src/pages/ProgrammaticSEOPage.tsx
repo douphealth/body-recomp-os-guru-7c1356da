@@ -82,7 +82,12 @@ const ProgrammaticSEOPage = ({ pageKey }: { pageKey: string }) => {
           </nav>
 
           <h1 className="text-3xl md:text-4xl font-bold mb-2">{page.title}</h1>
-          <p className="text-lg text-muted-foreground mb-8">{page.heroSubtitle}</p>
+          <p className="text-lg text-muted-foreground mb-6">{page.heroSubtitle}</p>
+
+          {/* Unique programmatic intro (~60 words, no duplicate content) */}
+          <p className="text-sm text-foreground/80 leading-relaxed mb-8 border-l-2 border-primary/40 pl-4">
+            {page.intro}
+          </p>
 
           {/* Quick Answer */}
           <Card className="bg-primary/5 border-primary/30 mb-8">
