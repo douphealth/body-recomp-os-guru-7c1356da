@@ -2,6 +2,7 @@
 // Request:  POST { token: string, regenerate?: boolean }
 // Response: { signedUrl, expiresIn, path }
 import { PDFDocument, StandardFonts, rgb } from 'npm:pdf-lib@1.17.1';
+import { fetchEntitlement, isEntitlementActive } from '../_shared/billing.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -361,7 +362,7 @@ Deno.serve(async (req) => {
   const supaKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   if (!supaUrl || !supaKey) return json({ error: 'Server not configured' }, 500);
 
-  let body: { token?: string; regenerate?: boolean };
+  let body: { token?: string; regenerate?: boolean; premium?: boolean };
   try { body = await req.json(); } catch { return json({ error: 'Invalid JSON' }, 400); }
 
   const token = (body.token ?? '').toString();
@@ -370,6 +371,11 @@ Deno.serve(async (req) => {
   try {
     const plan = await fetchPlan(supaUrl, supaKey, token);
     if (!plan) return json({ error: 'Plan not found' }, 404);
+
+    if (body.premium) {
+      const entitlement = await fetchEntitlement(supaUrl, supaKey, token);
+      if (!isEntitlementActive(entitlement)) return json({ error: 'Pro entitlement required' }, 402);
+    }
 
     let path = plan.pdf_url || '';
     const needsBuild = body.regenerate || !path;

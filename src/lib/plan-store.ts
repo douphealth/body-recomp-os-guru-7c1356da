@@ -110,10 +110,11 @@ export interface PlanPdfResult {
 export const getPlanPdf = async (
   token: string,
   regenerate = false,
+  premium = false,
 ): Promise<PlanPdfResult | null> => {
   try {
     const { data, error } = await supabase.functions.invoke('plan-pdf', {
-      body: { token, regenerate },
+      body: { token, regenerate, premium },
     });
     if (error || (data as any)?.error) {
       console.warn('getPlanPdf failed', error || (data as any)?.error);
