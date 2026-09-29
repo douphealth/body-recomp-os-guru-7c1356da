@@ -26,3 +26,21 @@ verify_jwt = false
 
 [functions.plan-pdf]
 verify_jwt = false
+ 
+[functions.billing-config]
+verify_jwt = false
+
+[functions.create-checkout]
+verify_jwt = false
+
+[functions.billing-status]
+verify_jwt = false
+
+[functions.create-billing-portal]
+verify_jwt = false
+
+[functions.premium-roadmap]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
