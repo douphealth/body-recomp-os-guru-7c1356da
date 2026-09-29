@@ -19,6 +19,7 @@ import TrainingTab from '@/components/results/TrainingTab';
 import RecoveryTab from '@/components/results/RecoveryTab';
 import ScienceTab from '@/components/results/ScienceTab';
 import TodayPanel from '@/components/results/TodayPanel';
+import PremiumUpgradeCard from '@/components/results/PremiumUpgradeCard';
 import CoachBio from '@/components/CoachBio';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { calculatePlan, getContextualLinks, type UserInputs, type PlanResults } from '@/lib/calculations';
@@ -154,6 +155,8 @@ const Results = () => {
       </div>
 
       <TodayPanel plan={plan} inputs={inputs} contextLinks={contextLinks} />
+
+      <PremiumUpgradeCard shareToken={shareToken} />
 
       {isMobile ? (
         <Accordion type="single" collapsible defaultValue="numbers" className="space-y-2">
